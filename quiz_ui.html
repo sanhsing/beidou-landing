@@ -260,9 +260,11 @@
             // 載入科目統計
             const stats = await fetchAPI('/subjects');
             
-            if (stats && stats.data) {
+            if (stats && stats.data && stats.data.length > 0) {
                 state.subjects = stats.data;
-                document.getElementById('totalQuestions').textContent = stats.total.toLocaleString();
+                // 計算總題數
+                const total = stats.data.reduce((sum, s) => sum + (s.node_count || 0), 0);
+                document.getElementById('totalQuestions').textContent = total.toLocaleString();
                 
                 // 隱藏 loading，顯示內容
                 document.getElementById('loadingSection').classList.add('hidden');
@@ -320,12 +322,12 @@
         function renderSubjects() {
             const grid = document.getElementById('subjectGrid');
             grid.innerHTML = state.subjects.map(s => `
-                <div onclick="selectSubject('${s.subject}')" 
+                <div onclick="selectSubject('${s.name || s.id}')" 
                     class="subject-card p-4 rounded-xl border-2 border-gray-200 bg-white hover:border-blue-400 hover:bg-blue-50 text-center"
-                    data-subject="${s.subject}" id="card-${s.subject}">
-                    <div class="text-3xl mb-2">${subjectIcons[s.subject] || '📚'}</div>
-                    <div class="font-medium text-gray-700">${s.subject}</div>
-                    <div class="text-xs text-gray-400 mt-1">${s.count} 題</div>
+                    data-subject="${s.name || s.id}" id="card-${s.name || s.id}">
+                    <div class="text-3xl mb-2">${subjectIcons[s.name || s.id] || '📚'}</div>
+                    <div class="font-medium text-gray-700">${s.name || s.id}</div>
+                    <div class="text-xs text-gray-400 mt-1">${s.node_count || s.count || 0} 題</div>
                 </div>
             `).join('');
         }
@@ -333,18 +335,21 @@
         // 渲染統計表格
         function renderStats() {
             const tbody = document.getElementById('statsTableBody');
-            const total = state.subjects.reduce((sum, s) => sum + s.count, 0);
+            const total = state.subjects.reduce((sum, s) => sum + (s.node_count || s.count || 0), 0);
 
-            tbody.innerHTML = state.subjects.map(s => `
-                <tr class="border-b hover:bg-gray-50 cursor-pointer" onclick="selectSubject('${s.subject}')">
+            tbody.innerHTML = state.subjects.map(s => {
+                const name = s.name || s.id;
+                const count = s.node_count || s.count || 0;
+                return `
+                <tr class="border-b hover:bg-gray-50 cursor-pointer" onclick="selectSubject('${name}')">
                     <td class="py-3 px-4">
-                        <span class="mr-2">${subjectIcons[s.subject] || '📚'}</span>
-                        <span class="font-medium">${s.subject}</span>
+                        <span class="mr-2">${subjectIcons[name] || '📚'}</span>
+                        <span class="font-medium">${name}</span>
                     </td>
-                    <td class="py-3 px-4 text-right text-blue-600 font-medium">${s.count}</td>
-                    <td class="py-3 px-4 text-right text-gray-500">${Math.round(s.count / total * 100)}%</td>
+                    <td class="py-3 px-4 text-right text-blue-600 font-medium">${count}</td>
+                    <td class="py-3 px-4 text-right text-gray-500">${Math.round(count / total * 100)}%</td>
                 </tr>
-            `).join('') + `
+            `}).join('') + `
                 <tr class="bg-gray-50 font-bold">
                     <td class="py-3 px-4">總計</td>
                     <td class="py-3 px-4 text-right text-blue-600">${total.toLocaleString()}</td>
@@ -404,7 +409,11 @@
             
             const result = await fetchAPI(endpoint);
             
-            if (result && result.data && result.data.length > 0) {
+            // API 回傳格式: {success, data: {count, questions: [...]}}
+            if (result && result.data && result.data.questions && result.data.questions.length > 0) {
+                state.questions = result.data.questions;
+            } else if (result && result.data && Array.isArray(result.data) && result.data.length > 0) {
+                // 備援: 直接是陣列
                 state.questions = result.data;
             } else {
                 alert('無法載入題目，請稍後再試');
@@ -434,18 +443,28 @@
             document.getElementById('progressBar').style.width = `${((state.currentIndex + 1) / total) * 100}%`;
             
             document.getElementById('questionSubject').textContent = q.subject;
-            document.getElementById('questionTopic').textContent = q.topic || '';
-            document.getElementById('questionText').textContent = q.text;
+            document.getElementById('questionTopic').textContent = q.topic || q.node_id || '';
+            document.getElementById('questionText').textContent = q.question || q.text || q.stem;
             
             const container = document.getElementById('optionsContainer');
             const answered = state.answers[state.currentIndex] !== null;
             const options = Array.isArray(q.options) ? q.options : JSON.parse(q.options || '[]');
             
+            // 計算正確答案索引
+            let correctIdx;
+            if (typeof q.answer === 'number') {
+                correctIdx = q.answer >= 1 && q.answer <= 4 ? q.answer - 1 : q.answer;
+            } else if (typeof q.answer === 'string') {
+                correctIdx = q.answer.toUpperCase().charCodeAt(0) - 65;
+            } else {
+                correctIdx = 0;
+            }
+            
             container.innerHTML = options.map((opt, i) => {
                 let classes = 'option-btn w-full p-4 text-left border-2 rounded-lg';
                 if (answered) {
                     classes += ' answered';
-                    if (i === q.answer) {
+                    if (i === correctIdx) {
                         classes += ' correct';
                     } else if (i === state.answers[state.currentIndex]) {
                         classes += ' wrong';
@@ -460,8 +479,8 @@
                             ${String.fromCharCode(65 + i)}
                         </span>
                         ${opt}
-                        ${answered && i === q.answer ? ' ✓' : ''}
-                        ${answered && i === state.answers[state.currentIndex] && i !== q.answer ? ' ✗' : ''}
+                        ${answered && i === correctIdx ? ' ✓' : ''}
+                        ${answered && i === state.answers[state.currentIndex] && i !== correctIdx ? ' ✗' : ''}
                     </button>
                 `;
             }).join('');
@@ -493,7 +512,21 @@
             
             state.answers[state.currentIndex] = optionIndex;
             const q = state.questions[state.currentIndex];
-            const isCorrect = optionIndex === q.answer;
+            
+            // 處理不同答案格式: 數字(0-3或1-4)、字母(A-D)
+            let correctIndex;
+            if (typeof q.answer === 'number') {
+                // 如果是 1-4，轉成 0-3
+                correctIndex = q.answer >= 1 && q.answer <= 4 ? q.answer - 1 : q.answer;
+            } else if (typeof q.answer === 'string') {
+                // 如果是 A-D，轉成 0-3
+                const letter = q.answer.toUpperCase();
+                correctIndex = letter.charCodeAt(0) - 65; // A=0, B=1, C=2, D=3
+            } else {
+                correctIndex = 0;
+            }
+            
+            const isCorrect = optionIndex === correctIndex;
             if (isCorrect) {
                 state.score++;
             }
