@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>課程學習 - 北斗教育</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="manifest" href="manifest.json">
+    <style>
+        .card { background: linear-gradient(135deg, #1e1b4b 0%, #312e81 100%); }
+        .lesson-item { transition: all 0.2s ease; }
+        .lesson-item:hover { background: rgba(139,92,246,0.2); }
+        .lesson-item.completed { border-left: 3px solid #10b981; }
+        .lesson-item.current { border-left: 3px solid #8b5cf6; background: rgba(139,92,246,0.1); }
+        .video-placeholder { aspect-ratio: 16/9; background: linear-gradient(45deg, #1e1b4b, #312e81); }
+    </style>
+</head>
+<body class="bg-gray-900 text-white min-h-screen">
+    <!-- 頂部導航 -->
+    <nav class="bg-gray-800/80 backdrop-blur border-b border-white/10 sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 py-3 flex justify-between items-center">
+            <div class="flex items-center gap-4">
+                <a href="courses.html" class="text-gray-400 hover:text-white">← 返回課程</a>
+                <span id="courseName" class="font-bold text-purple-400"></span>
+            </div>
+            <div class="flex items-center gap-4">
+                <div class="text-sm">
+                    <span class="text-gray-400">進度：</span>
+                    <span id="progressPercent" class="text-purple-400 font-bold">0%</span>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="flex">
+        <!-- 側邊欄：課程大綱 -->
+        <aside id="sidebar" class="w-80 bg-gray-800/50 border-r border-white/10 h-[calc(100vh-57px)] overflow-y-auto sticky top-[57px] hidden lg:block">
+            <div class="p-4">
+                <h2 class="font-bold mb-4">📚 課程大綱</h2>
+                <div id="moduleList" class="space-y-2">
+                    <div class="text-gray-500">載入中...</div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- 主要內容區 -->
+        <main class="flex-1 min-h-[calc(100vh-57px)]">
+            <!-- 內容區 -->
+            <div class="max-w-4xl mx-auto p-6">
+                <!-- 課程內容標題 -->
+                <div class="mb-6">
+                    <div class="text-sm text-gray-400 mb-1" id="moduleTitle">Module 1</div>
+                    <h1 class="text-2xl font-bold" id="lessonTitle">課程內容</h1>
+                </div>
+
+                <!-- 影片/內容區 -->
+                <div class="card rounded-2xl overflow-hidden mb-6">
+                    <div id="contentArea" class="video-placeholder flex items-center justify-center">
+                        <div class="text-center">
+                            <div class="text-6xl mb-4">📖</div>
+                            <div class="text-gray-400">選擇左側章節開始學習</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 課程說明 -->
+                <div class="card rounded-2xl p-6 mb-6">
+                    <h3 class="font-bold mb-3">📝 本節重點</h3>
+                    <div id="lessonContent" class="text-gray-300 space-y-3">
+                        <p>請從左側選擇章節開始學習。</p>
+                    </div>
+                </div>
+
+                <!-- 練習題區 -->
+                <div id="quizSection" class="hidden">
+                    <div class="card rounded-2xl p-6 mb-6">
+                        <h3 class="font-bold mb-4">🎯 隨堂測驗</h3>
+                        <div id="quizContent"></div>
+                    </div>
+                </div>
+
+                <!-- 底部導航 -->
+                <div class="flex justify-between items-center py-4">
+                    <button onclick="prevLesson()" id="prevBtn" class="bg-gray-700 hover:bg-gray-600 px-6 py-2 rounded-lg transition disabled:opacity-50" disabled>
+                        ← 上一節
+                    </button>
+                    <button onclick="completeAndNext()" id="nextBtn" class="bg-purple-600 hover:bg-purple-700 px-6 py-2 rounded-lg transition">
+                        完成並繼續 →
+                    </button>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- 移動端大綱抽屜 -->
+    <div id="mobileDrawer" class="fixed inset-0 bg-black/70 z-50 hidden">
+        <div class="absolute left-0 top-0 bottom-0 w-80 bg-gray-800 overflow-y-auto">
+            <div class="p-4">
+                <div class="flex justify-between items-center mb-4">
+                    <h2 class="font-bold">📚 課程大綱</h2>
+                    <button onclick="closeMobileDrawer()" class="text-gray-400 text-2xl">&times;</button>
+                </div>
+                <div id="mobileModuleList" class="space-y-2"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 移動端大綱按鈕 -->
+    <button onclick="openMobileDrawer()" class="lg:hidden fixed bottom-6 left-6 bg-purple-600 w-14 h-14 rounded-full shadow-lg flex items-center justify-center text-2xl z-40">
+        📋
+    </button>
+
+    <!-- 測驗完成彈窗 -->
+    <div id="quizResultModal" class="fixed inset-0 bg-black/70 hidden items-center justify-center z-50">
+        <div class="bg-gray-800 rounded-2xl p-8 max-w-md mx-4 text-center">
+            <div id="resultIcon" class="text-6xl mb-4">🎉</div>
+            <h3 id="resultTitle" class="text-2xl font-bold mb-2">測驗完成！</h3>
+            <p id="resultMessage" class="text-gray-400 mb-6"></p>
+            <div class="flex gap-3">
+                <button onclick="closeQuizResult()" class="flex-1 bg-gray-600 hover:bg-gray-500 py-3 rounded-lg transition">
+                    查看解析
+                </button>
+                <button onclick="closeQuizResult(); completeAndNext();" class="flex-1 bg-purple-600 hover:bg-purple-700 py-3 rounded-lg transition">
+                    繼續學習
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = 'https://beidou-edu-server-1.onrender.com';
+        
+        let currentUser = null;
+        let courseId = null;
+        let courseData = null;
+        let progressData = null;
+        let currentModuleIndex = 0;
+        let currentLessonIndex = 0;
+        let completedLessons = new Set();
+
+        // 課程內容模板（實際應從後端取得）
+        const COURSE_CONTENT = {
+            'google-ai': {
+                modules: [
+                    {
+                        id: 'ga-01',
+                        name: 'AI 基礎概念',
+                        lessons: [
+                            { id: 'ga-01-01', title: '什麼是人工智慧', content: '人工智慧（AI）是讓電腦模擬人類智慧的技術。包括機器學習、深度學習、自然語言處理等領域。', duration: '10分鐘' },
+                            { id: 'ga-01-02', title: 'AI 的發展歷史', content: '從 1950 年代的圖靈測試，到 2020 年代的大語言模型，AI 經歷了多次發展浪潮。', duration: '12分鐘' },
+                            { id: 'ga-01-03', title: 'AI 的類型分類', content: '弱 AI vs 強 AI、監督式學習 vs 非監督式學習、生成式 AI vs 判別式 AI。', duration: '15分鐘' },
+                            { id: 'ga-01-04', title: 'AI 的應用場景', content: '醫療診斷、自動駕駛、推薦系統、智慧客服、程式碼生成等。', duration: '12分鐘' },
+                            { id: 'ga-01-05', title: '章節測驗', content: '', isQuiz: true, duration: '10分鐘' }
+                        ]
+                    },
+                    {
+                        id: 'ga-02',
+                        name: 'Google AI 產品生態',
+                        lessons: [
+                            { id: 'ga-02-01', title: 'Google Cloud AI 服務', content: 'Vertex AI、AutoML、Document AI、Vision AI 等雲端 AI 服務介紹。', duration: '15分鐘' },
+                            { id: 'ga-02-02', title: 'Google Gemini 系列', content: 'Gemini Pro、Gemini Ultra、Gemini Nano 的特點與應用。', duration: '12分鐘' },
+                            { id: 'ga-02-03', title: 'TensorFlow 生態系統', content: 'TensorFlow、TensorFlow.js、TensorFlow Lite 的使用場景。', duration: '15分鐘' },
+                            { id: 'ga-02-04', title: '章節測驗', content: '', isQuiz: true, duration: '10分鐘' }
+                        ]
+                    },
+                    {
+                        id: 'ga-03',
+                        name: '機器學習基礎',
+                        lessons: [
+                            { id: 'ga-03-01', title: '機器學習核心概念', content: '特徵工程、模型訓練、驗證、測試、過擬合與欠擬合。', duration: '18分鐘' },
+                            { id: 'ga-03-02', title: '監督式學習', content: '分類、回歸、決策樹、隨機森林、支持向量機。', duration: '20分鐘' },
+                            { id: 'ga-03-03', title: '非監督式學習', content: '聚類、降維、K-means、PCA。', duration: '15分鐘' },
+                            { id: 'ga-03-04', title: '模型評估指標', content: '準確率、精確率、召回率、F1-Score、ROC-AUC。', duration: '15分鐘' },
+                            { id: 'ga-03-05', title: '實作練習', content: '使用 AutoML 訓練一個圖片分類模型。', duration: '20分鐘' },
+                            { id: 'ga-03-06', title: '章節測驗', content: '', isQuiz: true, duration: '12分鐘' }
+                        ]
+                    },
+                    {
+                        id: 'ga-04',
+                        name: '生成式 AI 與 LLM',
+                        lessons: [
+                            { id: 'ga-04-01', title: '什麼是生成式 AI', content: '從判別式 AI 到生成式 AI 的演進，VAE、GAN、Transformer。', duration: '15分鐘' },
+                            { id: 'ga-04-02', title: '大語言模型原理', content: 'Transformer 架構、注意力機制、預訓練與微調。', duration: '20分鐘' },
+                            { id: 'ga-04-03', title: 'Prompt Engineering', content: '如何撰寫有效的提示詞，Few-shot Learning、Chain of Thought。', duration: '18分鐘' },
+                            { id: 'ga-04-04', title: 'RAG 與向量資料庫', content: '檢索增強生成、Embedding、向量搜索。', duration: '15分鐘' },
+                            { id: 'ga-04-05', title: '章節測驗', content: '', isQuiz: true, duration: '12分鐘' }
+                        ]
+                    },
+                    {
+                        id: 'ga-05',
+                        name: '負責任的 AI',
+                        lessons: [
+                            { id: 'ga-05-01', title: 'AI 倫理原則', content: 'Google 的 AI 原則、公平性、透明性、可解釋性。', duration: '12分鐘' },
+                            { id: 'ga-05-02', title: '偏見與公平性', content: '數據偏見、算法偏見、如何檢測與緩解。', duration: '15分鐘' },
+                            { id: 'ga-05-03', title: '隱私與安全', content: '差分隱私、聯邦學習、模型安全。', duration: '12分鐘' },
+                            { id: 'ga-05-04', title: '章節測驗', content: '', isQuiz: true, duration: '10分鐘' }
+                        ]
+                    },
+                    {
+                        id: 'ga-06',
+                        name: '模擬測驗',
+                        lessons: [
+                            { id: 'ga-06-01', title: '模擬測驗一', content: '', isQuiz: true, isFinal: true, duration: '30分鐘' },
+                            { id: 'ga-06-02', title: '模擬測驗二', content: '', isQuiz: true, isFinal: true, duration: '30分鐘' },
+                            { id: 'ga-06-03', title: '考前重點整理', content: '考試重點回顧、常見錯誤、應試技巧。', duration: '20分鐘' }
+                        ]
+                    }
+                ]
+            }
+        };
+
+        // 測驗題目模板
+        const QUIZ_QUESTIONS = {
+            'ga-01-05': [
+                { q: '下列何者不是 AI 的主要類型？', options: ['機器學習', '深度學習', '區塊鏈', '自然語言處理'], answer: 2 },
+                { q: '圖靈測試的目的是什麼？', options: ['測試電腦運算速度', '測試電腦是否能模擬人類智慧', '測試網路安全', '測試程式效能'], answer: 1 },
+                { q: '生成式 AI 的主要功能是？', options: ['分類資料', '創造新內容', '加密資料', '壓縮檔案'], answer: 1 }
+            ],
+            'ga-02-04': [
+                { q: 'Vertex AI 是哪家公司的產品？', options: ['Amazon', 'Microsoft', 'Google', 'OpenAI'], answer: 2 },
+                { q: 'TensorFlow 主要用於什麼？', options: ['網頁設計', '機器學習模型開發', '資料庫管理', '作業系統'], answer: 1 }
+            ]
+        };
+
+        // 初始化
+        document.addEventListener('DOMContentLoaded', () => {
+            // 取得課程 ID
+            const params = new URLSearchParams(window.location.search);
+            courseId = params.get('id') || 'google-ai';
+            
+            checkAuth();
+            loadCourse();
+        });
+
+        // 檢查登入
+        function checkAuth() {
+            const token = localStorage.getItem('beidou_token');
+            const userData = localStorage.getItem('beidou_user');
+            
+            if (!token || !userData) {
+                window.location.href = `auth.html?redirect=course_learn.html?id=${courseId}`;
+                return;
+            }
+            
+            currentUser = JSON.parse(userData);
+        }
+
+        // 載入課程
+        async function loadCourse() {
+            // 使用本地內容（實際應從 API 取得）
+            courseData = COURSE_CONTENT[courseId] || COURSE_CONTENT['google-ai'];
+            
+            // 設定課程名稱
+            const courseNames = {
+                'google-ai': 'Google AI Essentials',
+                'aws-ai': 'AWS AI Practitioner',
+                'azure-ai': 'Azure AI Fundamentals',
+                'ipas-security': 'iPAS 資安認證'
+            };
+            document.getElementById('courseName').textContent = courseNames[courseId] || courseId;
+            
+            // 載入進度
+            await loadProgress();
+            
+            // 渲染大綱
+            renderModuleList();
+            
+            // 載入第一個未完成的課程
+            loadNextIncomplete();
+        }
+
+        // 載入進度
+        async function loadProgress() {
+            try {
+                const response = await fetch(`${API_BASE}/api/courses/${courseId}/progress/${currentUser.userId}`);
+                const result = await response.json();
+                
+                if (result.success) {
+                    progressData = result.data;
+                    completedLessons = new Set(result.data.progress?.completedLessons || []);
+                    updateProgressDisplay();
+                }
+            } catch (error) {
+                console.error('Load progress error:', error);
+                // 使用本地儲存作為備用
+                const saved = localStorage.getItem(`course_progress_${courseId}`);
+                if (saved) {
+                    completedLessons = new Set(JSON.parse(saved));
+                }
+            }
+        }
+
+        // 更新進度顯示
+        function updateProgressDisplay() {
+            const totalLessons = courseData.modules.reduce((sum, m) => sum + m.lessons.length, 0);
+            const percent = Math.round((completedLessons.size / totalLessons) * 100);
+            document.getElementById('progressPercent').textContent = `${percent}%`;
+        }
+
+        // 渲染模組列表
+        function renderModuleList() {
+            const html = courseData.modules.map((module, mi) => {
+                const completedCount = module.lessons.filter(l => completedLessons.has(l.id)).length;
+                const isExpanded = mi === currentModuleIndex;
+                
+                return `
+                    <div class="module-item">
+                        <div onclick="toggleModule(${mi})" class="flex justify-between items-center p-3 bg-gray-700/50 rounded-lg cursor-pointer hover:bg-gray-700">
+                            <div>
+                                <div class="font-medium text-sm">${module.name}</div>
+                                <div class="text-xs text-gray-400">${completedCount}/${module.lessons.length} 完成</div>
+                            </div>
+                            <span class="transform transition ${isExpanded ? 'rotate-180' : ''}">▼</span>
+                        </div>
+                        <div id="module-${mi}" class="${isExpanded ? '' : 'hidden'} mt-1 space-y-1 pl-2">
+                            ${module.lessons.map((lesson, li) => {
+                                const isCompleted = completedLessons.has(lesson.id);
+                                const isCurrent = mi === currentModuleIndex && li === currentLessonIndex;
+                                return `
+                                    <div onclick="goToLesson(${mi}, ${li})" 
+                                         class="lesson-item p-2 rounded cursor-pointer text-sm flex items-center gap-2 ${isCompleted ? 'completed' : ''} ${isCurrent ? 'current' : ''}">
+                                        <span>${isCompleted ? '✅' : lesson.isQuiz ? '📝' : '📖'}</span>
+                                        <span class="flex-1">${lesson.title}</span>
+                                        <span class="text-xs text-gray-500">${lesson.duration}</span>
+                                    </div>
+                                `;
+                            }).join('')}
+                        </div>
+                    </div>
+                `;
+            }).join('');
+            
+            document.getElementById('moduleList').innerHTML = html;
+            document.getElementById('mobileModuleList').innerHTML = html;
+        }
+
+        // 切換模組展開
+        function toggleModule(index) {
+            const el = document.getElementById(`module-${index}`);
+            el.classList.toggle('hidden');
+        }
+
+        // 跳轉到指定課程
+        function goToLesson(moduleIndex, lessonIndex) {
+            currentModuleIndex = moduleIndex;
+            currentLessonIndex = lessonIndex;
+            loadCurrentLesson();
+            renderModuleList();
+            closeMobileDrawer();
+        }
+
+        // 載入下一個未完成的課程
+        function loadNextIncomplete() {
+            for (let mi = 0; mi < courseData.modules.length; mi++) {
+                for (let li = 0; li < courseData.modules[mi].lessons.length; li++) {
+                    const lesson = courseData.modules[mi].lessons[li];
+                    if (!completedLessons.has(lesson.id)) {
+                        currentModuleIndex = mi;
+                        currentLessonIndex = li;
+                        loadCurrentLesson();
+                        return;
+                    }
+                }
+            }
+            // 全部完成
+            currentModuleIndex = 0;
+            currentLessonIndex = 0;
+            loadCurrentLesson();
+        }
+
+        // 載入當前課程
+        function loadCurrentLesson() {
+            const module = courseData.modules[currentModuleIndex];
+            const lesson = module.lessons[currentLessonIndex];
+            
+            document.getElementById('moduleTitle').textContent = `Module ${currentModuleIndex + 1}: ${module.name}`;
+            document.getElementById('lessonTitle').textContent = lesson.title;
+            
+            // 更新導航按鈕
+            document.getElementById('prevBtn').disabled = (currentModuleIndex === 0 && currentLessonIndex === 0);
+            
+            const isLast = currentModuleIndex === courseData.modules.length - 1 && 
+                           currentLessonIndex === module.lessons.length - 1;
+            document.getElementById('nextBtn').textContent = isLast ? '完成課程 🎉' : '完成並繼續 →';
+            
+            if (lesson.isQuiz) {
+                // 顯示測驗
+                document.getElementById('contentArea').innerHTML = `
+                    <div class="text-center p-8">
+                        <div class="text-6xl mb-4">${lesson.isFinal ? '🎯' : '📝'}</div>
+                        <h3 class="text-xl font-bold mb-2">${lesson.title}</h3>
+                        <p class="text-gray-400 mb-6">${lesson.isFinal ? '模擬正式考試環境' : '測試本章節的理解程度'}</p>
+                        <button onclick="startQuiz('${lesson.id}')" class="bg-purple-600 hover:bg-purple-700 px-8 py-3 rounded-lg transition">
+                            開始測驗
+                        </button>
+                    </div>
+                `;
+                document.getElementById('lessonContent').innerHTML = '<p>完成測驗以繼續學習。</p>';
+                document.getElementById('quizSection').classList.add('hidden');
+            } else {
+                // 顯示課程內容
+                document.getElementById('contentArea').innerHTML = `
+                    <div class="flex items-center justify-center h-full">
+                        <div class="text-center">
+                            <div class="text-6xl mb-4">📖</div>
+                            <div class="text-xl font-bold">${lesson.title}</div>
+                            <div class="text-gray-400 mt-2">預計學習時間：${lesson.duration}</div>
+                        </div>
+                    </div>
+                `;
+                document.getElementById('lessonContent').innerHTML = `
+                    <p>${lesson.content}</p>
+                    <div class="mt-4 p-4 bg-purple-600/20 rounded-lg">
+                        <div class="font-bold mb-2">💡 學習提示</div>
+                        <p class="text-sm text-gray-300">閱讀完成後，點擊「完成並繼續」進入下一節。建議做筆記以加深印象。</p>
+                    </div>
+                `;
+                document.getElementById('quizSection').classList.add('hidden');
+            }
+            
+            renderModuleList();
+        }
+
+        // 開始測驗
+        function startQuiz(lessonId) {
+            const questions = QUIZ_QUESTIONS[lessonId] || [
+                { q: '這是一道測試題目', options: ['選項A', '選項B', '選項C', '選項D'], answer: 0 }
+            ];
+            
+            let currentQ = 0;
+            let userAnswers = [];
+            
+            function renderQuestion() {
+                const q = questions[currentQ];
+                document.getElementById('contentArea').innerHTML = `
+                    <div class="p-6">
+                        <div class="flex justify-between items-center mb-6">
+                            <span class="text-sm text-gray-400">第 ${currentQ + 1} / ${questions.length} 題</span>
+                            <div class="bg-gray-700 rounded-full h-2 w-32">
+                                <div class="bg-purple-500 h-2 rounded-full" style="width: ${((currentQ + 1) / questions.length) * 100}%"></div>
+                            </div>
+                        </div>
+                        <h3 class="text-lg font-bold mb-6">${q.q}</h3>
+                        <div class="space-y-3">
+                            ${q.options.map((opt, i) => `
+                                <button onclick="selectAnswer(${i})" class="quiz-option w-full text-left p-4 bg-gray-700 hover:bg-gray-600 rounded-lg transition">
+                                    ${String.fromCharCode(65 + i)}. ${opt}
+                                </button>
+                            `).join('')}
+                        </div>
+                    </div>
+                `;
+            }
+            
+            window.selectAnswer = function(index) {
+                userAnswers.push(index);
+                currentQ++;
+                
+                if (currentQ < questions.length) {
+                    renderQuestion();
+                } else {
+                    // 計算分數
+                    let correct = 0;
+                    questions.forEach((q, i) => {
+                        if (userAnswers[i] === q.answer) correct++;
+                    });
+                    
+                    const score = Math.round((correct / questions.length) * 100);
+                    const passed = score >= 60;
+                    
+                    document.getElementById('resultIcon').textContent = passed ? '🎉' : '😅';
+                    document.getElementById('resultTitle').textContent = passed ? '測驗通過！' : '再接再厲';
+                    document.getElementById('resultMessage').textContent = `得分：${score}%（${correct}/${questions.length}）`;
+                    
+                    document.getElementById('quizResultModal').classList.remove('hidden');
+                    document.getElementById('quizResultModal').classList.add('flex');
+                    
+                    if (passed) {
+                        markComplete(lessonId);
+                    }
+                }
+            };
+            
+            renderQuestion();
+        }
+
+        // 關閉測驗結果
+        function closeQuizResult() {
+            document.getElementById('quizResultModal').classList.add('hidden');
+            document.getElementById('quizResultModal').classList.remove('flex');
+            loadCurrentLesson();
+        }
+
+        // 標記完成
+        async function markComplete(lessonId) {
+            if (!lessonId) {
+                const module = courseData.modules[currentModuleIndex];
+                lessonId = module.lessons[currentLessonIndex].id;
+            }
+            
+            completedLessons.add(lessonId);
+            
+            // 儲存到本地
+            localStorage.setItem(`course_progress_${courseId}`, JSON.stringify([...completedLessons]));
+            
+            // 同步到後端
+            try {
+                await fetch(`${API_BASE}/api/courses/${courseId}/progress`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        userId: currentUser.userId,
+                        lessonId,
+                        timeSpent: 300  // 假設 5 分鐘
+                    })
+                });
+            } catch (e) {
+                console.error('Sync progress error:', e);
+            }
+            
+            updateProgressDisplay();
+            renderModuleList();
+        }
+
+        // 完成並繼續
+        function completeAndNext() {
+            const module = courseData.modules[currentModuleIndex];
+            const lesson = module.lessons[currentLessonIndex];
+            
+            // 如果是測驗但未完成，不標記
+            if (!lesson.isQuiz || completedLessons.has(lesson.id)) {
+                markComplete();
+            }
+            
+            nextLesson();
+        }
+
+        // 上一節
+        function prevLesson() {
+            if (currentLessonIndex > 0) {
+                currentLessonIndex--;
+            } else if (currentModuleIndex > 0) {
+                currentModuleIndex--;
+                currentLessonIndex = courseData.modules[currentModuleIndex].lessons.length - 1;
+            }
+            loadCurrentLesson();
+        }
+
+        // 下一節
+        function nextLesson() {
+            const module = courseData.modules[currentModuleIndex];
+            
+            if (currentLessonIndex < module.lessons.length - 1) {
+                currentLessonIndex++;
+            } else if (currentModuleIndex < courseData.modules.length - 1) {
+                currentModuleIndex++;
+                currentLessonIndex = 0;
+            } else {
+                // 課程完成
+                alert('🎉 恭喜完成全部課程！');
+                return;
+            }
+            loadCurrentLesson();
+        }
+
+        // 移動端抽屜
+        function openMobileDrawer() {
+            document.getElementById('mobileDrawer').classList.remove('hidden');
+        }
+
+        function closeMobileDrawer() {
+            document.getElementById('mobileDrawer').classList.add('hidden');
+        }
+
+        // 點擊外部關閉
+        document.getElementById('mobileDrawer').addEventListener('click', (e) => {
+            if (e.target === document.getElementById('mobileDrawer')) {
+                closeMobileDrawer();
+            }
+        });
+    </script>
+</body>
+</html>

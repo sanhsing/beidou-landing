@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>北斗教育 | 成就徽章</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&display=swap');
+        body { font-family: 'Noto Sans TC', sans-serif; }
+        .gradient-bg { background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #0f172a 100%); }
+        .card { background: rgba(255,255,255,0.05); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1); }
+        .badge { transition: all 0.3s; }
+        .badge:hover { transform: scale(1.05); }
+        .badge.locked { filter: grayscale(1) opacity(0.5); }
+        .badge.unlocked { animation: unlock 0.5s ease-out; }
+        @keyframes unlock { 0% { transform: scale(0.8); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
+    </style>
+</head>
+<body class="gradient-bg min-h-screen text-white">
+    <nav class="border-b border-white/10 px-6 py-4">
+        <div class="max-w-4xl mx-auto flex items-center justify-between">
+            <a href="index.html" class="flex items-center gap-2">
+                <span class="text-2xl">🌟</span>
+                <span class="font-bold text-xl">北斗教育</span>
+            </a>
+            <a href="dashboard.html" class="text-gray-400 hover:text-white">← 返回儀表板</a>
+        </div>
+    </nav>
+
+    <main class="max-w-4xl mx-auto px-6 py-8">
+        <div class="text-center mb-8">
+            <h1 class="text-3xl font-bold mb-2">🏆 成就徽章</h1>
+            <p class="text-gray-400">已解鎖 <span id="unlockedCount" class="text-purple-400 font-bold">0</span> / <span id="totalCount">0</span></p>
+        </div>
+        
+        <!-- 進度條 -->
+        <div class="card rounded-xl p-4 mb-8">
+            <div class="flex justify-between text-sm mb-2">
+                <span>收集進度</span>
+                <span id="progressPercent">0%</span>
+            </div>
+            <div class="h-3 bg-white/10 rounded-full overflow-hidden">
+                <div id="progressBar" class="h-full bg-gradient-to-r from-purple-600 to-blue-600 transition-all" style="width:0%"></div>
+            </div>
+        </div>
+
+        <!-- 分類：答題 -->
+        <section class="mb-8">
+            <h2 class="text-xl font-semibold mb-4 flex items-center gap-2">📝 答題成就</h2>
+            <div id="answerBadges" class="grid grid-cols-2 md:grid-cols-4 gap-4"></div>
+        </section>
+
+        <!-- 分類：連續 -->
+        <section class="mb-8">
+            <h2 class="text-xl font-semibold mb-4 flex items-center gap-2">🔥 連續學習</h2>
+            <div id="streakBadges" class="grid grid-cols-2 md:grid-cols-4 gap-4"></div>
+        </section>
+
+        <!-- 分類：等級 -->
+        <section class="mb-8">
+            <h2 class="text-xl font-semibold mb-4 flex items-center gap-2">⭐ 等級成就</h2>
+            <div id="levelBadges" class="grid grid-cols-2 md:grid-cols-4 gap-4"></div>
+        </section>
+
+        <!-- 分類：特殊 -->
+        <section class="mb-8">
+            <h2 class="text-xl font-semibold mb-4 flex items-center gap-2">✨ 特殊成就</h2>
+            <div id="specialBadges" class="grid grid-cols-2 md:grid-cols-4 gap-4"></div>
+        </section>
+    </main>
+
+    <!-- 詳情 Modal -->
+    <div id="modal" class="hidden fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4">
+        <div class="card rounded-2xl max-w-sm w-full p-6 text-center">
+            <div id="modalIcon" class="text-6xl mb-4"></div>
+            <h3 id="modalName" class="text-xl font-bold mb-2"></h3>
+            <p id="modalDesc" class="text-gray-400 mb-4"></p>
+            <div id="modalReward" class="text-sm text-purple-400 mb-4"></div>
+            <div id="modalStatus" class="mb-4"></div>
+            <button onclick="closeModal()" class="w-full bg-purple-600 hover:bg-purple-700 py-3 rounded-lg">關閉</button>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = 'https://beidou-edu-server-1.onrender.com/api';
+        let achievements = [];
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const token = localStorage.getItem('beidou_token');
+            if (!token) { window.location.href = 'auth.html'; return; }
+            loadAchievements();
+        });
+
+        async function loadAchievements() {
+            const token = localStorage.getItem('beidou_token');
+            try {
+                const res = await fetch(`${API_BASE}/achievements/mine`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const data = await res.json();
+                if (data.success) {
+                    achievements = data.data.achievements;
+                    render(data.data.unlocked, data.data.total);
+                }
+            } catch (e) { useMock(); }
+        }
+
+        function useMock() {
+            achievements = [
+                { id: 'first_answer', name: '初試啼聲', description: '完成第一道題目', icon: '🎯', xp: 10, coins: 20, unlocked: true, condition: { type: 'total_answers' } },
+                { id: 'answer_10', name: '十題達人', description: '累計答題 10 道', icon: '📝', xp: 50, coins: 30, unlocked: true, condition: { type: 'total_answers' } },
+                { id: 'answer_100', name: '百題戰士', description: '累計答題 100 道', icon: '⚔️', xp: 200, coins: 100, unlocked: false, condition: { type: 'total_answers' } },
+                { id: 'answer_1000', name: '千題宗師', description: '累計答題 1000 道', icon: '🏆', xp: 1000, coins: 500, unlocked: false, condition: { type: 'total_answers' } },
+                { id: 'streak_3', name: '三日不輟', description: '連續學習 3 天', icon: '🔥', xp: 50, coins: 30, unlocked: true, condition: { type: 'streak_days' } },
+                { id: 'streak_7', name: '週週向上', description: '連續學習 7 天', icon: '🌟', xp: 150, coins: 100, unlocked: false, condition: { type: 'streak_days' } },
+                { id: 'streak_30', name: '月度堅持', description: '連續學習 30 天', icon: '💎', xp: 500, coins: 300, unlocked: false, condition: { type: 'streak_days' } },
+                { id: 'level_5', name: '初露鋒芒', description: '達到等級 5', icon: '⭐', xp: 0, coins: 50, unlocked: true, condition: { type: 'level' } },
+                { id: 'level_10', name: '漸入佳境', description: '達到等級 10', icon: '🌟', xp: 0, coins: 100, unlocked: false, condition: { type: 'level' } },
+                { id: 'level_20', name: '爐火純青', description: '達到等級 20', icon: '💫', xp: 0, coins: 200, unlocked: false, condition: { type: 'level' } },
+                { id: 'perfect_10', name: '完美十連', description: '連續答對 10 題', icon: '✨', xp: 100, coins: 50, unlocked: false, condition: { type: 'streak_correct' } },
+                { id: 'accuracy_90', name: '精準射手', description: '總正確率達到 90%', icon: '🎯', xp: 300, coins: 150, unlocked: false, condition: { type: 'accuracy' } },
+                { id: 'all_subjects', name: '全科達人', description: '在所有 10 個科目都答過題', icon: '🌈', xp: 200, coins: 100, unlocked: false, condition: { type: 'subjects_covered' } },
+                { id: 'first_referral', name: '好友同行', description: '成功推薦 1 位好友', icon: '🤝', xp: 100, coins: 100, unlocked: false, condition: { type: 'referrals' } },
+                { id: 'referral_5', name: '人氣王', description: '成功推薦 5 位好友', icon: '👑', xp: 500, coins: 500, unlocked: false, condition: { type: 'referrals' } }
+            ];
+            render(achievements.filter(a => a.unlocked).length, achievements.length);
+        }
+
+        function render(unlocked, total) {
+            document.getElementById('unlockedCount').textContent = unlocked;
+            document.getElementById('totalCount').textContent = total;
+            const pct = Math.round((unlocked / total) * 100);
+            document.getElementById('progressPercent').textContent = `${pct}%`;
+            document.getElementById('progressBar').style.width = `${pct}%`;
+
+            const answer = achievements.filter(a => a.condition?.type === 'total_answers' || a.id.startsWith('answer') || a.id === 'first_answer');
+            const streak = achievements.filter(a => a.condition?.type === 'streak_days' || a.condition?.type === 'streak_correct' || a.id.startsWith('streak') || a.id === 'perfect_10');
+            const level = achievements.filter(a => a.condition?.type === 'level' || a.id.startsWith('level'));
+            const special = achievements.filter(a => !answer.includes(a) && !streak.includes(a) && !level.includes(a));
+
+            document.getElementById('answerBadges').innerHTML = answer.map(badgeHTML).join('');
+            document.getElementById('streakBadges').innerHTML = streak.map(badgeHTML).join('');
+            document.getElementById('levelBadges').innerHTML = level.map(badgeHTML).join('');
+            document.getElementById('specialBadges').innerHTML = special.map(badgeHTML).join('');
+        }
+
+        function badgeHTML(a) {
+            return `
+                <div class="badge card rounded-xl p-4 text-center cursor-pointer ${a.unlocked ? 'unlocked' : 'locked'}" onclick='showDetail(${JSON.stringify(a).replace(/'/g, "\\'")})'>
+                    <div class="text-4xl mb-2">${a.icon}</div>
+                    <div class="font-medium text-sm">${a.name}</div>
+                    ${a.unlocked ? '<div class="text-green-400 text-xs mt-1">✓ 已解鎖</div>' : '<div class="text-gray-500 text-xs mt-1">🔒 未解鎖</div>'}
+                </div>
+            `;
+        }
+
+        function showDetail(a) {
+            document.getElementById('modalIcon').textContent = a.icon;
+            document.getElementById('modalName').textContent = a.name;
+            document.getElementById('modalDesc').textContent = a.description;
+            document.getElementById('modalReward').textContent = `獎勵：+${a.xp} XP / +${a.coins} 金幣`;
+            document.getElementById('modalStatus').innerHTML = a.unlocked 
+                ? '<span class="text-green-400">✓ 已解鎖</span>' 
+                : '<span class="text-gray-500">🔒 尚未達成</span>';
+            document.getElementById('modal').classList.remove('hidden');
+        }
+
+        function closeModal() { document.getElementById('modal').classList.add('hidden'); }
+        document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+    </script>
+</body>
+</html>

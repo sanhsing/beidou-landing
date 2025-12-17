@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>北斗教育 | 學習儀表板</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-8X0VB6K9G7"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-8X0VB6K9G7');
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&display=swap');
+        body { font-family: 'Noto Sans TC', sans-serif; }
+        .gradient-bg {
+            background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #0f172a 100%);
+        }
+        .card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .stat-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 40px rgba(139, 92, 246, 0.2);
+        }
+    </style>
+</head>
+<body class="gradient-bg min-h-screen text-white">
+    
+    <!-- 導航列 -->
+    <nav class="border-b border-white/10 px-6 py-4">
+        <div class="max-w-7xl mx-auto flex items-center justify-between">
+            <a href="index.html" class="flex items-center gap-2">
+                <span class="text-2xl">🌟</span>
+                <span class="font-bold text-xl">北斗教育</span>
+            </a>
+            <div class="flex items-center gap-4">
+                <a href="quiz_ui.html" class="text-gray-400 hover:text-white transition">測驗</a>
+                <a href="xtf_starmap.html" class="text-gray-400 hover:text-white transition">星圖</a>
+                <a href="leaderboard.html" class="text-gray-400 hover:text-white transition">排行榜</a>
+                <div class="flex items-center gap-2 ml-4">
+                    <span id="userCoins" class="text-yellow-400">🪙 0</span>
+                    <span id="userLevel" class="bg-purple-600 px-2 py-0.5 rounded text-sm">Lv.1</span>
+                </div>
+                <button onclick="logout()" class="text-gray-400 hover:text-red-400 transition">登出</button>
+            </div>
+        </div>
+    </nav>
+
+    <main class="max-w-7xl mx-auto px-6 py-8">
+        <!-- 歡迎區 -->
+        <div class="mb-8">
+            <h1 class="text-3xl font-bold mb-2">
+                <span id="greeting">你好</span>，<span id="userName">學習者</span>！
+            </h1>
+            <p class="text-gray-400">今天也要繼續努力學習喔 💪</p>
+        </div>
+        
+        <!-- 統計卡片 -->
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+            <div class="card stat-card rounded-xl p-5 transition">
+                <div class="text-3xl mb-2">🔥</div>
+                <div id="statStreak" class="text-3xl font-bold text-orange-400">0</div>
+                <div class="text-gray-400 text-sm">連續學習天數</div>
+            </div>
+            <div class="card stat-card rounded-xl p-5 transition">
+                <div class="text-3xl mb-2">📝</div>
+                <div id="statToday" class="text-3xl font-bold text-blue-400">0</div>
+                <div class="text-gray-400 text-sm">今日答題數</div>
+            </div>
+            <div class="card stat-card rounded-xl p-5 transition">
+                <div class="text-3xl mb-2">✅</div>
+                <div id="statAccuracy" class="text-3xl font-bold text-green-400">0%</div>
+                <div class="text-gray-400 text-sm">總正確率</div>
+            </div>
+            <div class="card stat-card rounded-xl p-5 transition">
+                <div class="text-3xl mb-2">⭐</div>
+                <div id="statXP" class="text-3xl font-bold text-purple-400">0</div>
+                <div class="text-gray-400 text-sm">累積經驗值</div>
+            </div>
+        </div>
+        
+        <!-- 圖表區 -->
+        <div class="grid md:grid-cols-2 gap-6 mb-8">
+            <!-- 週學習趨勢 -->
+            <div class="card rounded-xl p-6">
+                <h3 class="text-lg font-semibold mb-4">📈 本週學習趨勢</h3>
+                <canvas id="weeklyChart" height="200"></canvas>
+            </div>
+            
+            <!-- 科目分佈 -->
+            <div class="card rounded-xl p-6">
+                <h3 class="text-lg font-semibold mb-4">📊 科目分佈</h3>
+                <canvas id="subjectChart" height="200"></canvas>
+            </div>
+        </div>
+        
+        <!-- 快捷操作 -->
+        <div class="grid md:grid-cols-3 gap-4 mb-8">
+            <a href="quiz_ui.html" class="card rounded-xl p-6 hover:bg-white/10 transition group">
+                <div class="text-4xl mb-3 group-hover:scale-110 transition">🎯</div>
+                <h3 class="font-semibold mb-1">開始測驗</h3>
+                <p class="text-gray-400 text-sm">挑戰隨機題目</p>
+            </a>
+            <a href="wrong_book.html" class="card rounded-xl p-6 hover:bg-white/10 transition group">
+                <div class="text-4xl mb-3 group-hover:scale-110 transition">📕</div>
+                <h3 class="font-semibold mb-1">錯題本</h3>
+                <p class="text-gray-400 text-sm">從錯誤中學習</p>
+            </a>
+            <a href="report.html" class="card rounded-xl p-6 hover:bg-white/10 transition group">
+                <div class="text-4xl mb-3 group-hover:scale-110 transition">📊</div>
+                <h3 class="font-semibold mb-1">學習報告</h3>
+                <p class="text-gray-400 text-sm">查看學習分析</p>
+            </a>
+        </div>
+        
+        <!-- 更多功能 -->
+        <div class="grid md:grid-cols-4 gap-4 mb-8">
+            <a href="xtf_flashcard.html" class="card rounded-xl p-4 hover:bg-white/10 transition text-center">
+                <div class="text-2xl mb-2">📚</div>
+                <div class="text-sm">複習卡片</div>
+            </a>
+            <a href="achievements.html" class="card rounded-xl p-4 hover:bg-white/10 transition text-center">
+                <div class="text-2xl mb-2">🏆</div>
+                <div class="text-sm">成就徽章</div>
+            </a>
+            <a href="leaderboard.html" class="card rounded-xl p-4 hover:bg-white/10 transition text-center">
+                <div class="text-2xl mb-2">🥇</div>
+                <div class="text-sm">排行榜</div>
+            </a>
+            <a href="cert_exam.html" class="card rounded-xl p-4 hover:bg-white/10 transition text-center">
+                <div class="text-2xl mb-2">📜</div>
+                <div class="text-sm">證照考試</div>
+            </a>
+        </div>
+        
+        <!-- 推薦碼 -->
+        <div class="card rounded-xl p-6">
+            <h3 class="text-lg font-semibold mb-4">🎁 邀請好友</h3>
+            <p class="text-gray-400 text-sm mb-4">分享你的推薦碼，雙方各得 50 金幣！</p>
+            <div class="flex items-center gap-3">
+                <div class="flex-1 bg-white/10 rounded-lg px-4 py-3 font-mono text-lg" id="referralCode">
+                    載入中...
+                </div>
+                <button onclick="copyReferral()" 
+                    class="bg-purple-600 hover:bg-purple-700 px-6 py-3 rounded-lg transition">
+                    複製
+                </button>
+            </div>
+            <div id="copyMsg" class="hidden mt-2 text-green-400 text-sm">✓ 已複製到剪貼簿</div>
+        </div>
+    </main>
+
+    <script>
+        const API_BASE = 'https://beidou-edu-server-1.onrender.com/api';
+        let user = null;
+        let weeklyChart = null;
+        let subjectChart = null;
+        
+        // 初始化
+        document.addEventListener('DOMContentLoaded', async () => {
+            // 檢查登入
+            const token = localStorage.getItem('beidou_token');
+            const userData = localStorage.getItem('beidou_user');
+            
+            if (!token || !userData) {
+                window.location.href = 'auth.html';
+                return;
+            }
+            
+            user = JSON.parse(userData);
+            
+            // 顯示基本資料
+            document.getElementById('userName').textContent = user.username;
+            document.getElementById('userCoins').textContent = `🪙 ${user.coins || 0}`;
+            document.getElementById('userLevel').textContent = `Lv.${user.level || 1}`;
+            document.getElementById('referralCode').textContent = user.referralCode || 'N/A';
+            document.getElementById('statXP').textContent = user.xp || 0;
+            
+            // 問候語
+            const hour = new Date().getHours();
+            let greeting = '你好';
+            if (hour < 12) greeting = '早安';
+            else if (hour < 18) greeting = '午安';
+            else greeting = '晚安';
+            document.getElementById('greeting').textContent = greeting;
+            
+            // 載入統計
+            await loadStats();
+            
+            // GA
+            gtag('event', 'page_view', {
+                'event_category': 'dashboard'
+            });
+        });
+        
+        // 載入統計
+        async function loadStats() {
+            const token = localStorage.getItem('beidou_token');
+            
+            try {
+                // 取得用戶統計
+                const profileRes = await fetch(`${API_BASE}/user/profile`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const profileData = await profileRes.json();
+                
+                if (profileData.success) {
+                    const stats = profileData.data.stats;
+                    document.getElementById('statStreak').textContent = stats.streak || 0;
+                    document.getElementById('statToday').textContent = stats.todayQuestions || 0;
+                    document.getElementById('statAccuracy').textContent = `${stats.accuracy || 0}%`;
+                    
+                    // 更新用戶資料
+                    const u = profileData.data.user;
+                    document.getElementById('userCoins').textContent = `🪙 ${u.coins || 0}`;
+                    document.getElementById('userLevel').textContent = `Lv.${u.level || 1}`;
+                    document.getElementById('statXP').textContent = u.xp || 0;
+                }
+                
+                // 取得詳細統計
+                const statsRes = await fetch(`${API_BASE}/user/stats?days=7`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const statsData = await statsRes.json();
+                
+                if (statsData.success) {
+                    renderWeeklyChart(statsData.data.daily);
+                    renderSubjectChart(statsData.data.subjects);
+                }
+            } catch (err) {
+                console.error('載入統計失敗:', err);
+                // 使用模擬資料
+                renderWeeklyChart([]);
+                renderSubjectChart([]);
+            }
+        }
+        
+        // 週趨勢圖
+        function renderWeeklyChart(daily) {
+            const ctx = document.getElementById('weeklyChart').getContext('2d');
+            
+            // 準備 7 天資料
+            const labels = [];
+            const data = [];
+            const days = ['日', '一', '二', '三', '四', '五', '六'];
+            
+            for (let i = 6; i >= 0; i--) {
+                const date = new Date(Date.now() - i * 86400000);
+                const dateStr = date.toISOString().split('T')[0];
+                labels.push(days[date.getDay()]);
+                
+                const dayData = daily.find(d => d.date === dateStr);
+                data.push(dayData ? dayData.totalQuestions : 0);
+            }
+            
+            if (weeklyChart) weeklyChart.destroy();
+            
+            weeklyChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels,
+                    datasets: [{
+                        label: '答題數',
+                        data,
+                        backgroundColor: 'rgba(139, 92, 246, 0.6)',
+                        borderColor: 'rgba(139, 92, 246, 1)',
+                        borderWidth: 1,
+                        borderRadius: 4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: { display: false }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: { color: '#9ca3af' },
+                            grid: { color: 'rgba(255,255,255,0.1)' }
+                        },
+                        x: {
+                            ticks: { color: '#9ca3af' },
+                            grid: { display: false }
+                        }
+                    }
+                }
+            });
+        }
+        
+        // 科目分佈圖
+        function renderSubjectChart(subjects) {
+            const ctx = document.getElementById('subjectChart').getContext('2d');
+            
+            // 準備資料
+            let labels = [];
+            let data = [];
+            
+            if (subjects && subjects.length > 0) {
+                labels = subjects.map(s => s._id);
+                data = subjects.map(s => s.total);
+            } else {
+                // 模擬資料
+                labels = ['數學', '物理', '化學', '生物', '英文'];
+                data = [0, 0, 0, 0, 0];
+            }
+            
+            const colors = [
+                '#8b5cf6', '#3b82f6', '#10b981', '#f59e0b', '#ef4444',
+                '#ec4899', '#6366f1', '#14b8a6', '#f97316', '#84cc16'
+            ];
+            
+            if (subjectChart) subjectChart.destroy();
+            
+            subjectChart = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels,
+                    datasets: [{
+                        data,
+                        backgroundColor: colors.slice(0, labels.length),
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            position: 'right',
+                            labels: { color: '#9ca3af' }
+                        }
+                    }
+                }
+            });
+        }
+        
+        // 複製推薦碼
+        function copyReferral() {
+            const code = document.getElementById('referralCode').textContent;
+            navigator.clipboard.writeText(code).then(() => {
+                document.getElementById('copyMsg').classList.remove('hidden');
+                setTimeout(() => {
+                    document.getElementById('copyMsg').classList.add('hidden');
+                }, 2000);
+                
+                gtag('event', 'copy_referral', {
+                    'event_category': 'dashboard'
+                });
+            });
+        }
+        
+        // 登出
+        function logout() {
+            localStorage.removeItem('beidou_token');
+            localStorage.removeItem('beidou_user');
+            gtag('event', 'logout', {
+                'event_category': 'auth'
+            });
+            window.location.href = 'auth.html';
+        }
+    </script>
+</body>
+</html>
