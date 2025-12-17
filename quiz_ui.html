@@ -397,7 +397,7 @@
             });
             
             // 從 API 獲取題目
-            let endpoint = `/quiz/subject/${encodeURIComponent(state.selectedSubject)}?limit=${count}`;
+            let endpoint = `/quiz/questions?subject=${encodeURIComponent(state.selectedSubject)}&limit=${count}`;
             if (difficulty) {
                 endpoint += `&difficulty=${difficulty}`;
             }
