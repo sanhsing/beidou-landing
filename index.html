@@ -3,412 +3,563 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>北斗教育 - 學測備考系統</title>
-    <meta name="description" content="20,217道A級題目 × 771個XTF知識節點 × 10科完整覆蓋。一個爸爸為高二兒子做的學測備考系統，XTF學習法讓你錯了就知道補哪裡。">
-    
-    <!-- PWA -->
-    <link rel="manifest" href="manifest.json">
-    <meta name="theme-color" content="#8b5cf6">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="北斗教育">
-    <link rel="apple-touch-icon" href="icons/icon-192.png">
-    
+    <title>北斗教育 | 學測不是題海，是系統化通關</title>
+    <meta name="description" content="從刷題量到通題理——771節點 × 20,217題的結構化學習。北斗教育，你的認知作業系統。">
+    <meta name="keywords" content="學測, 備考, 108課綱, XTF學習法, 結構化學習, 高中, 題庫">
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⭐</text></svg>">
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Noto Sans TC', sans-serif; }
-        .gradient-text { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-        .card-hover { transition: all 0.3s ease; }
-        .card-hover:hover { transform: translateY(-4px); box-shadow: 0 20px 40px rgba(0,0,0,0.3); }
-        .pulse-glow { animation: pulse-glow 2s ease-in-out infinite; }
-        @keyframes pulse-glow { 0%, 100% { box-shadow: 0 0 20px rgba(102, 126, 234, 0.4); } 50% { box-shadow: 0 0 40px rgba(102, 126, 234, 0.8); } }
-        .stat-number { transition: all 0.5s ease; }
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700;900&display=swap');
+        
+        * { font-family: 'Noto Sans TC', sans-serif; }
+        
+        .gradient-bg {
+            background: linear-gradient(135deg, #0f172a 0%, #1e3a5f 50%, #1e40af 100%);
+        }
+        
+        .card-hover {
+            transition: all 0.3s ease;
+        }
+        .card-hover:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 25px 50px rgba(59, 130, 246, 0.3);
+        }
+        
+        .glow {
+            box-shadow: 0 0 60px rgba(59, 130, 246, 0.4);
+        }
+        
+        .star {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background: white;
+            border-radius: 50%;
+            animation: twinkle 3s infinite;
+        }
+        
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.2; }
+            50% { opacity: 1; }
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+        
+        .float {
+            animation: float 4s ease-in-out infinite;
+        }
+        
+        .price-card {
+            transition: all 0.3s ease;
+        }
+        .price-card:hover {
+            transform: scale(1.02);
+        }
+        .price-card.recommended {
+            border: 2px solid #3b82f6;
+            transform: scale(1.05);
+        }
+        .price-card.recommended:hover {
+            transform: scale(1.07);
+        }
     </style>
-    <!-- Google Analytics -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-8X0VB6K9G7"></script>
-    <script>
-        window.dataLayer = window.dataLayer || [];
-        function gtag(){dataLayer.push(arguments);}
-        gtag('js', new Date());
-        gtag('config', 'G-8X0VB6K9G7');
-    </script>
 </head>
-<body class="bg-gray-900 text-white min-h-screen">
-    <!-- Hero Section -->
-    <section class="relative overflow-hidden">
-        <div class="absolute inset-0 bg-gradient-to-br from-gray-900 via-purple-900/20 to-gray-900"></div>
-        <div class="relative max-w-6xl mx-auto px-4 py-20">
-            <div class="text-center">
-                <h1 class="text-4xl md:text-6xl font-bold mb-6">
-                    <span class="gradient-text">北斗教育</span>
+<body class="bg-slate-900 text-white">
+
+    <!-- ==================== Hero Section ==================== -->
+    <header class="gradient-bg relative overflow-hidden min-h-screen flex items-center">
+        <!-- 星星背景 -->
+        <div class="absolute inset-0" id="stars"></div>
+        
+        <div class="container mx-auto px-4 py-20 relative z-10">
+            <div class="max-w-4xl mx-auto text-center">
+                
+                <!-- 主標題 (澄韻風格) -->
+                <h1 class="text-4xl md:text-6xl lg:text-7xl font-black mb-6 leading-tight">
+                    學測不是題海<br>
+                    <span class="text-blue-400">是系統化通關</span>
                 </h1>
+                
+                <!-- 副標題 (理樞風格) -->
                 <p class="text-xl md:text-2xl text-gray-300 mb-4">
-                    一個爸爸為高二兒子做的學測備考系統
+                    從「刷題量」到「通題理」
                 </p>
-                <p class="text-gray-400 mb-8 max-w-2xl mx-auto">
-                    XTF 學習法：消化理解 → 拓展連結 → 融會貫通<br>
-                    每道題目連結知識點，錯了知道補哪裡
+                <p class="text-lg text-gray-400 mb-8">
+                    771 節點 × 20,217 題的結構化學習
                 </p>
                 
-                <!-- 統計數字 - 動態載入 -->
-                <div class="flex justify-center gap-8 md:gap-16 mb-12">
-                    <div class="text-center">
-                        <div id="stat-questions" class="text-3xl md:text-4xl font-bold text-purple-400 stat-number">--</div>
-                        <div class="text-gray-400 text-sm">道題目</div>
-                    </div>
-                    <div class="text-center">
-                        <div id="stat-nodes" class="text-3xl md:text-4xl font-bold text-green-400 stat-number">--</div>
-                        <div class="text-gray-400 text-sm">個知識節點</div>
-                    </div>
-                    <div class="text-center">
-                        <div id="stat-subjects" class="text-3xl md:text-4xl font-bold text-blue-400 stat-number">--</div>
-                        <div class="text-gray-400 text-sm">科完整覆蓋</div>
-                    </div>
-                </div>
+                <!-- 品牌定位 (織明風格) -->
+                <p class="text-blue-300 text-lg mb-12">
+                    北斗教育——你的認知作業系統
+                </p>
                 
-                <!-- CTA 按鈕 -->
-                <div class="flex flex-col sm:flex-row gap-4 justify-center">
-                    <a href="quiz_ui.html" class="inline-block bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white font-bold py-4 px-8 rounded-full text-lg transition pulse-glow">
-                        🚀 立即開始練習
+                <!-- CTA 按鈕 (澄韻文案) -->
+                <div class="flex flex-col sm:flex-row gap-4 justify-center mb-8">
+                    <a href="#pricing" class="bg-blue-600 hover:bg-blue-500 text-white font-bold py-4 px-10 rounded-full text-xl transition-all glow">
+                        免費試用開始
                     </a>
-                    <a href="xtf_starmap.html" class="inline-block border border-purple-500 text-purple-400 hover:bg-purple-500/20 font-bold py-4 px-8 rounded-full text-lg transition">
-                        🌟 探索知識星圖
+                    <a href="#features" class="border-2 border-white/30 hover:border-white/60 text-white font-medium py-4 px-10 rounded-full text-xl transition-all">
+                        了解更多
                     </a>
                 </div>
                 
-                <!-- 登入提示 -->
-                <div id="authSection" class="mt-8">
-                    <p class="text-gray-500 text-sm mb-2">登入後可追蹤學習進度、解鎖成就</p>
-                    <a href="auth.html" id="loginBtn" class="text-purple-400 hover:text-purple-300 font-medium">
-                        👤 登入 / 註冊
-                    </a>
-                    <a href="dashboard.html" id="dashboardBtn" class="hidden text-green-400 hover:text-green-300 font-medium">
-                        📊 進入儀表板
-                    </a>
-                </div>
+                <!-- 信任標記 -->
+                <p class="text-gray-500 text-sm">
+                    ✓ 不綁卡 &nbsp; ✓ 100題免費 &nbsp; ✓ 隨時取消
+                </p>
+                
             </div>
         </div>
         
-        <!-- 浮動導航 (登入後顯示) -->
-        <div id="floatNav" class="hidden fixed top-4 right-4 z-50">
-            <div class="bg-gray-800/90 backdrop-blur rounded-full px-4 py-2 flex items-center gap-3 border border-white/10">
-                <span id="navCoins" class="text-yellow-400 text-sm">🪙 0</span>
-                <span id="navLevel" class="bg-purple-600 px-2 py-0.5 rounded text-xs">Lv.1</span>
-                <a href="dashboard.html" class="text-gray-400 hover:text-white text-sm">儀表板</a>
-            </div>
+        <!-- 向下箭頭 -->
+        <div class="absolute bottom-8 left-1/2 transform -translate-x-1/2 float">
+            <svg class="w-8 h-8 text-white/50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path>
+            </svg>
         </div>
-    </section>
+    </header>
 
-    <!-- 特色區塊 -->
-    <section class="py-16 bg-gray-800/50">
-        <div class="max-w-6xl mx-auto px-4">
-            <h2 class="text-2xl md:text-3xl font-bold text-center mb-12">為什麼選擇北斗？</h2>
-            <div class="grid md:grid-cols-3 gap-8">
-                <div class="bg-gray-800 rounded-2xl p-6 card-hover">
-                    <div class="text-4xl mb-4">🎯</div>
-                    <h3 class="text-xl font-bold mb-2">精準定位弱點</h3>
-                    <p class="text-gray-400">每道題目連結知識節點，答錯立刻知道要補哪個觀念，不再盲目刷題。</p>
-                </div>
-                <div class="bg-gray-800 rounded-2xl p-6 card-hover">
-                    <div class="text-4xl mb-4">🧠</div>
-                    <h3 class="text-xl font-bold mb-2">XTF 學習法</h3>
-                    <p class="text-gray-400">消-拓-融三階段學習：先理解、再連結、最後應用。科學化的記憶方法。</p>
-                </div>
-                <div class="bg-gray-800 rounded-2xl p-6 card-hover">
-                    <div class="text-4xl mb-4">📊</div>
-                    <h3 class="text-xl font-bold mb-2">視覺化知識圖譜</h3>
-                    <p class="text-gray-400">用星圖呈現知識關聯，看清楚哪些已掌握、哪些還需加強。</p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- 科目一覽 -->
-    <section class="py-16">
-        <div class="max-w-6xl mx-auto px-4">
-            <h2 class="text-2xl md:text-3xl font-bold text-center mb-12">完整科目覆蓋</h2>
-            <div id="subject-grid" class="grid grid-cols-2 md:grid-cols-5 gap-4">
-                <!-- 動態載入科目 -->
-                <div class="text-center text-gray-500">載入中...</div>
-            </div>
-        </div>
-    </section>
-
-    <!-- 功能入口 -->
-    <section class="py-16 bg-gray-800/50">
-        <div class="max-w-6xl mx-auto px-4">
-            <h2 class="text-2xl md:text-3xl font-bold text-center mb-12">開始學習</h2>
-            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-                <a href="quiz_ui.html" class="bg-gray-800 rounded-2xl p-6 card-hover block">
-                    <div class="text-3xl mb-3">📝</div>
-                    <h3 class="font-bold mb-1">題庫練習</h3>
-                    <p class="text-gray-400 text-sm">隨機抽題或選科練習</p>
-                </a>
-                <a href="xtf_starmap.html" class="bg-gray-800 rounded-2xl p-6 card-hover block">
-                    <div class="text-3xl mb-3">🌟</div>
-                    <h3 class="font-bold mb-1">知識星圖</h3>
-                    <p class="text-gray-400 text-sm">視覺化知識關聯</p>
-                </a>
-                <a href="xtf_flashcard.html" class="bg-gray-800 rounded-2xl p-6 card-hover block">
-                    <div class="text-3xl mb-3">🃏</div>
-                    <h3 class="font-bold mb-1">字卡複習</h3>
-                    <p class="text-gray-400 text-sm">XTF 消拓融記憶法</p>
-                </a>
-                <a href="class.html" class="bg-gray-800 rounded-2xl p-6 card-hover block">
-                    <div class="text-3xl mb-3">📚</div>
-                    <h3 class="font-bold mb-1">班級管理</h3>
-                    <p class="text-gray-400 text-sm">教師派作業、學生排行榜</p>
-                </a>
-                <a href="courses.html" class="bg-gray-800 rounded-2xl p-6 card-hover block border border-yellow-500/30">
-                    <div class="text-3xl mb-3">🎓</div>
-                    <h3 class="font-bold mb-1">AI 認證課程</h3>
-                    <p class="text-gray-400 text-sm">Google/AWS/Azure 認證備考</p>
-                </a>
-                <a href="learning_path.html" class="bg-gray-800 rounded-2xl p-6 card-hover block">
-                    <div class="text-3xl mb-3">🛤️</div>
-                    <h3 class="font-bold mb-1">學習路徑</h3>
-                    <p class="text-gray-400 text-sm">個人化學習規劃</p>
-                </a>
-            </div>
-        </div>
-    </section>
-
-    <!-- 訂閱方案 -->
-    <section class="py-16">
-        <div class="max-w-4xl mx-auto px-4">
-            <h2 class="text-2xl md:text-3xl font-bold text-center mb-12">訂閱方案</h2>
-            <div class="grid md:grid-cols-3 gap-6">
-                <!-- 免費方案 -->
-                <div class="bg-gray-800 rounded-2xl p-6 card-hover">
-                    <div class="text-center">
-                        <div class="text-3xl font-bold mb-2">免費</div>
-                        <div class="text-gray-400 mb-4">直接用</div>
-                        <ul class="text-gray-400 text-sm space-y-2 mb-6 text-left">
-                            <li>✓ 全部題庫體驗</li>
-                            <li>✓ XTF 知識連結</li>
-                            <li class="text-gray-600">✗ 不保存進度</li>
-                        </ul>
-                        <a href="quiz_ui.html" class="inline-block bg-gray-700 hover:bg-gray-600 text-white py-2 px-6 rounded-full text-sm transition">開始使用</a>
+    <!-- ==================== 痛點 Section ==================== -->
+    <section class="py-20 bg-slate-800">
+        <div class="container mx-auto px-4">
+            <div class="max-w-3xl mx-auto text-center">
+                
+                <h2 class="text-3xl md:text-4xl font-bold mb-12">
+                    你是不是也這樣？
+                </h2>
+                
+                <div class="space-y-6 text-left">
+                    <div class="flex items-start gap-4 bg-slate-700/50 p-6 rounded-xl">
+                        <span class="text-3xl">😰</span>
+                        <div>
+                            <p class="text-xl text-gray-200">刷了 1000 題，還是不會？</p>
+                            <p class="text-gray-400 mt-1">題目換個數字就卡住，根本沒有學進去</p>
+                        </div>
+                    </div>
+                    
+                    <div class="flex items-start gap-4 bg-slate-700/50 p-6 rounded-xl">
+                        <span class="text-3xl">😰</span>
+                        <div>
+                            <p class="text-xl text-gray-200">買了三本參考書，越讀越亂？</p>
+                            <p class="text-gray-400 mt-1">每本講法不同，不知道該信哪個</p>
+                        </div>
+                    </div>
+                    
+                    <div class="flex items-start gap-4 bg-slate-700/50 p-6 rounded-xl">
+                        <span class="text-3xl">😰</span>
+                        <div>
+                            <p class="text-xl text-gray-200">考前衝刺，不知從何下手？</p>
+                            <p class="text-gray-400 mt-1">時間不夠，但什麼都想複習</p>
+                        </div>
                     </div>
                 </div>
                 
-                <!-- 標準方案 -->
-                <div class="bg-gradient-to-b from-purple-900/50 to-gray-800 rounded-2xl p-6 card-hover border border-purple-500/30">
-                    <div class="text-center">
-                        <div class="text-xs text-purple-400 mb-2">推薦</div>
-                        <div class="text-3xl font-bold mb-2">$99<span class="text-lg text-gray-400">/月</span></div>
-                        <div class="text-gray-400 mb-4">學測完整版</div>
-                        <ul class="text-gray-300 text-sm space-y-2 mb-6 text-left">
-                            <li>✓ 完整題庫</li>
-                            <li>✓ 錯題本</li>
-                            <li>✓ 進度追蹤</li>
-                        </ul>
-                        <a href="#" class="inline-block bg-purple-600 hover:bg-purple-700 text-white py-2 px-6 rounded-full text-sm transition">訂閱</a>
-                    </div>
+                <div class="mt-12 p-8 bg-blue-900/30 rounded-2xl border border-blue-500/30">
+                    <p class="text-2xl font-bold text-blue-300">
+                        問題不是你不夠努力<br>
+                        <span class="text-white">是方法不對</span>
+                    </p>
                 </div>
                 
-                <!-- 進階方案 -->
-                <div class="bg-gray-800 rounded-2xl p-6 card-hover">
-                    <div class="text-center">
-                        <div class="text-3xl font-bold mb-2">$199<span class="text-lg text-gray-400">/月</span></div>
-                        <div class="text-gray-400 mb-4">學測 + 證照</div>
-                        <ul class="text-gray-400 text-sm space-y-2 mb-6 text-left">
-                            <li>✓ 學測全功能</li>
-                            <li>✓ AI 診斷弱點</li>
-                            <li>✓ 證照題庫</li>
-                        </ul>
-                        <a href="#" class="inline-block border border-gray-600 text-gray-300 hover:bg-gray-700 py-2 px-6 rounded-full text-sm transition">訂閱</a>
-                    </div>
-                </div>
             </div>
         </div>
     </section>
 
-    <!-- Footer -->
-    <footer class="py-8 border-t border-gray-800">
-        <div class="max-w-6xl mx-auto px-4 text-center text-gray-500 text-sm">
-            <p>北斗七星文創數位有限公司 © 2025</p>
-            <p class="mt-2">用愛做的教育工具 ❤️</p>
-            
-            <!-- 法律連結 -->
-            <div class="mt-4 flex justify-center flex-wrap gap-4">
-                <a href="terms.html" class="hover:text-purple-400 transition">服務條款</a>
-                <a href="privacy.html" class="hover:text-purple-400 transition">隱私政策</a>
-                <a href="refund.html" class="hover:text-purple-400 transition">退款政策</a>
-                <a href="contact.html" class="hover:text-purple-400 transition">聯絡我們</a>
+    <!-- ==================== 解決方案 Section ==================== -->
+    <section id="features" class="py-20 bg-slate-900">
+        <div class="container mx-auto px-4">
+            <div class="max-w-5xl mx-auto">
+                
+                <div class="text-center mb-16">
+                    <h2 class="text-3xl md:text-4xl font-bold mb-4">
+                        從「刷題量」到「通題理」
+                    </h2>
+                    <p class="text-gray-400 text-lg">
+                        北斗教育用 XTF 結構重組知識，讓你真的搞懂
+                    </p>
+                </div>
+                
+                <!-- 三大賣點 (澄韻 Slogan) -->
+                <div class="grid md:grid-cols-3 gap-8">
+                    
+                    <!-- 賣點 1 -->
+                    <div class="card-hover bg-gradient-to-br from-slate-800 to-slate-700 p-8 rounded-2xl text-center">
+                        <div class="w-20 h-20 bg-blue-600/20 rounded-full flex items-center justify-center mx-auto mb-6">
+                            <svg class="w-10 h-10 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"></path>
+                            </svg>
+                        </div>
+                        <h3 class="text-2xl font-bold mb-4 text-blue-300">
+                            節點串聯<br>題題指向考點
+                        </h3>
+                        <p class="text-gray-400">
+                            771 個 XTF 節點<br>
+                            不是堆題，是結構化<br>
+                            每道題都知道自己在哪裡
+                        </p>
+                    </div>
+                    
+                    <!-- 賣點 2 -->
+                    <div class="card-hover bg-gradient-to-br from-slate-800 to-slate-700 p-8 rounded-2xl text-center">
+                        <div class="w-20 h-20 bg-green-600/20 rounded-full flex items-center justify-center mx-auto mb-6">
+                            <svg class="w-10 h-10 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                        </div>
+                        <h3 class="text-2xl font-bold mb-4 text-green-300">
+                            全量精題<br>三維無死角
+                        </h3>
+                        <p class="text-gray-400">
+                            20,217 道 A 級題<br>
+                            100% 三維完整度<br>
+                            理解、記憶、應用全覆蓋
+                        </p>
+                    </div>
+                    
+                    <!-- 賣點 3 -->
+                    <div class="card-hover bg-gradient-to-br from-slate-800 to-slate-700 p-8 rounded-2xl text-center">
+                        <div class="w-20 h-20 bg-purple-600/20 rounded-full flex items-center justify-center mx-auto mb-6">
+                            <svg class="w-10 h-10 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                            </svg>
+                        </div>
+                        <h3 class="text-2xl font-bold mb-4 text-purple-300">
+                            量少質精<br>速度翻倍
+                        </h3>
+                        <p class="text-gray-400">
+                            做對的題，不做多的題<br>
+                            XTF 方法論<br>
+                            讓每題都有記憶點
+                        </p>
+                    </div>
+                    
+                </div>
+                
             </div>
-            
-            <!-- 聯絡資訊 -->
-            <div class="mt-4 pt-4 border-t border-gray-700">
-                <p>📧 sanhsing@gmail.com ｜ 統編：94322729</p>
+        </div>
+    </section>
+
+    <!-- ==================== 對比 Section ==================== -->
+    <section class="py-20 bg-slate-800">
+        <div class="container mx-auto px-4">
+            <div class="max-w-4xl mx-auto">
+                
+                <h2 class="text-3xl md:text-4xl font-bold text-center mb-12">
+                    為什麼選北斗教育？
+                </h2>
+                
+                <!-- 對比表 (理樞產出) -->
+                <div class="overflow-x-auto">
+                    <table class="w-full">
+                        <thead>
+                            <tr class="border-b border-slate-600">
+                                <th class="py-4 px-6 text-left text-gray-400">維度</th>
+                                <th class="py-4 px-6 text-center text-gray-400">傳統題庫</th>
+                                <th class="py-4 px-6 text-center text-blue-400 font-bold">北斗教育</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="border-b border-slate-700">
+                                <td class="py-4 px-6 text-gray-300">學習單位</td>
+                                <td class="py-4 px-6 text-center text-gray-500">單題</td>
+                                <td class="py-4 px-6 text-center text-white font-medium">知識節點（XTF）</td>
+                            </tr>
+                            <tr class="border-b border-slate-700">
+                                <td class="py-4 px-6 text-gray-300">內容組織</td>
+                                <td class="py-4 px-6 text-center text-gray-500">章節堆疊</td>
+                                <td class="py-4 px-6 text-center text-white font-medium">771 節點網絡</td>
+                            </tr>
+                            <tr class="border-b border-slate-700">
+                                <td class="py-4 px-6 text-gray-300">品質標準</td>
+                                <td class="py-4 px-6 text-center text-gray-500">混雜</td>
+                                <td class="py-4 px-6 text-center text-white font-medium">100% A級</td>
+                            </tr>
+                            <tr class="border-b border-slate-700">
+                                <td class="py-4 px-6 text-gray-300">核心邏輯</td>
+                                <td class="py-4 px-6 text-center text-gray-500">題海戰術</td>
+                                <td class="py-4 px-6 text-center text-white font-medium">結構化學習</td>
+                            </tr>
+                            <tr>
+                                <td class="py-4 px-6 text-gray-300">價值主張</td>
+                                <td class="py-4 px-6 text-center text-gray-500">量大</td>
+                                <td class="py-4 px-6 text-center text-blue-400 font-bold">精準高效</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                
+            </div>
+        </div>
+    </section>
+
+    <!-- ==================== 定價 Section ==================== -->
+    <section id="pricing" class="py-20 bg-slate-900">
+        <div class="container mx-auto px-4">
+            <div class="max-w-5xl mx-auto">
+                
+                <div class="text-center mb-12">
+                    <h2 class="text-3xl md:text-4xl font-bold mb-4">
+                        選擇你的方案
+                    </h2>
+                    <p class="text-gray-400">
+                        低於競品價格，功能更完整
+                    </p>
+                </div>
+                
+                <!-- 三層定價 (理樞產出) -->
+                <div class="grid md:grid-cols-3 gap-8">
+                    
+                    <!-- 免費版 -->
+                    <div class="price-card bg-slate-800 p-8 rounded-2xl">
+                        <h3 class="text-xl font-bold mb-2">免費版</h3>
+                        <div class="text-4xl font-black mb-6">
+                            $0
+                            <span class="text-lg text-gray-400 font-normal">/永久</span>
+                        </div>
+                        <ul class="space-y-3 mb-8">
+                            <li class="flex items-center gap-2">
+                                <svg class="w-5 h-5 text-green-400" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+                                </svg>
+                                <span class="text-gray-300">100 題體驗</span>
+                            </li>
+                            <li class="flex items-center gap-2">
+                                <svg class="w-5 h-5 text-green-400" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+                                </svg>
+                                <span class="text-gray-300">3 個 XTF 節點試用</span>
+                            </li>
+                            <li class="flex items-center gap-2">
+                                <svg class="w-5 h-5 text-green-400" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+                                </svg>
+                                <span class="text-gray-300">基礎進度追蹤</span>
+                            </li>
+                        </ul>
+                        <a href="#" class="block text-center py-3 px-6 border-2 border-gray-600 hover:border-gray-400 rounded-full transition-all">
+                            免費開始
+                        </a>
+                    </div>
+                    
+                    <!-- 標準版 (推薦) -->
+                    <div class="price-card recommended bg-gradient-to-br from-blue-900 to-slate-800 p-8 rounded-2xl relative">
+                        <div class="absolute -top-4 left-1/2 transform -translate-x-1/2 bg-blue-600 text-white text-sm font-bold py-1 px-4 rounded-full">
+                            🚀 早鳥價
+                        </div>
+                        <h3 class="text-xl font-bold mb-2">標準版</h3>
+                        <div class="text-4xl font-black mb-2">
+                            $99
+                            <span class="text-lg text-gray-400 font-normal">/月</span>
+                        </div>
+                        <p class="text-sm text-blue-300 mb-6">年費 $990（省 $198）</p>
+                        <ul class="space-y-3 mb-8">
+                            <li class="flex items-center gap-2">
+                                <svg class="w-5 h-5 text-green-400" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+                                </svg>
+                                <span class="text-white font-medium">20,217 題完整解鎖</span>
+                            </li>
+                            <li class="flex items-center gap-2">
+                                <svg class="w-5 h-5 text-green-400" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+                                </svg>
+                                <span class="text-white font-medium">771 XTF 節點完整</span>
+                            </li>
+                            <li class="flex items-center gap-2">
+                                <svg class="w-5 h-5 text-green-400" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+                                </svg>
+                                <span class="text-gray-300">個人化錯題本</span>
+                            </li>
+                            <li class="flex items-center gap-2">
+                                <svg class="w-5 h-5 text-green-400" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+                                </svg>
+                                <span class="text-gray-300">進度分析報告</span>
+                            </li>
+                        </ul>
+                        <a href="#" id="btn-standard" class="block text-center py-3 px-6 bg-blue-600 hover:bg-blue-500 rounded-full font-bold transition-all">
+                            立即訂閱
+                        </a>
+                    </div>
+                    
+                    <!-- 進階版 -->
+                    <div class="price-card bg-slate-800 p-8 rounded-2xl">
+                        <h3 class="text-xl font-bold mb-2">進階版</h3>
+                        <div class="text-4xl font-black mb-2">
+                            $199
+                            <span class="text-lg text-gray-400 font-normal">/月</span>
+                        </div>
+                        <p class="text-sm text-gray-400 mb-6">年費 $1,990（省 $398）</p>
+                        <ul class="space-y-3 mb-8">
+                            <li class="flex items-center gap-2">
+                                <svg class="w-5 h-5 text-green-400" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+                                </svg>
+                                <span class="text-gray-300">標準版全功能</span>
+                            </li>
+                            <li class="flex items-center gap-2">
+                                <svg class="w-5 h-5 text-green-400" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+                                </svg>
+                                <span class="text-gray-300">AI 個人化推薦</span>
+                            </li>
+                            <li class="flex items-center gap-2">
+                                <svg class="w-5 h-5 text-green-400" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+                                </svg>
+                                <span class="text-gray-300">模擬考排名</span>
+                            </li>
+                            <li class="flex items-center gap-2">
+                                <svg class="w-5 h-5 text-green-400" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+                                </svg>
+                                <span class="text-gray-300">優先客服支援</span>
+                            </li>
+                        </ul>
+                        <a href="#" id="btn-pro" class="block text-center py-3 px-6 border-2 border-gray-600 hover:border-gray-400 rounded-full transition-all">
+                            升級進階
+                        </a>
+                    </div>
+                    
+                </div>
+                
+            </div>
+        </div>
+    </section>
+
+    <!-- ==================== CTA Section ==================== -->
+    <section class="py-20 gradient-bg relative overflow-hidden">
+        <div class="absolute inset-0" id="stars2"></div>
+        <div class="container mx-auto px-4 relative z-10">
+            <div class="max-w-3xl mx-auto text-center">
+                
+                <h2 class="text-3xl md:text-4xl font-bold mb-6">
+                    準備好系統化備戰學測了嗎？
+                </h2>
+                
+                <p class="text-gray-300 text-lg mb-8">
+                    加入北斗教育，讓每一題都指向成功
+                </p>
+                
+                <a href="#pricing" class="inline-block bg-white text-slate-900 font-bold py-4 px-12 rounded-full text-xl hover:bg-gray-100 transition-all">
+                    免費試用開始
+                </a>
+                
+                <p class="text-gray-400 text-sm mt-6">
+                    ✓ 不綁卡 &nbsp; ✓ 100題免費 &nbsp; ✓ 隨時取消
+                </p>
+                
+            </div>
+        </div>
+    </section>
+
+    <!-- ==================== Footer ==================== -->
+    <footer class="py-12 bg-slate-950">
+        <div class="container mx-auto px-4">
+            <div class="max-w-4xl mx-auto">
+                
+                <div class="flex flex-col md:flex-row justify-between items-center gap-6">
+                    <div class="text-center md:text-left">
+                        <div class="text-2xl font-bold mb-2">⭐ 北斗教育</div>
+                        <p class="text-gray-400 text-sm">你的認知作業系統</p>
+                    </div>
+                    
+                    <div class="flex gap-6 text-gray-400 text-sm">
+                        <a href="#" class="hover:text-white transition-colors">使用條款</a>
+                        <a href="#" class="hover:text-white transition-colors">隱私政策</a>
+                        <a href="#" class="hover:text-white transition-colors">聯絡我們</a>
+                    </div>
+                </div>
+                
+                <div class="border-t border-slate-800 mt-8 pt-8 text-center text-gray-500 text-sm">
+                    <p>北斗七星文創數位有限公司</p>
+                    <p class="mt-1">© 2025 Beidou Education. All Rights Reserved.</p>
+                </div>
+                
             </div>
         </div>
     </footer>
 
-    <!-- JavaScript: 動態載入統計 -->
+    <!-- ==================== Scripts ==================== -->
     <script>
-        const API_BASE = 'https://beidou-edu-server-1.onrender.com';
-        
-        // 數字動畫效果
-        function animateNumber(element, target, duration = 1000) {
-            const start = 0;
-            const startTime = performance.now();
+        // 星星背景
+        function createStars(containerId, count = 100) {
+            const container = document.getElementById(containerId);
+            if (!container) return;
             
-            function update(currentTime) {
-                const elapsed = currentTime - startTime;
-                const progress = Math.min(elapsed / duration, 1);
-                const easeOut = 1 - Math.pow(1 - progress, 3);
-                const current = Math.floor(start + (target - start) * easeOut);
-                element.textContent = current.toLocaleString();
-                
-                if (progress < 1) {
-                    requestAnimationFrame(update);
-                }
+            for (let i = 0; i < count; i++) {
+                const star = document.createElement('div');
+                star.className = 'star';
+                star.style.left = Math.random() * 100 + '%';
+                star.style.top = Math.random() * 100 + '%';
+                star.style.animationDelay = Math.random() * 3 + 's';
+                star.style.width = (Math.random() * 2 + 1) + 'px';
+                star.style.height = star.style.width;
+                container.appendChild(star);
             }
-            requestAnimationFrame(update);
         }
         
-        // 載入統計數據
-        async function loadStats() {
+        createStars('stars', 150);
+        createStars('stars2', 100);
+        
+        // ECPay 金流串接（沙箱測試）
+        const SERVER_URL = 'https://beidou-edu-server-1.onrender.com';
+        
+        document.getElementById('btn-standard')?.addEventListener('click', async (e) => {
+            e.preventDefault();
             try {
-                const response = await fetch(`${API_BASE}/api/stats`);
-                const result = await response.json();
-                
-                if (result.success && result.data) {
-                    const data = result.data;
-                    
-                    // 動畫顯示數字
-                    animateNumber(document.getElementById('stat-questions'), data.total_questions || 20217);
-                    animateNumber(document.getElementById('stat-nodes'), data.total_nodes || 771);
-                    animateNumber(document.getElementById('stat-subjects'), data.total_subjects || 10, 500);
-                    
-                    // 載入科目網格
-                    if (data.subjects && data.subjects.length > 0) {
-                        renderSubjects(data.subjects);
-                    }
-                } else {
-                    // Fallback 靜態數據
-                    setFallbackStats();
+                const response = await fetch(`${SERVER_URL}/api/payment/create`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        plan: 'standard',
+                        billingCycle: 'monthly',
+                        userId: 'test_user_' + Date.now()
+                    })
+                });
+                const data = await response.json();
+                if (data.paymentUrl) {
+                    window.location.href = data.paymentUrl;
+                } else if (data.html) {
+                    // ECPay 回傳的是 HTML form，需要自動提交
+                    document.body.innerHTML = data.html;
+                    document.forms[0]?.submit();
                 }
-            } catch (error) {
-                console.error('Stats load error:', error);
-                setFallbackStats();
+            } catch (err) {
+                console.error('Payment error:', err);
+                alert('付款功能準備中，請稍後再試');
             }
-        }
+        });
         
-        // Fallback 靜態數據 (v12.12 規模)
-        function setFallbackStats() {
-            animateNumber(document.getElementById('stat-questions'), 20217);
-            animateNumber(document.getElementById('stat-nodes'), 771);
-            animateNumber(document.getElementById('stat-subjects'), 10, 500);
-            renderDefaultSubjects();
-        }
-        
-        // 渲染科目網格
-        function renderSubjects(subjects) {
-            const grid = document.getElementById('subject-grid');
-            const colors = {
-                '數學': 'from-blue-500 to-blue-700',
-                '物理': 'from-purple-500 to-purple-700',
-                '化學': 'from-green-500 to-green-700',
-                '生物': 'from-emerald-500 to-emerald-700',
-                '地球科學': 'from-cyan-500 to-cyan-700',
-                '國文': 'from-red-500 to-red-700',
-                '英文': 'from-yellow-500 to-yellow-700',
-                '歷史': 'from-orange-500 to-orange-700',
-                '地理': 'from-teal-500 to-teal-700',
-                '公民': 'from-pink-500 to-pink-700'
-            };
-            
-            grid.innerHTML = subjects.map(s => `
-                <div class="bg-gradient-to-br ${colors[s.subject] || 'from-gray-500 to-gray-700'} rounded-xl p-4 text-center card-hover">
-                    <div class="font-bold">${s.subject}</div>
-                    <div class="text-sm opacity-80">${s.nodes || s.node_count || 0} 節點</div>
-                    <div class="text-xs opacity-60">${s.questions || 0} 題</div>
-                </div>
-            `).join('');
-        }
-        
-        // 預設科目 (v12.12 數據)
-        function renderDefaultSubjects() {
-            const defaultSubjects = [
-                { subject: '數學', nodes: 102, questions: 2688 },
-                { subject: '物理', nodes: 78, questions: 2052 },
-                { subject: '化學', nodes: 72, questions: 1896 },
-                { subject: '生物', nodes: 68, questions: 1788 },
-                { subject: '地球科學', nodes: 54, questions: 1422 },
-                { subject: '國文', nodes: 118, questions: 3108 },
-                { subject: '英文', nodes: 96, questions: 2529 },
-                { subject: '歷史', nodes: 72, questions: 1896 },
-                { subject: '地理', nodes: 58, questions: 1527 },
-                { subject: '公民', nodes: 53, questions: 1311 }
-            ];
-            renderSubjects(defaultSubjects);
-        }
-        
-        // CTA 點擊追蹤
-        function trackCTA(action, label) {
-            gtag('event', action, {
-                'event_category': 'cta',
-                'event_label': label
-            });
-        }
-        
-        // 綁定 CTA 追蹤事件
-        function bindCTATracking() {
-            // 主 CTA
-            document.querySelectorAll('a[href="quiz_ui.html"]').forEach(el => {
-                el.addEventListener('click', () => trackCTA('click_start_quiz', 'hero'));
-            });
-            document.querySelectorAll('a[href="xtf_starmap.html"]').forEach(el => {
-                el.addEventListener('click', () => trackCTA('click_starmap', 'hero'));
-            });
-            document.querySelectorAll('a[href="xtf_flashcard.html"]').forEach(el => {
-                el.addEventListener('click', () => trackCTA('click_flashcard', 'feature'));
-            });
-            document.querySelectorAll('a[href="learning_path.html"]').forEach(el => {
-                el.addEventListener('click', () => trackCTA('click_learning_path', 'feature'));
-            });
-            // 訂閱按鈕
-            document.querySelectorAll('a[href="#"]').forEach(el => {
-                if (el.textContent.includes('訂閱')) {
-                    el.addEventListener('click', () => trackCTA('click_subscribe', el.closest('.bg-gradient-to-b') ? 'standard' : 'premium'));
+        document.getElementById('btn-pro')?.addEventListener('click', async (e) => {
+            e.preventDefault();
+            try {
+                const response = await fetch(`${SERVER_URL}/api/payment/create`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        plan: 'pro',
+                        billingCycle: 'monthly',
+                        userId: 'test_user_' + Date.now()
+                    })
+                });
+                const data = await response.json();
+                if (data.paymentUrl) {
+                    window.location.href = data.paymentUrl;
+                } else if (data.html) {
+                    document.body.innerHTML = data.html;
+                    document.forms[0]?.submit();
                 }
-            });
-        }
-        
-        // 檢查登入狀態
-        function checkAuth() {
-            const token = localStorage.getItem('beidou_token');
-            const userData = localStorage.getItem('beidou_user');
-            
-            if (token && userData) {
-                const user = JSON.parse(userData);
-                // 已登入：顯示儀表板按鈕
-                document.getElementById('loginBtn').classList.add('hidden');
-                document.getElementById('dashboardBtn').classList.remove('hidden');
-                // 顯示浮動導航
-                document.getElementById('floatNav').classList.remove('hidden');
-                document.getElementById('navCoins').textContent = `🪙 ${user.coins || 0}`;
-                document.getElementById('navLevel').textContent = `Lv.${user.level || 1}`;
-            }
-        }
-        
-        // 頁面載入時執行
-        document.addEventListener('DOMContentLoaded', () => {
-            loadStats();
-            bindCTATracking();
-            checkAuth();
-            
-            // 註冊 Service Worker
-            if ('serviceWorker' in navigator) {
-                navigator.serviceWorker.register('/sw.js')
-                    .then(reg => console.log('✅ SW 註冊成功'))
-                    .catch(err => console.log('⚠️ SW 註冊失敗:', err));
+            } catch (err) {
+                console.error('Payment error:', err);
+                alert('付款功能準備中，請稍後再試');
             }
         });
     </script>
+
 </body>
 </html>
