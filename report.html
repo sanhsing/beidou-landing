@@ -1,439 +1,241 @@
 <!DOCTYPE html>
 <html lang="zh-TW">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>北斗教育 | 學習報告</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <!-- Google Analytics -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-8X0VB6K9G7"></script>
-    <script>
-        window.dataLayer = window.dataLayer || [];
-        function gtag(){dataLayer.push(arguments);}
-        gtag('js', new Date());
-        gtag('config', 'G-8X0VB6K9G7');
-    </script>
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&display=swap');
-        body { font-family: 'Noto Sans TC', sans-serif; }
-        .gradient-bg {
-            background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #0f172a 100%);
-        }
-        .card {
-            background: rgba(255, 255, 255, 0.05);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-        }
-        @media print {
-            .no-print { display: none; }
-            body { background: white; color: black; }
-            .card { background: #f3f4f6; border: 1px solid #e5e7eb; }
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>學習報告 - 北斗教育</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="js/components.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <style>
+    .chart-container { position: relative; height: 280px; }
+  </style>
 </head>
-<body class="gradient-bg min-h-screen text-white">
-    
-    <!-- 導航列 -->
-    <nav class="border-b border-white/10 px-6 py-4 no-print">
-        <div class="max-w-4xl mx-auto flex items-center justify-between">
-            <a href="index.html" class="flex items-center gap-2">
-                <span class="text-2xl">🌟</span>
-                <span class="font-bold text-xl">北斗教育</span>
+<body class="bg-gray-100 min-h-screen">
+  <nav class="bg-white shadow-sm sticky top-0 z-50">
+    <div class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
+      <a href="dashboard_v2.html" class="flex items-center gap-2 text-gray-600 hover:text-gray-900">
+        <span>←</span> 返回儀表板
+      </a>
+      <h1 class="font-bold text-lg">📊 學習報告</h1>
+      <button onclick="exportReport()" class="btn btn-primary text-sm">匯出 PDF</button>
+    </div>
+  </nav>
+
+  <main class="max-w-6xl mx-auto px-4 py-6">
+    <!-- 總覽卡片 -->
+    <div class="grid md:grid-cols-4 gap-4 mb-6">
+      <div class="stat-card">
+        <div class="stat-icon">📚</div>
+        <div class="stat-content">
+          <div class="stat-value" id="totalQuestions">0</div>
+          <div class="stat-label">累計答題</div>
+        </div>
+      </div>
+      <div class="stat-card success">
+        <div class="stat-icon">✓</div>
+        <div class="stat-content">
+          <div class="stat-value" id="overallAccuracy">0%</div>
+          <div class="stat-label">總正確率</div>
+        </div>
+      </div>
+      <div class="stat-card warning">
+        <div class="stat-icon">📈</div>
+        <div class="stat-content">
+          <div class="stat-value" id="avgMastery">0%</div>
+          <div class="stat-label">平均掌握度</div>
+        </div>
+      </div>
+      <div class="stat-card info">
+        <div class="stat-icon">🎯</div>
+        <div class="stat-content">
+          <div class="stat-value" id="nodesStudied">0</div>
+          <div class="stat-label">已學節點</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="grid md:grid-cols-2 gap-6 mb-6">
+      <!-- 30天趨勢 -->
+      <div class="card">
+        <div class="card-header">
+          <h2 class="card-title">📅 30天學習趨勢</h2>
+        </div>
+        <div class="chart-container">
+          <canvas id="trendChart"></canvas>
+        </div>
+      </div>
+
+      <!-- 科目能力雷達 -->
+      <div class="card">
+        <div class="card-header">
+          <h2 class="card-title">🎯 科目能力分析</h2>
+        </div>
+        <div class="chart-container">
+          <canvas id="radarChart"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <div class="grid md:grid-cols-2 gap-6 mb-6">
+      <!-- 弱點科目 -->
+      <div class="card">
+        <div class="card-header">
+          <h2 class="card-title">⚠️ 弱點科目</h2>
+        </div>
+        <div id="weakSubjects" class="space-y-3">
+          <div class="skeleton skeleton-text"></div>
+          <div class="skeleton skeleton-text"></div>
+        </div>
+      </div>
+
+      <!-- 弱點節點 -->
+      <div class="card">
+        <div class="card-header">
+          <h2 class="card-title">📍 需加強的知識點</h2>
+        </div>
+        <div id="weakNodes" class="space-y-3">
+          <div class="skeleton skeleton-text"></div>
+          <div class="skeleton skeleton-text"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 學習建議 -->
+    <div class="card">
+      <div class="card-header">
+        <h2 class="card-title">💡 學習建議</h2>
+      </div>
+      <div id="recommendations" class="grid md:grid-cols-2 gap-4">
+        <div class="skeleton skeleton-card"></div>
+        <div class="skeleton skeleton-card"></div>
+      </div>
+    </div>
+  </main>
+
+  <script src="js/api.js"></script>
+  <script src="js/charts.js"></script>
+  <script>
+    let charts = {};
+
+    document.addEventListener('DOMContentLoaded', init);
+
+    async function init() {
+      await loadReport();
+    }
+
+    async function loadReport() {
+      try {
+        const [dashRes, trendRes, weakRes] = await Promise.all([
+          BeidouAPI.analytics.dashboard(),
+          BeidouAPI.analytics.trends(null, 30),
+          BeidouAPI.analytics.weakness()
+        ]);
+
+        if (dashRes.success) renderOverview(dashRes.data);
+        if (trendRes.success) renderTrends(trendRes.data);
+        if (weakRes.success) renderWeakness(weakRes.data);
+
+      } catch (error) {
+        console.error('Load report error:', error);
+      }
+    }
+
+    function renderOverview(data) {
+      const { overview } = data;
+      document.getElementById('totalQuestions').textContent = overview?.total_questions || 0;
+      const acc = overview?.total_questions > 0 
+        ? Math.round(overview.total_correct / overview.total_questions * 100) 
+        : 0;
+      document.getElementById('overallAccuracy').textContent = acc + '%';
+      document.getElementById('avgMastery').textContent = Math.round(overview?.avg_mastery || 0) + '%';
+      document.getElementById('nodesStudied').textContent = overview?.nodes_studied || 0;
+    }
+
+    function renderTrends(data) {
+      const { dailyTrend, subjectTrend } = data;
+
+      // 30天趨勢
+      if (dailyTrend && dailyTrend.length > 0) {
+        const chartData = dailyTrend.map(d => ({
+          date: d.date.slice(5),
+          value: d.accuracy || 0
+        }));
+        charts.trend = BeidouCharts.trendLine('trendChart', chartData, { color: '#6366f1' });
+      }
+
+      // 科目雷達
+      if (subjectTrend && subjectTrend.length > 0) {
+        const radarData = subjectTrend.slice(0, 8).map(s => ({
+          subject: s.subject_id,
+          mastery: s.accuracy || 0
+        }));
+        charts.radar = BeidouCharts.radarChart('radarChart', radarData);
+      }
+    }
+
+    function renderWeakness(data) {
+      const { weakSubjects, weakNodes, recommendations } = data;
+
+      // 弱點科目
+      const subjEl = document.getElementById('weakSubjects');
+      if (weakSubjects && weakSubjects.length > 0) {
+        subjEl.innerHTML = weakSubjects.map(s => `
+          <div class="flex items-center justify-between p-3 bg-red-50 rounded-lg">
+            <div>
+              <span class="font-medium">${s.subject_id}</span>
+              <span class="text-sm text-gray-500 ml-2">${s.total} 題</span>
+            </div>
+            <span class="text-red-600 font-bold">${s.accuracy}%</span>
+          </div>
+        `).join('');
+      } else {
+        subjEl.innerHTML = '<div class="text-center text-gray-400 py-4">👍 各科表現均衡</div>';
+      }
+
+      // 弱點節點
+      const nodeEl = document.getElementById('weakNodes');
+      if (weakNodes && weakNodes.length > 0) {
+        nodeEl.innerHTML = weakNodes.slice(0, 5).map(n => `
+          <div class="flex items-center justify-between p-3 bg-yellow-50 rounded-lg">
+            <div>
+              <div class="font-medium">${n.node_name || n.node_id}</div>
+              <div class="text-sm text-gray-500">${n.subject_id || ''}</div>
+            </div>
+            <div class="text-right">
+              <div class="font-bold ${n.mastery_level < 50 ? 'text-red-600' : 'text-yellow-600'}">${n.mastery_level}%</div>
+              <a href="quiz_v2.html?node=${n.node_id}" class="text-sm text-indigo-600">去練習 →</a>
+            </div>
+          </div>
+        `).join('');
+      } else {
+        nodeEl.innerHTML = '<div class="text-center text-gray-400 py-4">👍 沒有需要加強的知識點</div>';
+      }
+
+      // 學習建議
+      const recEl = document.getElementById('recommendations');
+      if (recommendations && recommendations.length > 0) {
+        recEl.innerHTML = recommendations.map(r => `
+          <div class="p-4 bg-indigo-50 rounded-lg border-l-4 border-indigo-500">
+            <div class="font-medium text-indigo-700 mb-1">${r.nodeName || r.nodeId}</div>
+            <div class="text-sm text-gray-600">${r.reason}</div>
+            <a href="quiz_v2.html?node=${r.nodeId}" class="inline-block mt-2 text-sm text-indigo-600 font-medium">
+              開始練習 →
             </a>
-            <div class="flex items-center gap-4">
-                <a href="dashboard.html" class="text-gray-400 hover:text-white transition">儀表板</a>
-                <button onclick="window.print()" class="bg-purple-600 hover:bg-purple-700 px-4 py-2 rounded-lg transition">
-                    🖨️ 列印報告
-                </button>
-            </div>
-        </div>
-    </nav>
+          </div>
+        `).join('');
+      } else {
+        recEl.innerHTML = `
+          <div class="col-span-2 text-center py-8 text-gray-400">
+            繼續學習，我們會為你提供個人化建議
+          </div>
+        `;
+      }
+    }
 
-    <main class="max-w-4xl mx-auto px-6 py-8">
-        <!-- 報告標題 -->
-        <div class="text-center mb-8">
-            <h1 class="text-3xl font-bold mb-2">📊 學習報告</h1>
-            <p class="text-gray-400" id="reportPeriod">載入中...</p>
-        </div>
-        
-        <!-- 時間範圍選擇 -->
-        <div class="flex justify-center gap-2 mb-8 no-print">
-            <button onclick="setPeriod('week')" id="periodWeek"
-                class="px-6 py-2 rounded-full text-sm font-medium transition bg-purple-600">
-                本週
-            </button>
-            <button onclick="setPeriod('month')" id="periodMonth"
-                class="px-6 py-2 rounded-full text-sm font-medium transition bg-white/10 text-gray-400">
-                本月
-            </button>
-            <button onclick="setPeriod('all')" id="periodAll"
-                class="px-6 py-2 rounded-full text-sm font-medium transition bg-white/10 text-gray-400">
-                全部
-            </button>
-        </div>
-        
-        <!-- 總覽卡片 -->
-        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-            <div class="card rounded-xl p-5 text-center">
-                <div class="text-3xl mb-2">📝</div>
-                <div id="statTotal" class="text-2xl font-bold text-blue-400">0</div>
-                <div class="text-gray-400 text-sm">總答題數</div>
-            </div>
-            <div class="card rounded-xl p-5 text-center">
-                <div class="text-3xl mb-2">✅</div>
-                <div id="statCorrect" class="text-2xl font-bold text-green-400">0</div>
-                <div class="text-gray-400 text-sm">答對題數</div>
-            </div>
-            <div class="card rounded-xl p-5 text-center">
-                <div class="text-3xl mb-2">🎯</div>
-                <div id="statAccuracy" class="text-2xl font-bold text-purple-400">0%</div>
-                <div class="text-gray-400 text-sm">正確率</div>
-            </div>
-            <div class="card rounded-xl p-5 text-center">
-                <div class="text-3xl mb-2">⏱️</div>
-                <div id="statTime" class="text-2xl font-bold text-orange-400">0</div>
-                <div class="text-gray-400 text-sm">學習時間 (分)</div>
-            </div>
-        </div>
-        
-        <!-- 圖表區 -->
-        <div class="grid md:grid-cols-2 gap-6 mb-8">
-            <!-- 每日趨勢 -->
-            <div class="card rounded-xl p-6">
-                <h3 class="text-lg font-semibold mb-4">📈 每日答題趨勢</h3>
-                <canvas id="dailyChart" height="200"></canvas>
-            </div>
-            
-            <!-- 科目正確率 -->
-            <div class="card rounded-xl p-6">
-                <h3 class="text-lg font-semibold mb-4">📊 各科正確率</h3>
-                <canvas id="subjectChart" height="200"></canvas>
-            </div>
-        </div>
-        
-        <!-- 科目詳情 -->
-        <div class="card rounded-xl p-6 mb-8">
-            <h3 class="text-lg font-semibold mb-4">📚 各科目表現</h3>
-            <div id="subjectDetails" class="space-y-4">
-                <!-- 動態載入 -->
-            </div>
-        </div>
-        
-        <!-- 學習建議 -->
-        <div class="card rounded-xl p-6 mb-8">
-            <h3 class="text-lg font-semibold mb-4">💡 學習建議</h3>
-            <div id="suggestions" class="space-y-3">
-                <!-- 動態載入 -->
-            </div>
-        </div>
-        
-        <!-- 成就摘要 -->
-        <div class="card rounded-xl p-6">
-            <h3 class="text-lg font-semibold mb-4">🏆 本期成就</h3>
-            <div id="achievements" class="flex flex-wrap gap-3">
-                <!-- 動態載入 -->
-            </div>
-        </div>
-    </main>
-    
-    <!-- 頁尾 -->
-    <footer class="text-center py-6 text-gray-500 text-sm">
-        北斗教育 © 2025 | 報告產生時間：<span id="generateTime"></span>
-    </footer>
-
-    <script>
-        const API_BASE = 'https://beidou-edu-server-1.onrender.com/api';
-        let currentPeriod = 'week';
-        let reportData = null;
-        let dailyChart = null;
-        let subjectChart = null;
-        
-        // 初始化
-        document.addEventListener('DOMContentLoaded', () => {
-            const token = localStorage.getItem('beidou_token');
-            if (!token) {
-                window.location.href = 'auth.html';
-                return;
-            }
-            
-            document.getElementById('generateTime').textContent = 
-                new Date().toLocaleString('zh-TW');
-            
-            loadReport();
-            
-            gtag('event', 'page_view', {
-                'event_category': 'report'
-            });
-        });
-        
-        // 設定時間範圍
-        function setPeriod(period) {
-            currentPeriod = period;
-            
-            ['week', 'month', 'all'].forEach(p => {
-                const btn = document.getElementById(`period${p.charAt(0).toUpperCase() + p.slice(1)}`);
-                if (p === period) {
-                    btn.classList.remove('bg-white/10', 'text-gray-400');
-                    btn.classList.add('bg-purple-600');
-                } else {
-                    btn.classList.add('bg-white/10', 'text-gray-400');
-                    btn.classList.remove('bg-purple-600');
-                }
-            });
-            
-            loadReport();
-            
-            gtag('event', 'change_period', {
-                'event_category': 'report',
-                'event_label': period
-            });
-        }
-        
-        // 載入報告
-        async function loadReport() {
-            const token = localStorage.getItem('beidou_token');
-            
-            let days = 7;
-            let periodText = '本週';
-            if (currentPeriod === 'month') {
-                days = 30;
-                periodText = '本月';
-            } else if (currentPeriod === 'all') {
-                days = 365;
-                periodText = '全部時間';
-            }
-            
-            document.getElementById('reportPeriod').textContent = periodText;
-            
-            try {
-                const res = await fetch(`${API_BASE}/user/stats?days=${days}`, {
-                    headers: { 'Authorization': `Bearer ${token}` }
-                });
-                const data = await res.json();
-                
-                if (data.success) {
-                    reportData = data.data;
-                    renderReport();
-                } else {
-                    throw new Error('載入失敗');
-                }
-            } catch (err) {
-                console.error('載入報告失敗:', err);
-                useMockData();
-            }
-        }
-        
-        // 模擬資料
-        function useMockData() {
-            reportData = {
-                daily: Array.from({length: 7}, (_, i) => {
-                    const date = new Date(Date.now() - (6-i) * 86400000);
-                    return {
-                        date: date.toISOString().split('T')[0],
-                        totalQuestions: Math.floor(Math.random() * 30) + 5,
-                        correctCount: Math.floor(Math.random() * 25) + 3,
-                        totalTime: Math.floor(Math.random() * 60) + 10
-                    };
-                }),
-                subjects: [
-                    { _id: '數學', total: 45, correct: 38 },
-                    { _id: '物理', total: 32, correct: 26 },
-                    { _id: '化學', total: 28, correct: 21 },
-                    { _id: '生物', total: 20, correct: 17 },
-                    { _id: '英文', total: 35, correct: 30 }
-                ]
-            };
-            renderReport();
-        }
-        
-        // 渲染報告
-        function renderReport() {
-            const { daily, subjects } = reportData;
-            
-            // 計算總計
-            const totalQuestions = daily.reduce((sum, d) => sum + d.totalQuestions, 0);
-            const totalCorrect = daily.reduce((sum, d) => sum + d.correctCount, 0);
-            const totalTime = daily.reduce((sum, d) => sum + (d.totalTime || 0), 0);
-            const accuracy = totalQuestions > 0 ? Math.round((totalCorrect / totalQuestions) * 100) : 0;
-            
-            document.getElementById('statTotal').textContent = totalQuestions;
-            document.getElementById('statCorrect').textContent = totalCorrect;
-            document.getElementById('statAccuracy').textContent = `${accuracy}%`;
-            document.getElementById('statTime').textContent = Math.round(totalTime / 60);
-            
-            renderDailyChart(daily);
-            renderSubjectChart(subjects);
-            renderSubjectDetails(subjects);
-            renderSuggestions(subjects, accuracy);
-        }
-        
-        // 每日趨勢圖
-        function renderDailyChart(daily) {
-            const ctx = document.getElementById('dailyChart').getContext('2d');
-            
-            if (dailyChart) dailyChart.destroy();
-            
-            dailyChart = new Chart(ctx, {
-                type: 'line',
-                data: {
-                    labels: daily.map(d => d.date.slice(5)),
-                    datasets: [
-                        {
-                            label: '答題數',
-                            data: daily.map(d => d.totalQuestions),
-                            borderColor: '#8b5cf6',
-                            backgroundColor: 'rgba(139, 92, 246, 0.1)',
-                            fill: true,
-                            tension: 0.3
-                        },
-                        {
-                            label: '答對數',
-                            data: daily.map(d => d.correctCount),
-                            borderColor: '#10b981',
-                            backgroundColor: 'transparent',
-                            tension: 0.3
-                        }
-                    ]
-                },
-                options: {
-                    responsive: true,
-                    plugins: {
-                        legend: { labels: { color: '#9ca3af' } }
-                    },
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            ticks: { color: '#9ca3af' },
-                            grid: { color: 'rgba(255,255,255,0.1)' }
-                        },
-                        x: {
-                            ticks: { color: '#9ca3af' },
-                            grid: { display: false }
-                        }
-                    }
-                }
-            });
-        }
-        
-        // 科目正確率圖
-        function renderSubjectChart(subjects) {
-            const ctx = document.getElementById('subjectChart').getContext('2d');
-            
-            if (subjectChart) subjectChart.destroy();
-            
-            const labels = subjects.map(s => s._id);
-            const accuracies = subjects.map(s => 
-                s.total > 0 ? Math.round((s.correct / s.total) * 100) : 0
-            );
-            
-            subjectChart = new Chart(ctx, {
-                type: 'bar',
-                data: {
-                    labels,
-                    datasets: [{
-                        label: '正確率 %',
-                        data: accuracies,
-                        backgroundColor: accuracies.map(a => 
-                            a >= 80 ? '#10b981' : a >= 60 ? '#f59e0b' : '#ef4444'
-                        ),
-                        borderRadius: 4
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    plugins: {
-                        legend: { display: false }
-                    },
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            max: 100,
-                            ticks: { color: '#9ca3af' },
-                            grid: { color: 'rgba(255,255,255,0.1)' }
-                        },
-                        x: {
-                            ticks: { color: '#9ca3af' },
-                            grid: { display: false }
-                        }
-                    }
-                }
-            });
-        }
-        
-        // 科目詳情
-        function renderSubjectDetails(subjects) {
-            const html = subjects.map(s => {
-                const acc = s.total > 0 ? Math.round((s.correct / s.total) * 100) : 0;
-                const color = acc >= 80 ? 'green' : acc >= 60 ? 'yellow' : 'red';
-                
-                return `
-                    <div class="flex items-center justify-between p-3 bg-white/5 rounded-lg">
-                        <div class="flex items-center gap-3">
-                            <span class="w-3 h-3 rounded-full bg-${color}-500"></span>
-                            <span class="font-medium">${s._id}</span>
-                        </div>
-                        <div class="flex items-center gap-6 text-sm">
-                            <span class="text-gray-400">答題 ${s.total}</span>
-                            <span class="text-gray-400">答對 ${s.correct}</span>
-                            <span class="font-medium text-${color}-400">${acc}%</span>
-                        </div>
-                    </div>
-                `;
-            }).join('');
-            
-            document.getElementById('subjectDetails').innerHTML = html || 
-                '<div class="text-gray-500 text-center">暫無資料</div>';
-        }
-        
-        // 學習建議
-        function renderSuggestions(subjects, overallAccuracy) {
-            const suggestions = [];
-            
-            // 找出弱項科目
-            const weakSubjects = subjects.filter(s => {
-                const acc = s.total > 0 ? (s.correct / s.total) * 100 : 0;
-                return s.total >= 5 && acc < 70;
-            });
-            
-            if (weakSubjects.length > 0) {
-                suggestions.push({
-                    icon: '📚',
-                    text: `建議加強 ${weakSubjects.map(s => s._id).join('、')}，這些科目正確率較低`
-                });
-            }
-            
-            // 整體建議
-            if (overallAccuracy >= 85) {
-                suggestions.push({
-                    icon: '🌟',
-                    text: '表現優秀！可以挑戰更高難度的題目'
-                });
-            } else if (overallAccuracy >= 70) {
-                suggestions.push({
-                    icon: '💪',
-                    text: '繼續保持，多練習錯題可以更進步'
-                });
-            } else {
-                suggestions.push({
-                    icon: '🎯',
-                    text: '建議先鞏固基礎概念，善用 XTF 字卡複習'
-                });
-            }
-            
-            // 學習習慣
-            suggestions.push({
-                icon: '⏰',
-                text: '每天固定時間學習 30 分鐘，效果最佳'
-            });
-            
-            document.getElementById('suggestions').innerHTML = suggestions.map(s => `
-                <div class="flex items-start gap-3 p-3 bg-white/5 rounded-lg">
-                    <span class="text-2xl">${s.icon}</span>
-                    <span>${s.text}</span>
-                </div>
-            `).join('');
-        }
-    </script>
+    function exportReport() {
+      alert('PDF 匯出功能開發中...');
+    }
+  </script>
 </body>
 </html>
