@@ -213,7 +213,10 @@
     }
 
     function loadFallbackQuestions() {
-      state.questions = [
+      const params = new URLSearchParams(window.location.search);
+      const filterSubject = params.get('subject') || '';
+      
+      let allQuestions = [
         { id: 'demo_1', subject: '數學', question: '若 x² - 5x + 6 = 0，則 x 的解為？', options: ['x = 1, 6', 'x = 2, 3', 'x = -2, -3', 'x = 1, 5'], answer: 'B', explanation: '因式分解：(x-2)(x-3) = 0' },
         { id: 'demo_2', subject: '物理', question: '質量 2 kg 物體受 10 N 力，加速度為？', options: ['2 m/s²', '5 m/s²', '10 m/s²', '20 m/s²'], answer: 'B', explanation: 'a = F/m = 10/2 = 5 m/s²' },
         { id: 'demo_3', subject: '化學', question: '水的化學式是？', options: ['H₂O', 'CO₂', 'NaCl', 'H₂SO₄'], answer: 'A', explanation: '水 = H₂O' },
@@ -225,8 +228,19 @@
         { id: 'demo_9', subject: '歷史', question: '台灣第一任民選總統是？', options: ['蔣中正', '李登輝', '陳水扁', '蔣經國'], answer: 'B', explanation: '1996年李登輝當選首任民選總統' },
         { id: 'demo_10', subject: '公民', question: '中華民國憲法共有幾章？', options: ['10章', '12章', '14章', '16章'], answer: 'C', explanation: '憲法共14章175條' }
       ];
+      
+      // 按科目過濾
+      if (filterSubject) {
+        state.questions = allQuestions.filter(q => q.subject === filterSubject);
+        if (state.questions.length === 0) {
+          state.questions = allQuestions; // 無匹配則顯示全部
+        }
+      } else {
+        state.questions = allQuestions;
+      }
+      
       renderQuestion();
-      showToast('已載入試用題目 (10題)', 'info');
+      showToast(`已載入試用題目 (${state.questions.length}題)`, 'info');
     }
 
     document.addEventListener('DOMContentLoaded', init);
