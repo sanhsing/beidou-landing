@@ -168,25 +168,33 @@
     };
 
     // 初始化
-    document.addEventListener('DOMContentLoaded', init);
-
-    async function init() {
+        async function init() {
+      // 檢查試用模式
+      const params = new URLSearchParams(window.location.search);
+      state.trialMode = params.get('mode') === 'trial';
+      
+      if (state.trialMode) {
+        console.log('🎮 試用模式啟動');
+        state.totalQuestions = 10;
+      }
+      
       startTimer();
       await loadQuestions();
     }
 
     async function loadQuestions() {
       try {
-        // 取得 URL 參數
         const params = new URLSearchParams(window.location.search);
         const subject = params.get('subject') || '';
-        const count = params.get('count') || 10;
+        const count = state.trialMode ? 10 : (params.get('count') || 10);
+        const node = params.get('node') || '';
         
         state.totalQuestions = parseInt(count);
 
         const res = await BeidouAPI.quiz.getQuestions({ 
           subject, 
           count,
+          node,
           shuffle: true 
         });
 
@@ -195,12 +203,37 @@
           renderQuestion();
         } else {
           showToast('無法載入題目', 'error');
+          if (state.trialMode) loadFallbackQuestions();
         }
       } catch (error) {
         console.error('Load questions error:', error);
         showToast('載入失敗: ' + error.message, 'error');
+        if (state.trialMode) loadFallbackQuestions();
       }
     }
+
+    function loadFallbackQuestions() {
+      state.questions = [
+        { id: 'demo_1', subject: '數學', question: '若 x² - 5x + 6 = 0，則 x 的解為？', options: ['x = 1, 6', 'x = 2, 3', 'x = -2, -3', 'x = 1, 5'], answer: 'B', explanation: '因式分解：(x-2)(x-3) = 0' },
+        { id: 'demo_2', subject: '物理', question: '質量 2 kg 物體受 10 N 力，加速度為？', options: ['2 m/s²', '5 m/s²', '10 m/s²', '20 m/s²'], answer: 'B', explanation: 'a = F/m = 10/2 = 5 m/s²' },
+        { id: 'demo_3', subject: '化學', question: '水的化學式是？', options: ['H₂O', 'CO₂', 'NaCl', 'H₂SO₄'], answer: 'A', explanation: '水 = H₂O' },
+        { id: 'demo_4', subject: '英文', question: 'The book _____ on the table.', options: ['is', 'are', 'be', 'been'], answer: 'A', explanation: '單數用 is' },
+        { id: 'demo_5', subject: '國文', question: '「床前明月光」出自哪位詩人？', options: ['杜甫', '李白', '白居易', '王維'], answer: 'B', explanation: '李白《靜夜思》' },
+        { id: 'demo_6', subject: '數學', question: 'sin 30° = ?', options: ['0', '0.5', '1', '√3/2'], answer: 'B', explanation: 'sin 30° = 1/2 = 0.5' },
+        { id: 'demo_7', subject: '生物', question: '人體最大的器官是？', options: ['心臟', '肝臟', '皮膚', '大腦'], answer: 'C', explanation: '皮膚是人體最大的器官' },
+        { id: 'demo_8', subject: '地理', question: '台灣最高峰是？', options: ['阿里山', '玉山', '雪山', '合歡山'], answer: 'B', explanation: '玉山海拔 3952 公尺' },
+        { id: 'demo_9', subject: '歷史', question: '台灣第一任民選總統是？', options: ['蔣中正', '李登輝', '陳水扁', '蔣經國'], answer: 'B', explanation: '1996年李登輝當選首任民選總統' },
+        { id: 'demo_10', subject: '公民', question: '中華民國憲法共有幾章？', options: ['10章', '12章', '14章', '16章'], answer: 'C', explanation: '憲法共14章175條' }
+      ];
+      renderQuestion();
+      showToast('已載入試用題目 (10題)', 'info');
+    }
+
+    document.addEventListener('DOMContentLoaded', init);
+
+    
+
+    
 
     function renderQuestion() {
       const q = state.questions[state.currentIndex];
