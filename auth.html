@@ -330,8 +330,14 @@
                 window.location.href = 'dashboard.html';
             }
             
-            // 初始化標籤樣式
+            // 檢查 URL 參數，自動切換到註冊
+            const params = new URLSearchParams(window.location.search);
+            if (params.get('mode') === 'register') {
+                switchTab('register');
+            } else {
+                // 初始化標籤樣式
             document.getElementById('tabLogin').classList.add('bg-purple-600', 'text-white');
+            }
         });
     </script>
 </body>
