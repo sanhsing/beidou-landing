@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>前端模組測試</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="js/components.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <style>
+    .test-card { border: 2px solid #e5e7eb; margin: 1rem 0; }
+    .test-card.pass { border-color: #22c55e; }
+    .test-card.fail { border-color: #ef4444; }
+    .chart-box { height: 200px; }
+  </style>
+</head>
+<body class="bg-gray-100 p-8">
+  <div class="max-w-4xl mx-auto">
+    <h1 class="text-2xl font-bold mb-6">🧪 北斗教育前端測試</h1>
+    
+    <!-- 模組載入測試 -->
+    <div class="card test-card" id="test1">
+      <h2 class="card-title">1. 模組載入測試</h2>
+      <div id="moduleStatus" class="mt-2"></div>
+    </div>
+
+    <!-- CSS 組件測試 -->
+    <div class="card test-card" id="test2">
+      <h2 class="card-title">2. CSS 組件測試</h2>
+      <div class="grid grid-cols-2 gap-4 mt-4">
+        <div class="stat-card">
+          <div class="stat-icon">📚</div>
+          <div class="stat-content">
+            <div class="stat-value">123</div>
+            <div class="stat-label">統計卡片</div>
+          </div>
+        </div>
+        <div class="stat-card success">
+          <div class="stat-icon">✓</div>
+          <div class="stat-content">
+            <div class="stat-value">85%</div>
+            <div class="stat-label">成功樣式</div>
+          </div>
+        </div>
+      </div>
+      <div class="mt-4">
+        <span class="badge badge-primary">Primary</span>
+        <span class="badge badge-success">Success</span>
+        <span class="badge badge-warning">Warning</span>
+        <span class="badge badge-danger">Danger</span>
+      </div>
+      <div class="mt-4">
+        <div class="progress-bar" style="width: 200px;">
+          <div class="fill" style="width: 75%;"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 圖表測試 -->
+    <div class="card test-card" id="test3">
+      <h2 class="card-title">3. 圖表組件測試</h2>
+      <div class="grid grid-cols-3 gap-4 mt-4">
+        <div>
+          <p class="text-sm text-gray-500 mb-2">環形圖</p>
+          <div class="chart-box">
+            <canvas id="ringChart"></canvas>
+          </div>
+        </div>
+        <div>
+          <p class="text-sm text-gray-500 mb-2">柱狀圖</p>
+          <div class="chart-box">
+            <canvas id="barChart"></canvas>
+          </div>
+        </div>
+        <div>
+          <p class="text-sm text-gray-500 mb-2">折線圖</p>
+          <div class="chart-box">
+            <canvas id="lineChart"></canvas>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- API 測試 -->
+    <div class="card test-card" id="test4">
+      <h2 class="card-title">4. API 模組測試</h2>
+      <div id="apiStatus" class="mt-2"></div>
+      <button onclick="testAPI()" class="btn btn-primary mt-4">執行 API 測試</button>
+    </div>
+
+    <!-- 測試結果 -->
+    <div class="card mt-6 bg-gray-800 text-white">
+      <h2 class="text-lg font-bold mb-2">📊 測試結果</h2>
+      <div id="testSummary"></div>
+    </div>
+  </div>
+
+  <script src="js/api.js"></script>
+  <script src="js/charts.js"></script>
+  <script>
+    const results = { pass: 0, fail: 0, tests: [] };
+
+    function log(name, pass, msg) {
+      results.tests.push({ name, pass, msg });
+      if (pass) results.pass++; else results.fail++;
+    }
+
+    function updateSummary() {
+      document.getElementById('testSummary').innerHTML = `
+        <p>✅ 通過: ${results.pass}</p>
+        <p>❌ 失敗: ${results.fail}</p>
+        <p>總計: ${results.tests.length}</p>
+      `;
+    }
+
+    // 1. 模組載入測試
+    function testModules() {
+      const el = document.getElementById('moduleStatus');
+      let html = '';
+      
+      // BeidouAPI
+      if (typeof BeidouAPI !== 'undefined') {
+        html += '<p>✅ BeidouAPI 已載入</p>';
+        html += '<p class="text-sm text-gray-500 ml-4">- CONFIG.BASE_URL: ' + BeidouAPI.CONFIG.BASE_URL + '</p>';
+        html += '<p class="text-sm text-gray-500 ml-4">- 方法: user, progress, answers, analytics, quiz, cert</p>';
+        log('BeidouAPI', true, '模組載入成功');
+        document.getElementById('test1').classList.add('pass');
+      } else {
+        html += '<p>❌ BeidouAPI 未載入</p>';
+        log('BeidouAPI', false, '模組未載入');
+        document.getElementById('test1').classList.add('fail');
+      }
+      
+      // BeidouCharts
+      if (typeof BeidouCharts !== 'undefined') {
+        html += '<p>✅ BeidouCharts 已載入</p>';
+        html += '<p class="text-sm text-gray-500 ml-4">- 方法: progressRing, subjectBars, trendLine, radarChart</p>';
+        log('BeidouCharts', true, '模組載入成功');
+      } else {
+        html += '<p>❌ BeidouCharts 未載入</p>';
+        log('BeidouCharts', false, '模組未載入');
+      }
+      
+      el.innerHTML = html;
+    }
+
+    // 2. CSS 測試 (視覺確認)
+    function testCSS() {
+      const card = document.querySelector('.stat-card');
+      const computed = getComputedStyle(card);
+      if (computed.borderLeftWidth === '4px') {
+        log('CSS stat-card', true, '樣式正確');
+        document.getElementById('test2').classList.add('pass');
+      } else {
+        log('CSS stat-card', false, '樣式異常');
+        document.getElementById('test2').classList.add('fail');
+      }
+    }
+
+    // 3. 圖表測試
+    function testCharts() {
+      try {
+        // 環形圖
+        BeidouCharts.progressRing('ringChart', 75);
+        log('progressRing', true, '環形圖渲染成功');
+        
+        // 柱狀圖
+        BeidouCharts.subjectBars('barChart', [
+          { subject: '數學', mastery: 80 },
+          { subject: '物理', mastery: 65 },
+          { subject: '化學', mastery: 72 }
+        ]);
+        log('subjectBars', true, '柱狀圖渲染成功');
+        
+        // 折線圖
+        BeidouCharts.trendLine('lineChart', [
+          { date: '12/15', value: 60 },
+          { date: '12/16', value: 75 },
+          { date: '12/17', value: 68 },
+          { date: '12/18', value: 82 },
+          { date: '12/19', value: 90 }
+        ]);
+        log('trendLine', true, '折線圖渲染成功');
+        
+        document.getElementById('test3').classList.add('pass');
+      } catch (e) {
+        log('Charts', false, e.message);
+        document.getElementById('test3').classList.add('fail');
+      }
+    }
+
+    // 4. API 測試
+    async function testAPI() {
+      const el = document.getElementById('apiStatus');
+      el.innerHTML = '<p>測試中...</p>';
+      
+      let html = '';
+      
+      // 測試 API 結構
+      const apis = ['user', 'progress', 'answers', 'analytics', 'quiz', 'cert'];
+      apis.forEach(api => {
+        if (BeidouAPI[api]) {
+          html += `<p>✅ BeidouAPI.${api} 存在</p>`;
+          log(`API.${api}`, true, '方法存在');
+        } else {
+          html += `<p>❌ BeidouAPI.${api} 不存在</p>`;
+          log(`API.${api}`, false, '方法不存在');
+        }
+      });
+      
+      // 測試實際呼叫 (會失敗因為 CORS，但可驗證方法)
+      html += '<hr class="my-2">';
+      html += '<p class="text-sm text-gray-500">註: 實際 API 呼叫需在部署環境測試</p>';
+      
+      el.innerHTML = html;
+      document.getElementById('test4').classList.add('pass');
+      updateSummary();
+    }
+
+    // 執行測試
+    window.onload = function() {
+      testModules();
+      testCSS();
+      testCharts();
+      updateSummary();
+    };
+  </script>
+</body>
+</html>

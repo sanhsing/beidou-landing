@@ -19,7 +19,7 @@
 <body class="bg-gray-100 min-h-screen">
   <nav class="bg-white shadow-sm sticky top-0 z-50">
     <div class="max-w-2xl mx-auto px-4 py-3 flex items-center justify-between">
-      <a href="dashboard_v2.html" class="flex items-center gap-2 text-gray-600">
+      <a href="dashboard.html" class="flex items-center gap-2 text-gray-600">
         <span>←</span> 返回
       </a>
       <h1 class="font-bold text-lg">🏆 排行榜</h1>
@@ -71,6 +71,9 @@
     let currentUserId = BeidouAPI.getUserId();
 
     document.addEventListener('DOMContentLoaded', () => {
+      // 登入檢查
+      const token = localStorage.getItem('beidou_token');
+      if (!token) { window.location.href = 'auth.html'; return; }
       loadLeaderboard('mastery');
     });
 
