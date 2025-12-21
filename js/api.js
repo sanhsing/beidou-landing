@@ -134,7 +134,14 @@ const BeidouAPI = (function() {
   // 題庫 API
   // ============================================================
   const quiz = {
+    // 學測題目 (主要使用)
     getQuestions: (params) => {
+      const query = new URLSearchParams(params).toString();
+      return request(`/quiz/gsat/questions?${query}`);
+    },
+    
+    // 舊版兼容
+    getQuestionsLegacy: (params) => {
       const query = new URLSearchParams(params).toString();
       return request(`/quiz/questions?${query}`);
     },
@@ -145,6 +152,26 @@ const BeidouAPI = (function() {
     getSubjects: () => request('/quiz/subjects'),
     
     getChapters: (subject) => request(`/quiz/chapters/${subject}`)
+  };
+
+  // ============================================================
+  // XTF 知識節點 API
+  // ============================================================
+  const xtf = {
+    // 節點列表 (星圖用)
+    list: (params = {}) => {
+      const query = new URLSearchParams(params).toString();
+      return request(`/xtf/list?${query}`);
+    },
+    
+    // 節點詳情 (字卡用)
+    node: (nodeId) => request(`/xtf/v2/node/${nodeId}`),
+    
+    // 隨機節點 (字卡用)
+    random: (params = {}) => {
+      const query = new URLSearchParams(params).toString();
+      return request(`/xtf/v2/random?${query}`);
+    }
   };
 
   // ============================================================
@@ -191,6 +218,7 @@ const BeidouAPI = (function() {
     answers,
     analytics,
     quiz,
+    xtf,
     cert,
     achievements,
     payment,
