@@ -140,7 +140,19 @@
 
   <script>
     const API_BASE = 'https://beidou-edu-server-1.onrender.com';
-    let questions = [], currentIndex = 0, score = 0, streak = 0, userAnswers = {}, timer = 0, timerInterval = null;
+    let questions = [];
+    let currentIndex = 0;
+    let score = 0;
+    let streak = 0;
+    let timer = 0;
+    let timerInterval = null;
+    
+    // 分開存放不同題型的答案
+    let singleAnswer = null;      // 單選題：數字
+    let multiAnswers = [];        // 多選題：字母陣列
+    let matchingData = {};        // 配對題
+    let orderingData = [];        // 排序題
+    
     const typeIcons = { 'single_choice': '📝', 'matching': '🔗', 'ordering': '📋', 'fill_blank': '✏️', 'multiple_select': '☑️' };
     const typeNames = { 'single_choice': '單選題', 'matching': '配對題', 'ordering': '排序題', 'fill_blank': '填空題', 'multiple_select': '多選題' };
 
@@ -221,6 +233,13 @@
       document.getElementById('streak').textContent = streak;
     }
 
+    function resetAnswers() {
+      singleAnswer = null;
+      multiAnswers = [];
+      matchingData = { matches: {}, selectedLeft: null };
+      orderingData = [];
+    }
+
     function renderQuestion() {
       if (currentIndex >= questions.length) { showResult(); return; }
       const q = questions[currentIndex];
@@ -229,6 +248,10 @@
       document.getElementById('subjectBadge').textContent = q.subject || '綜合';
       const type = q.type || 'single_choice';
       document.getElementById('typeBadge').textContent = `${typeIcons[type] || '📝'} ${typeNames[type] || type}`;
+      
+      // 重設答案
+      resetAnswers();
+      
       switch (type) {
         case 'single_choice': renderSingleChoice(q); break;
         case 'matching': renderMatching(q); break;
@@ -239,46 +262,49 @@
       document.getElementById('submitBtn').classList.remove('hidden');
       document.getElementById('nextBtn').classList.add('hidden');
       document.getElementById('explanationBox').classList.add('hidden');
-      userAnswers = {};
     }
 
+    // ===== 單選題 =====
     function renderSingleChoice(q) {
       document.getElementById('questionStem').textContent = q.stem || q.question;
       document.getElementById('questionContent').innerHTML = (q.options || []).map((opt, i) => `
-        <div class="option-card rounded-xl p-4 mb-3" onclick="selectOption(${i})" data-index="${i}">
+        <div class="option-card rounded-xl p-4 mb-3" onclick="selectSingleOption(${i})" data-index="${i}">
           <span class="inline-flex items-center justify-center w-8 h-8 bg-gray-100 rounded-full font-bold mr-3">${String.fromCharCode(65+i)}</span>${opt}
         </div>
       `).join('');
     }
-    function selectOption(i) {
+    
+    function selectSingleOption(i) {
       document.querySelectorAll('.option-card').forEach(el => el.classList.remove('selected'));
       document.querySelector(`.option-card[data-index="${i}"]`).classList.add('selected');
-      userAnswers.selected = i;
+      singleAnswer = i;
     }
 
+    // ===== 配對題 =====
     function renderMatching(q) {
       document.getElementById('questionStem').textContent = q.instruction;
       document.getElementById('questionContent').innerHTML = `
         <div class="grid grid-cols-2 gap-6">
-          <div id="leftColumn" class="space-y-3">${(q.leftItems||[]).map((item,i) => `<div class="matching-item" data-side="left" data-index="${i}" onclick="selectMatching('left',${i})"><span class="inline-flex items-center justify-center w-6 h-6 bg-indigo-100 text-indigo-700 rounded-full text-sm font-bold mr-3">${i+1}</span>${item}</div>`).join('')}</div>
-          <div id="rightColumn" class="space-y-3">${(q.rightItems||[]).map((item,i) => `<div class="matching-item" data-side="right" data-index="${i}" onclick="selectMatching('right',${i})"><span class="inline-flex items-center justify-center w-6 h-6 bg-purple-100 text-purple-700 rounded-full text-sm font-bold mr-3">${String.fromCharCode(65+i)}</span>${item}</div>`).join('')}</div>
+          <div id="leftColumn" class="space-y-3">${(q.leftItems||[]).map((item,i) => `<div class="matching-item" data-side="left" data-index="${i}" onclick="selectMatchingItem('left',${i})"><span class="inline-flex items-center justify-center w-6 h-6 bg-indigo-100 text-indigo-700 rounded-full text-sm font-bold mr-3">${i+1}</span>${item}</div>`).join('')}</div>
+          <div id="rightColumn" class="space-y-3">${(q.rightItems||[]).map((item,i) => `<div class="matching-item" data-side="right" data-index="${i}" onclick="selectMatchingItem('right',${i})"><span class="inline-flex items-center justify-center w-6 h-6 bg-purple-100 text-purple-700 rounded-full text-sm font-bold mr-3">${String.fromCharCode(65+i)}</span>${item}</div>`).join('')}</div>
         </div>
         <div class="mt-4 p-3 bg-blue-50 rounded-lg text-sm text-blue-600">💡 點擊左欄，再點擊右欄配對</div>`;
-      userAnswers.matches = {}; userAnswers.selectedLeft = null;
     }
-    function selectMatching(side, i) {
+    
+    function selectMatchingItem(side, i) {
       if (side === 'left') {
         document.querySelectorAll('#leftColumn .matching-item').forEach(el => el.classList.remove('selected'));
         document.querySelector(`#leftColumn .matching-item[data-index="${i}"]`).classList.add('selected');
-        userAnswers.selectedLeft = i;
-      } else if (userAnswers.selectedLeft !== null) {
-        userAnswers.matches[userAnswers.selectedLeft] = i;
-        document.querySelector(`#leftColumn .matching-item[data-index="${userAnswers.selectedLeft}"]`).classList.replace('selected','matched');
+        matchingData.selectedLeft = i;
+      } else if (matchingData.selectedLeft !== null) {
+        matchingData.matches[matchingData.selectedLeft] = i;
+        document.querySelector(`#leftColumn .matching-item[data-index="${matchingData.selectedLeft}"]`).classList.replace('selected','matched');
         document.querySelector(`#rightColumn .matching-item[data-index="${i}"]`).classList.add('matched');
-        userAnswers.selectedLeft = null;
+        matchingData.selectedLeft = null;
       }
     }
 
+    // ===== 排序題 =====
     function renderOrdering(q) {
       document.getElementById('questionStem').textContent = q.instruction;
       document.getElementById('questionContent').innerHTML = `
@@ -286,6 +312,7 @@
         <div class="mt-4 p-3 bg-blue-50 rounded-lg text-sm text-blue-600">💡 拖曳調整順序</div>`;
       initSortable();
     }
+    
     function initSortable() {
       const list = document.getElementById('sortableList');
       let draggedItem = null;
@@ -295,6 +322,7 @@
         item.addEventListener('dragover', function(e) { e.preventDefault(); const after = getDragAfterElement(list, e.clientY); after ? list.insertBefore(draggedItem, after) : list.appendChild(draggedItem); });
       });
     }
+    
     function getDragAfterElement(container, y) {
       return [...container.querySelectorAll('.sortable-item:not(.dragging)')].reduce((closest, child) => {
         const box = child.getBoundingClientRect();
@@ -302,9 +330,11 @@
         return offset < 0 && offset > closest.offset ? { offset, element: child } : closest;
       }, { offset: Number.NEGATIVE_INFINITY }).element;
     }
+    
     function updateSortNumbers() { document.querySelectorAll('#sortableList .sortable-item').forEach((el, i) => el.querySelector('.number').textContent = i + 1); }
-    function updateSortOrder() { userAnswers.order = Array.from(document.querySelectorAll('#sortableList .sortable-item')).map(el => parseInt(el.dataset.original)); }
+    function updateSortOrder() { orderingData = Array.from(document.querySelectorAll('#sortableList .sortable-item')).map(el => parseInt(el.dataset.original)); }
 
+    // ===== 填空題 =====
     function renderFillBlank(q) {
       document.getElementById('questionStem').textContent = q.stem;
       document.getElementById('questionContent').innerHTML = `
@@ -315,20 +345,37 @@
       setTimeout(() => document.getElementById('fillBlankInput').focus(), 100);
     }
 
+    // ===== 多選題 =====
     function renderMultipleSelect(q) {
       document.getElementById('questionStem').textContent = q.stem;
       document.getElementById('questionContent').innerHTML = `
-        <div class="space-y-3">${(q.options||[]).map((opt,i) => `<div class="multi-option" onclick="toggleMultiOption(${i})" data-index="${i}"><div class="checkbox">✓</div><span class="font-bold mr-2">${String.fromCharCode(65+i)}.</span>${opt}</div>`).join('')}</div>
+        <div class="space-y-3">${(q.options||[]).map((opt,i) => `<div class="multi-option" onclick="toggleMultiAnswer(${i})" data-index="${i}"><div class="checkbox">✓</div><span class="font-bold mr-2">${String.fromCharCode(65+i)}.</span>${opt}</div>`).join('')}</div>
         <div class="mt-4 p-3 bg-blue-50 rounded-lg text-sm text-blue-600">💡 可選多個答案（部分給分）</div>`;
-      userAnswers.selected = [];
+      // 確保 multiAnswers 已重設為空陣列
+      multiAnswers = [];
     }
-    function toggleMultiOption(i) {
+    
+    function toggleMultiAnswer(i) {
       const el = document.querySelector(`.multi-option[data-index="${i}"]`);
       const letter = String.fromCharCode(65 + i);
-      if (userAnswers.selected.includes(letter)) { userAnswers.selected = userAnswers.selected.filter(x => x !== letter); el.classList.remove('selected'); }
-      else { userAnswers.selected.push(letter); el.classList.add('selected'); }
+      
+      console.log('點擊選項:', letter, '當前選擇:', multiAnswers);
+      
+      const idx = multiAnswers.indexOf(letter);
+      if (idx > -1) {
+        // 已選取，移除
+        multiAnswers.splice(idx, 1);
+        el.classList.remove('selected');
+      } else {
+        // 未選取，加入
+        multiAnswers.push(letter);
+        el.classList.add('selected');
+      }
+      
+      console.log('更新後選擇:', multiAnswers);
     }
 
+    // ===== 檢查答案 =====
     async function checkAnswer() {
       const q = questions[currentIndex];
       const type = q.type || 'single_choice';
@@ -336,35 +383,39 @@
 
       switch (type) {
         case 'single_choice':
-          if (userAnswers.selected === undefined) { alert('請選擇答案'); return; }
-          const userAns = String.fromCharCode(65 + userAnswers.selected);
+          if (singleAnswer === null) { alert('請選擇答案'); return; }
+          const userAns = String.fromCharCode(65 + singleAnswer);
           correct = userAns === q.answer;
           points = correct ? 100 : 0;
           document.querySelectorAll('.option-card').forEach((el, i) => {
             el.classList.add('disabled');
             if (String.fromCharCode(65+i) === q.answer) el.classList.add('correct');
-            else if (i === userAnswers.selected && !correct) el.classList.add('wrong');
+            else if (i === singleAnswer && !correct) el.classList.add('wrong');
           });
           break;
+          
         case 'matching':
           const leftCount = (q.leftItems||[]).length;
-          if (Object.keys(userAnswers.matches).length < leftCount) { alert('請完成所有配對'); return; }
-          let matchAns = []; for (let i = 0; i < leftCount; i++) matchAns.push(userAnswers.matches[i]);
+          if (Object.keys(matchingData.matches).length < leftCount) { alert('請完成所有配對'); return; }
+          let matchAns = []; 
+          for (let i = 0; i < leftCount; i++) matchAns.push(matchingData.matches[i]);
           correct = JSON.stringify(matchAns) === JSON.stringify(q.answer);
           points = correct ? 100 : 0;
           for (let i = 0; i < leftCount; i++) {
             const leftEl = document.querySelector(`#leftColumn .matching-item[data-index="${i}"]`);
-            const rightEl = document.querySelector(`#rightColumn .matching-item[data-index="${userAnswers.matches[i]}"]`);
-            if (userAnswers.matches[i] === q.answer[i]) { leftEl.classList.add('matched'); rightEl.classList.add('matched'); }
+            const rightEl = document.querySelector(`#rightColumn .matching-item[data-index="${matchingData.matches[i]}"]`);
+            if (matchingData.matches[i] === q.answer[i]) { leftEl.classList.add('matched'); rightEl.classList.add('matched'); }
             else { leftEl.classList.add('wrong-match'); rightEl.classList.add('wrong-match'); }
           }
           break;
+          
         case 'ordering':
           updateSortOrder();
-          if (!userAnswers.order) userAnswers.order = Array.from(document.querySelectorAll('#sortableList .sortable-item')).map(el => parseInt(el.dataset.original));
-          correct = JSON.stringify(userAnswers.order) === JSON.stringify(q.answer);
+          if (orderingData.length === 0) orderingData = Array.from(document.querySelectorAll('#sortableList .sortable-item')).map(el => parseInt(el.dataset.original));
+          correct = JSON.stringify(orderingData) === JSON.stringify(q.answer);
           points = correct ? 100 : 0;
           break;
+          
         case 'fill_blank':
           const input = document.getElementById('fillBlankInput');
           if (!input.value.trim()) { alert('請輸入答案'); return; }
@@ -373,16 +424,25 @@
           input.classList.add(correct ? 'correct' : 'wrong');
           input.disabled = true;
           break;
+          
         case 'multiple_select':
-          if (userAnswers.selected.length === 0) { alert('請選擇至少一個答案'); return; }
+          if (multiAnswers.length === 0) { alert('請選擇至少一個答案'); return; }
           const correctAns = (q.answer||[]).sort();
-          const userSel = userAnswers.selected.sort();
-          const correctSet = new Set(correctAns), userSet = new Set(userSel);
+          const userSel = [...multiAnswers].sort();
+          const correctSet = new Set(correctAns);
+          const userSet = new Set(userSel);
           const correctCount = [...userSet].filter(x => correctSet.has(x)).length;
           const wrongCount = [...userSet].filter(x => !correctSet.has(x)).length;
-          if (wrongCount === 0 && correctCount === correctSet.size) { points = 100; correct = true; }
-          else if (wrongCount <= 1 && correctCount > 0) points = 60;
-          else if (wrongCount <= 2 && correctCount > 0) points = 20;
+          
+          if (wrongCount === 0 && correctCount === correctSet.size) { 
+            points = 100; 
+            correct = true; 
+          } else if (wrongCount <= 1 && correctCount > 0) {
+            points = 60;
+          } else if (wrongCount <= 2 && correctCount > 0) {
+            points = 20;
+          }
+          
           document.querySelectorAll('.multi-option').forEach((el, i) => {
             const letter = String.fromCharCode(65 + i);
             if (correctSet.has(letter)) el.classList.add('correct-option');
