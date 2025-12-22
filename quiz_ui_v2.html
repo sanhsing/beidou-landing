@@ -1,0 +1,735 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>多元題型練習 - 北斗教育</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="js/components.css">
+  <style>
+    :root {
+      --primary: #4F46E5;
+      --success: #10B981;
+      --danger: #EF4444;
+      --warning: #F59E0B;
+    }
+    
+    /* 通用選項樣式 */
+    .option-card {
+      transition: all 0.2s ease;
+      border: 2px solid #E5E7EB;
+      cursor: pointer;
+    }
+    .option-card:hover:not(.disabled) {
+      border-color: var(--primary);
+      transform: translateX(4px);
+    }
+    .option-card.selected {
+      border-color: var(--primary);
+      background: #EEF2FF;
+    }
+    .option-card.correct {
+      border-color: var(--success);
+      background: #DCFCE7;
+    }
+    .option-card.wrong {
+      border-color: var(--danger);
+      background: #FEE2E2;
+    }
+    .option-card.disabled { pointer-events: none; }
+    
+    /* 配對題樣式 */
+    .matching-item {
+      padding: 12px 16px;
+      background: white;
+      border: 2px solid #E5E7EB;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .matching-item:hover { border-color: var(--primary); }
+    .matching-item.selected { border-color: var(--primary); background: #EEF2FF; }
+    .matching-item.matched { border-color: var(--success); background: #DCFCE7; }
+    .matching-line {
+      stroke: var(--primary);
+      stroke-width: 2;
+      fill: none;
+    }
+    
+    /* 排序題樣式 */
+    .sortable-item {
+      padding: 12px 16px;
+      background: white;
+      border: 2px solid #E5E7EB;
+      border-radius: 8px;
+      cursor: grab;
+      transition: all 0.2s;
+      user-select: none;
+    }
+    .sortable-item:active { cursor: grabbing; }
+    .sortable-item.dragging {
+      opacity: 0.5;
+      border-color: var(--primary);
+    }
+    .sortable-item .handle {
+      color: #9CA3AF;
+      margin-right: 8px;
+    }
+    
+    /* 填空題樣式 */
+    .fill-blank-input {
+      border: 2px solid #E5E7EB;
+      border-radius: 8px;
+      padding: 8px 16px;
+      font-size: 1.1rem;
+      width: 200px;
+      text-align: center;
+      transition: all 0.2s;
+    }
+    .fill-blank-input:focus {
+      border-color: var(--primary);
+      outline: none;
+    }
+    .fill-blank-input.correct { border-color: var(--success); background: #DCFCE7; }
+    .fill-blank-input.wrong { border-color: var(--danger); background: #FEE2E2; }
+    
+    /* 多選題樣式 */
+    .multi-option {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 16px;
+      background: white;
+      border: 2px solid #E5E7EB;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .multi-option:hover { border-color: var(--primary); }
+    .multi-option.selected { border-color: var(--primary); background: #EEF2FF; }
+    .multi-option .checkbox {
+      width: 20px;
+      height: 20px;
+      border: 2px solid #D1D5DB;
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s;
+    }
+    .multi-option.selected .checkbox {
+      background: var(--primary);
+      border-color: var(--primary);
+      color: white;
+    }
+    
+    /* 動畫 */
+    @keyframes bounceIn {
+      0% { transform: scale(0); }
+      50% { transform: scale(1.2); }
+      100% { transform: scale(1); }
+    }
+    .animate-bounce-in { animation: bounceIn 0.5s ease; }
+  </style>
+</head>
+<body class="bg-gray-100 min-h-screen">
+  <!-- 頂部進度條 -->
+  <div class="fixed top-0 left-0 right-0 h-1 bg-gray-200 z-50">
+    <div id="progressBar" class="h-full bg-indigo-600 transition-all duration-300" style="width: 0%"></div>
+  </div>
+
+  <!-- 頂部導航 -->
+  <nav class="bg-white shadow-sm sticky top-0 z-40 mt-1">
+    <div class="max-w-4xl mx-auto px-4 py-3 flex items-center justify-between">
+      <a href="dashboard.html" class="flex items-center gap-2 text-gray-600 hover:text-gray-900">
+        <span>←</span> 返回
+      </a>
+      <div class="flex items-center gap-4">
+        <span id="timer" class="font-mono text-lg font-bold">⏱️ 00:00</span>
+        <span id="score" class="font-bold text-indigo-600">📊 0分</span>
+      </div>
+    </div>
+  </nav>
+
+  <main class="max-w-4xl mx-auto px-4 py-6">
+    <!-- 題目資訊 -->
+    <div class="mb-4 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <span class="px-3 py-1 bg-indigo-100 text-indigo-700 rounded-full text-sm font-medium" id="questionNum">1 / 10</span>
+        <span class="px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-sm" id="typeBadge">單選題</span>
+        <span class="px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-sm" id="subjectBadge">數學</span>
+      </div>
+    </div>
+
+    <!-- 題目卡片 -->
+    <div class="bg-white rounded-xl shadow-lg p-6 mb-6">
+      <h2 class="text-xl font-bold text-gray-800 mb-4" id="questionStem">題目載入中...</h2>
+      
+      <!-- 動態內容區 -->
+      <div id="questionContent">
+        <!-- 根據題型動態渲染 -->
+      </div>
+    </div>
+
+    <!-- 提交按鈕 -->
+    <div class="flex justify-center gap-4">
+      <button id="submitBtn" onclick="checkAnswer()" 
+              class="px-8 py-3 bg-indigo-600 text-white rounded-lg font-bold hover:bg-indigo-700 transition">
+        確認答案
+      </button>
+      <button id="nextBtn" onclick="nextQuestion()" 
+              class="px-8 py-3 bg-gray-200 text-gray-700 rounded-lg font-bold hover:bg-gray-300 transition hidden">
+        下一題 →
+      </button>
+    </div>
+
+    <!-- 解析區 -->
+    <div id="explanationBox" class="mt-6 bg-green-50 border border-green-200 rounded-xl p-4 hidden">
+      <h3 class="font-bold text-green-800 mb-2">📖 解析</h3>
+      <p id="explanationText" class="text-green-700"></p>
+    </div>
+  </main>
+
+  <!-- 設定模態框 -->
+  <div id="settingsModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+    <div class="bg-white rounded-xl p-6 max-w-md w-full mx-4">
+      <h2 class="text-xl font-bold mb-4">🎯 選擇練習模式</h2>
+      
+      <div class="space-y-4">
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">科目</label>
+          <select id="subjectSelect" class="w-full border rounded-lg px-4 py-2">
+            <option value="">全部科目</option>
+            <option value="數學">數學</option>
+            <option value="物理">物理</option>
+            <option value="化學">化學</option>
+            <option value="生物">生物</option>
+            <option value="國文">國文</option>
+            <option value="英文">英文</option>
+            <option value="歷史">歷史</option>
+            <option value="地理">地理</option>
+            <option value="公民">公民</option>
+            <option value="地科">地科</option>
+          </select>
+        </div>
+        
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">題型</label>
+          <select id="typeSelect" class="w-full border rounded-lg px-4 py-2">
+            <option value="mixed">混合題型</option>
+            <option value="single_choice">單選題</option>
+            <option value="matching">配對題</option>
+            <option value="ordering">排序題</option>
+            <option value="fill_blank">填空題</option>
+            <option value="multiple_select">多選題</option>
+          </select>
+        </div>
+        
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">題數</label>
+          <select id="countSelect" class="w-full border rounded-lg px-4 py-2">
+            <option value="5">5 題</option>
+            <option value="10" selected>10 題</option>
+            <option value="20">20 題</option>
+          </select>
+        </div>
+      </div>
+      
+      <button onclick="startQuiz()" 
+              class="w-full mt-6 px-6 py-3 bg-indigo-600 text-white rounded-lg font-bold hover:bg-indigo-700">
+        開始練習 🚀
+      </button>
+    </div>
+  </div>
+
+  <script>
+    // ============================================================
+    // 設定
+    // ============================================================
+    const API_BASE = 'https://beidou-edu-api.onrender.com'; // 修改為實際 API
+    // const API_BASE = 'http://localhost:10000'; // 本地測試用
+    
+    let questions = [];
+    let currentIndex = 0;
+    let score = 0;
+    let userAnswers = {};
+    let timer = 0;
+    let timerInterval = null;
+    
+    // ============================================================
+    // 初始化
+    // ============================================================
+    document.addEventListener('DOMContentLoaded', () => {
+      // 顯示設定模態框
+    });
+    
+    async function startQuiz() {
+      const subject = document.getElementById('subjectSelect').value;
+      const type = document.getElementById('typeSelect').value;
+      const count = parseInt(document.getElementById('countSelect').value);
+      
+      document.getElementById('settingsModal').classList.add('hidden');
+      
+      // 載入題目
+      try {
+        if (type === 'mixed') {
+          await loadMixedQuestions(subject, count);
+        } else if (type === 'single_choice') {
+          await loadSingleChoice(subject, count);
+        } else {
+          await loadNewType(type, subject, count);
+        }
+        
+        startTimer();
+        renderQuestion();
+      } catch (error) {
+        console.error('載入題目失敗:', error);
+        alert('載入題目失敗，請重試');
+      }
+    }
+    
+    // ============================================================
+    // API 呼叫
+    // ============================================================
+    async function loadSingleChoice(subject, count) {
+      const url = `${API_BASE}/api/v2/questions?count=${count}${subject ? '&subject=' + subject : ''}`;
+      const res = await fetch(url);
+      const data = await res.json();
+      questions = data.data || [];
+    }
+    
+    async function loadNewType(type, subject, count) {
+      const url = `${API_BASE}/api/v2/types/${type}?count=${count}${subject ? '&subject=' + subject : ''}`;
+      const res = await fetch(url);
+      const data = await res.json();
+      questions = data.data || [];
+    }
+    
+    async function loadMixedQuestions(subject, count) {
+      // 混合載入各題型
+      const single = Math.ceil(count * 0.4);
+      const others = Math.floor(count * 0.15);
+      
+      const [q1, q2, q3, q4, q5] = await Promise.all([
+        fetch(`${API_BASE}/api/v2/questions?count=${single}${subject ? '&subject=' + subject : ''}`).then(r => r.json()),
+        fetch(`${API_BASE}/api/v2/types/matching?count=${others}${subject ? '&subject=' + subject : ''}`).then(r => r.json()),
+        fetch(`${API_BASE}/api/v2/types/ordering?count=${others}${subject ? '&subject=' + subject : ''}`).then(r => r.json()),
+        fetch(`${API_BASE}/api/v2/types/fill_blank?count=${others}${subject ? '&subject=' + subject : ''}`).then(r => r.json()),
+        fetch(`${API_BASE}/api/v2/types/multiple_select?count=${others}${subject ? '&subject=' + subject : ''}`).then(r => r.json())
+      ]);
+      
+      questions = [
+        ...(q1.data || []),
+        ...(q2.data || []),
+        ...(q3.data || []),
+        ...(q4.data || []),
+        ...(q5.data || [])
+      ];
+      
+      // 打亂順序
+      questions = questions.sort(() => Math.random() - 0.5);
+    }
+    
+    // ============================================================
+    // 計時器
+    // ============================================================
+    function startTimer() {
+      timer = 0;
+      timerInterval = setInterval(() => {
+        timer++;
+        const mins = Math.floor(timer / 60).toString().padStart(2, '0');
+        const secs = (timer % 60).toString().padStart(2, '0');
+        document.getElementById('timer').textContent = `⏱️ ${mins}:${secs}`;
+      }, 1000);
+    }
+    
+    // ============================================================
+    // 渲染題目
+    // ============================================================
+    function renderQuestion() {
+      if (currentIndex >= questions.length) {
+        showResult();
+        return;
+      }
+      
+      const q = questions[currentIndex];
+      const progress = ((currentIndex + 1) / questions.length) * 100;
+      document.getElementById('progressBar').style.width = `${progress}%`;
+      document.getElementById('questionNum').textContent = `${currentIndex + 1} / ${questions.length}`;
+      document.getElementById('subjectBadge').textContent = q.subject || '綜合';
+      
+      // 根據題型渲染
+      const type = q.type || 'single_choice';
+      const typeNames = {
+        'single_choice': '單選題',
+        'matching': '配對題',
+        'ordering': '排序題',
+        'fill_blank': '填空題',
+        'multiple_select': '多選題'
+      };
+      document.getElementById('typeBadge').textContent = typeNames[type] || type;
+      
+      switch (type) {
+        case 'single_choice':
+          renderSingleChoice(q);
+          break;
+        case 'matching':
+          renderMatching(q);
+          break;
+        case 'ordering':
+          renderOrdering(q);
+          break;
+        case 'fill_blank':
+          renderFillBlank(q);
+          break;
+        case 'multiple_select':
+          renderMultipleSelect(q);
+          break;
+      }
+      
+      // 重設按鈕狀態
+      document.getElementById('submitBtn').classList.remove('hidden');
+      document.getElementById('nextBtn').classList.add('hidden');
+      document.getElementById('explanationBox').classList.add('hidden');
+      userAnswers = {};
+    }
+    
+    // ============================================================
+    // 單選題
+    // ============================================================
+    function renderSingleChoice(q) {
+      document.getElementById('questionStem').textContent = q.stem || q.question;
+      
+      const options = q.options || [];
+      const html = options.map((opt, i) => `
+        <div class="option-card rounded-lg p-4 mb-3" onclick="selectOption(${i})" data-index="${i}">
+          <span class="font-bold mr-2">${String.fromCharCode(65 + i)}.</span>
+          <span>${opt}</span>
+        </div>
+      `).join('');
+      
+      document.getElementById('questionContent').innerHTML = html;
+    }
+    
+    function selectOption(index) {
+      document.querySelectorAll('.option-card').forEach(el => el.classList.remove('selected'));
+      document.querySelector(`.option-card[data-index="${index}"]`).classList.add('selected');
+      userAnswers.selected = index;
+    }
+    
+    // ============================================================
+    // 配對題
+    // ============================================================
+    function renderMatching(q) {
+      document.getElementById('questionStem').textContent = q.instruction;
+      
+      const leftItems = q.leftItems || [];
+      const rightItems = q.rightItems || [];
+      
+      const html = `
+        <div class="grid grid-cols-2 gap-8">
+          <div class="space-y-3" id="leftColumn">
+            ${leftItems.map((item, i) => `
+              <div class="matching-item" data-side="left" data-index="${i}" onclick="selectMatching('left', ${i})">
+                ${i + 1}. ${item}
+              </div>
+            `).join('')}
+          </div>
+          <div class="space-y-3" id="rightColumn">
+            ${rightItems.map((item, i) => `
+              <div class="matching-item" data-side="right" data-index="${i}" onclick="selectMatching('right', ${i})">
+                ${String.fromCharCode(65 + i)}. ${item}
+              </div>
+            `).join('')}
+          </div>
+        </div>
+        <div class="mt-4 text-sm text-gray-500">點擊左欄項目，再點擊右欄對應項目進行配對</div>
+      `;
+      
+      document.getElementById('questionContent').innerHTML = html;
+      userAnswers.matches = {};
+      userAnswers.selectedLeft = null;
+    }
+    
+    function selectMatching(side, index) {
+      if (side === 'left') {
+        document.querySelectorAll('#leftColumn .matching-item').forEach(el => el.classList.remove('selected'));
+        document.querySelector(`#leftColumn .matching-item[data-index="${index}"]`).classList.add('selected');
+        userAnswers.selectedLeft = index;
+      } else if (side === 'right' && userAnswers.selectedLeft !== null) {
+        // 配對完成
+        userAnswers.matches[userAnswers.selectedLeft] = index;
+        
+        // 更新視覺
+        const leftEl = document.querySelector(`#leftColumn .matching-item[data-index="${userAnswers.selectedLeft}"]`);
+        const rightEl = document.querySelector(`#rightColumn .matching-item[data-index="${index}"]`);
+        leftEl.classList.remove('selected');
+        leftEl.classList.add('matched');
+        rightEl.classList.add('matched');
+        
+        userAnswers.selectedLeft = null;
+      }
+    }
+    
+    // ============================================================
+    // 排序題
+    // ============================================================
+    function renderOrdering(q) {
+      document.getElementById('questionStem').textContent = q.instruction;
+      
+      const items = q.items || [];
+      
+      const html = `
+        <div id="sortableList" class="space-y-3">
+          ${items.map((item, i) => `
+            <div class="sortable-item flex items-center" draggable="true" data-index="${i}">
+              <span class="handle">☰</span>
+              <span class="font-bold mr-2">${i + 1}.</span>
+              <span>${item}</span>
+            </div>
+          `).join('')}
+        </div>
+        <div class="mt-4 text-sm text-gray-500">拖曳項目調整順序</div>
+      `;
+      
+      document.getElementById('questionContent').innerHTML = html;
+      initSortable();
+    }
+    
+    function initSortable() {
+      const list = document.getElementById('sortableList');
+      let draggedItem = null;
+      
+      list.querySelectorAll('.sortable-item').forEach(item => {
+        item.addEventListener('dragstart', function(e) {
+          draggedItem = this;
+          this.classList.add('dragging');
+        });
+        
+        item.addEventListener('dragend', function() {
+          this.classList.remove('dragging');
+          updateSortOrder();
+        });
+        
+        item.addEventListener('dragover', function(e) {
+          e.preventDefault();
+          const afterElement = getDragAfterElement(list, e.clientY);
+          if (afterElement == null) {
+            list.appendChild(draggedItem);
+          } else {
+            list.insertBefore(draggedItem, afterElement);
+          }
+        });
+      });
+    }
+    
+    function getDragAfterElement(container, y) {
+      const elements = [...container.querySelectorAll('.sortable-item:not(.dragging)')];
+      return elements.reduce((closest, child) => {
+        const box = child.getBoundingClientRect();
+        const offset = y - box.top - box.height / 2;
+        if (offset < 0 && offset > closest.offset) {
+          return { offset, element: child };
+        } else {
+          return closest;
+        }
+      }, { offset: Number.NEGATIVE_INFINITY }).element;
+    }
+    
+    function updateSortOrder() {
+      const items = document.querySelectorAll('#sortableList .sortable-item');
+      userAnswers.order = Array.from(items).map(el => parseInt(el.dataset.index));
+    }
+    
+    // ============================================================
+    // 填空題
+    // ============================================================
+    function renderFillBlank(q) {
+      document.getElementById('questionStem').textContent = q.stem;
+      
+      const html = `
+        <div class="flex flex-col items-center gap-4">
+          <input type="text" id="fillBlankInput" class="fill-blank-input" placeholder="輸入答案" autofocus>
+          ${q.hint ? `<div class="text-sm text-gray-500">提示: ${q.hint}</div>` : ''}
+        </div>
+      `;
+      
+      document.getElementById('questionContent').innerHTML = html;
+    }
+    
+    // ============================================================
+    // 多選題
+    // ============================================================
+    function renderMultipleSelect(q) {
+      document.getElementById('questionStem').textContent = q.stem;
+      
+      const options = q.options || [];
+      
+      const html = `
+        <div class="space-y-3">
+          ${options.map((opt, i) => `
+            <div class="multi-option" onclick="toggleMultiOption(${i})" data-index="${i}">
+              <div class="checkbox">✓</div>
+              <span class="font-bold">${String.fromCharCode(65 + i)}.</span>
+              <span>${opt}</span>
+            </div>
+          `).join('')}
+        </div>
+        <div class="mt-4 text-sm text-gray-500">可選擇多個答案</div>
+      `;
+      
+      document.getElementById('questionContent').innerHTML = html;
+      userAnswers.selected = [];
+    }
+    
+    function toggleMultiOption(index) {
+      const el = document.querySelector(`.multi-option[data-index="${index}"]`);
+      const letter = String.fromCharCode(65 + index);
+      
+      if (userAnswers.selected.includes(letter)) {
+        userAnswers.selected = userAnswers.selected.filter(x => x !== letter);
+        el.classList.remove('selected');
+      } else {
+        userAnswers.selected.push(letter);
+        el.classList.add('selected');
+      }
+    }
+    
+    // ============================================================
+    // 檢查答案
+    // ============================================================
+    async function checkAnswer() {
+      const q = questions[currentIndex];
+      const type = q.type || 'single_choice';
+      
+      let userAnswer;
+      let correct = false;
+      
+      switch (type) {
+        case 'single_choice':
+          if (userAnswers.selected === undefined) {
+            alert('請選擇答案');
+            return;
+          }
+          userAnswer = String.fromCharCode(65 + userAnswers.selected);
+          correct = userAnswer === q.answer;
+          
+          // 顯示對錯
+          document.querySelectorAll('.option-card').forEach((el, i) => {
+            el.classList.add('disabled');
+            const letter = String.fromCharCode(65 + i);
+            if (letter === q.answer) el.classList.add('correct');
+            else if (i === userAnswers.selected) el.classList.add('wrong');
+          });
+          break;
+          
+        case 'matching':
+          if (Object.keys(userAnswers.matches).length < (q.leftItems || []).length) {
+            alert('請完成所有配對');
+            return;
+          }
+          userAnswer = Object.values(userAnswers.matches);
+          correct = JSON.stringify(userAnswer) === JSON.stringify(q.answer);
+          break;
+          
+        case 'ordering':
+          updateSortOrder();
+          if (!userAnswers.order) {
+            alert('請排序項目');
+            return;
+          }
+          userAnswer = userAnswers.order;
+          correct = JSON.stringify(userAnswer) === JSON.stringify(q.answer);
+          break;
+          
+        case 'fill_blank':
+          const input = document.getElementById('fillBlankInput');
+          userAnswer = input.value.trim();
+          if (!userAnswer) {
+            alert('請輸入答案');
+            return;
+          }
+          correct = String(userAnswer).toLowerCase() === String(q.answer).toLowerCase();
+          input.classList.add(correct ? 'correct' : 'wrong');
+          break;
+          
+        case 'multiple_select':
+          if (userAnswers.selected.length === 0) {
+            alert('請選擇至少一個答案');
+            return;
+          }
+          userAnswer = userAnswers.selected.sort();
+          const correctAns = (q.answer || []).sort();
+          correct = JSON.stringify(userAnswer) === JSON.stringify(correctAns);
+          
+          // 部分給分計算
+          const correctSet = new Set(correctAns);
+          const userSet = new Set(userAnswer);
+          const correctCount = [...userSet].filter(x => correctSet.has(x)).length;
+          const wrongCount = [...userSet].filter(x => !correctSet.has(x)).length;
+          
+          if (wrongCount === 0 && correctCount === correctSet.size) {
+            score += 100;
+          } else if (wrongCount <= 1) {
+            score += 60;
+          } else if (wrongCount <= 2) {
+            score += 20;
+          }
+          break;
+      }
+      
+      if (type !== 'multiple_select') {
+        score += correct ? 100 : 0;
+      }
+      
+      document.getElementById('score').textContent = `📊 ${Math.round(score / (currentIndex + 1))}分`;
+      
+      // 顯示解析
+      if (q.explanation) {
+        document.getElementById('explanationText').textContent = q.explanation;
+        document.getElementById('explanationBox').classList.remove('hidden');
+      }
+      
+      // 切換按鈕
+      document.getElementById('submitBtn').classList.add('hidden');
+      document.getElementById('nextBtn').classList.remove('hidden');
+    }
+    
+    // ============================================================
+    // 下一題
+    // ============================================================
+    function nextQuestion() {
+      currentIndex++;
+      renderQuestion();
+    }
+    
+    // ============================================================
+    // 顯示結果
+    // ============================================================
+    function showResult() {
+      clearInterval(timerInterval);
+      
+      const avgScore = Math.round(score / questions.length);
+      const mins = Math.floor(timer / 60);
+      const secs = timer % 60;
+      
+      document.getElementById('questionContent').innerHTML = `
+        <div class="text-center py-8">
+          <div class="text-6xl mb-4">${avgScore >= 80 ? '🎉' : avgScore >= 60 ? '👍' : '💪'}</div>
+          <h2 class="text-2xl font-bold mb-2">練習完成！</h2>
+          <div class="text-4xl font-bold text-indigo-600 mb-4">${avgScore} 分</div>
+          <div class="text-gray-500 mb-6">用時 ${mins} 分 ${secs} 秒</div>
+          <div class="flex justify-center gap-4">
+            <button onclick="location.reload()" class="px-6 py-2 bg-indigo-600 text-white rounded-lg">再練一次</button>
+            <a href="dashboard.html" class="px-6 py-2 bg-gray-200 text-gray-700 rounded-lg">返回首頁</a>
+          </div>
+        </div>
+      `;
+      
+      document.getElementById('questionStem').textContent = '';
+      document.getElementById('submitBtn').classList.add('hidden');
+      document.getElementById('nextBtn').classList.add('hidden');
+    }
+  </script>
+</body>
+</html>
