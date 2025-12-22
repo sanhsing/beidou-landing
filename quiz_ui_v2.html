@@ -5,200 +5,100 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>多元題型練習 - 北斗教育</title>
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-  <link rel="stylesheet" href="js/components.css">
   <style>
-    :root {
-      --primary: #4F46E5;
-      --success: #10B981;
-      --danger: #EF4444;
-      --warning: #F59E0B;
-    }
-    
-    /* 通用選項樣式 */
-    .option-card {
-      transition: all 0.2s ease;
-      border: 2px solid #E5E7EB;
-      cursor: pointer;
-    }
-    .option-card:hover:not(.disabled) {
-      border-color: var(--primary);
-      transform: translateX(4px);
-    }
-    .option-card.selected {
-      border-color: var(--primary);
-      background: #EEF2FF;
-    }
-    .option-card.correct {
-      border-color: var(--success);
-      background: #DCFCE7;
-    }
-    .option-card.wrong {
-      border-color: var(--danger);
-      background: #FEE2E2;
-    }
+    :root { --primary: #4F46E5; --success: #10B981; --danger: #EF4444; }
+    .loader { border: 4px solid #f3f3f3; border-top: 4px solid var(--primary); border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; }
+    @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    .option-card { transition: all 0.2s; border: 2px solid #E5E7EB; cursor: pointer; }
+    .option-card:hover:not(.disabled) { border-color: var(--primary); transform: translateX(4px); }
+    .option-card.selected { border-color: var(--primary); background: #EEF2FF; }
+    .option-card.correct { border-color: var(--success); background: #DCFCE7; }
+    .option-card.wrong { border-color: var(--danger); background: #FEE2E2; }
     .option-card.disabled { pointer-events: none; }
-    
-    /* 配對題樣式 */
-    .matching-item {
-      padding: 12px 16px;
-      background: white;
-      border: 2px solid #E5E7EB;
-      border-radius: 8px;
-      cursor: pointer;
-      transition: all 0.2s;
-    }
+    .matching-item { padding: 12px 16px; background: white; border: 2px solid #E5E7EB; border-radius: 8px; cursor: pointer; transition: all 0.2s; }
     .matching-item:hover { border-color: var(--primary); }
     .matching-item.selected { border-color: var(--primary); background: #EEF2FF; }
     .matching-item.matched { border-color: var(--success); background: #DCFCE7; }
-    .matching-line {
-      stroke: var(--primary);
-      stroke-width: 2;
-      fill: none;
-    }
-    
-    /* 排序題樣式 */
-    .sortable-item {
-      padding: 12px 16px;
-      background: white;
-      border: 2px solid #E5E7EB;
-      border-radius: 8px;
-      cursor: grab;
-      transition: all 0.2s;
-      user-select: none;
-    }
-    .sortable-item:active { cursor: grabbing; }
-    .sortable-item.dragging {
-      opacity: 0.5;
-      border-color: var(--primary);
-    }
-    .sortable-item .handle {
-      color: #9CA3AF;
-      margin-right: 8px;
-    }
-    
-    /* 填空題樣式 */
-    .fill-blank-input {
-      border: 2px solid #E5E7EB;
-      border-radius: 8px;
-      padding: 8px 16px;
-      font-size: 1.1rem;
-      width: 200px;
-      text-align: center;
-      transition: all 0.2s;
-    }
-    .fill-blank-input:focus {
-      border-color: var(--primary);
-      outline: none;
-    }
+    .matching-item.wrong-match { border-color: var(--danger); background: #FEE2E2; }
+    .sortable-item { padding: 12px 16px; background: white; border: 2px solid #E5E7EB; border-radius: 8px; cursor: grab; transition: all 0.2s; user-select: none; }
+    .sortable-item.dragging { opacity: 0.5; border-color: var(--primary); }
+    .sortable-item .handle { color: #9CA3AF; margin-right: 12px; }
+    .sortable-item .number { display: inline-flex; align-items: center; justify-content: center; width: 24px; height: 24px; background: var(--primary); color: white; border-radius: 50%; font-size: 0.8rem; font-weight: bold; margin-right: 12px; }
+    .fill-blank-input { border: 2px solid #E5E7EB; border-radius: 8px; padding: 12px 20px; font-size: 1.2rem; width: 250px; text-align: center; }
+    .fill-blank-input:focus { border-color: var(--primary); outline: none; }
     .fill-blank-input.correct { border-color: var(--success); background: #DCFCE7; }
     .fill-blank-input.wrong { border-color: var(--danger); background: #FEE2E2; }
-    
-    /* 多選題樣式 */
-    .multi-option {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      padding: 12px 16px;
-      background: white;
-      border: 2px solid #E5E7EB;
-      border-radius: 8px;
-      cursor: pointer;
-      transition: all 0.2s;
-    }
+    .multi-option { display: flex; align-items: center; gap: 12px; padding: 12px 16px; background: white; border: 2px solid #E5E7EB; border-radius: 8px; cursor: pointer; transition: all 0.2s; }
     .multi-option:hover { border-color: var(--primary); }
     .multi-option.selected { border-color: var(--primary); background: #EEF2FF; }
-    .multi-option .checkbox {
-      width: 20px;
-      height: 20px;
-      border: 2px solid #D1D5DB;
-      border-radius: 4px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: all 0.2s;
-    }
-    .multi-option.selected .checkbox {
-      background: var(--primary);
-      border-color: var(--primary);
-      color: white;
-    }
-    
-    /* 動畫 */
-    @keyframes bounceIn {
-      0% { transform: scale(0); }
-      50% { transform: scale(1.2); }
-      100% { transform: scale(1); }
-    }
-    .animate-bounce-in { animation: bounceIn 0.5s ease; }
+    .multi-option.correct-option { border-color: var(--success); background: #DCFCE7; }
+    .multi-option.wrong-option { border-color: var(--danger); background: #FEE2E2; }
+    .multi-option .checkbox { width: 22px; height: 22px; border: 2px solid #D1D5DB; border-radius: 4px; display: flex; align-items: center; justify-content: center; }
+    .multi-option.selected .checkbox { background: var(--primary); border-color: var(--primary); color: white; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    .animate-fade-in { animation: fadeIn 0.3s ease; }
+    .score-popup { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 4rem; font-weight: bold; animation: scoreAnim 1s ease forwards; pointer-events: none; z-index: 100; }
+    @keyframes scoreAnim { 0% { transform: translate(-50%, -50%) scale(0); opacity: 0; } 50% { transform: translate(-50%, -50%) scale(1.2); opacity: 1; } 100% { transform: translate(-50%, -50%) scale(1); opacity: 0; } }
+    .score-correct { color: var(--success); }
+    .score-wrong { color: var(--danger); }
   </style>
 </head>
-<body class="bg-gray-100 min-h-screen">
-  <!-- 頂部進度條 -->
-  <div class="fixed top-0 left-0 right-0 h-1 bg-gray-200 z-50">
-    <div id="progressBar" class="h-full bg-indigo-600 transition-all duration-300" style="width: 0%"></div>
+<body class="bg-gray-50 min-h-screen">
+  <div class="fixed top-0 left-0 right-0 h-1.5 bg-gray-200 z-50">
+    <div id="progressBar" class="h-full bg-gradient-to-r from-indigo-500 to-purple-500 transition-all duration-500" style="width: 0%"></div>
   </div>
 
-  <!-- 頂部導航 -->
-  <nav class="bg-white shadow-sm sticky top-0 z-40 mt-1">
+  <nav class="bg-white shadow-sm sticky top-0 z-40 mt-1.5">
     <div class="max-w-4xl mx-auto px-4 py-3 flex items-center justify-between">
-      <a href="dashboard.html" class="flex items-center gap-2 text-gray-600 hover:text-gray-900">
-        <span>←</span> 返回
-      </a>
+      <a href="dashboard.html" class="flex items-center gap-2 text-gray-600 hover:text-indigo-600">← 返回</a>
       <div class="flex items-center gap-4">
-        <span id="timer" class="font-mono text-lg font-bold">⏱️ 00:00</span>
-        <span id="score" class="font-bold text-indigo-600">📊 0分</span>
+        <span class="bg-gray-100 px-3 py-1.5 rounded-full">⏱️ <span id="timer" class="font-mono font-bold">00:00</span></span>
+        <span class="bg-indigo-100 px-3 py-1.5 rounded-full">📊 <span id="score" class="font-bold text-indigo-600">0 分</span></span>
       </div>
     </div>
   </nav>
 
   <main class="max-w-4xl mx-auto px-4 py-6">
-    <!-- 題目資訊 -->
-    <div class="mb-4 flex items-center justify-between">
+    <div id="loadingBox" class="hidden flex flex-col items-center justify-center py-20">
+      <div class="loader mb-4"></div>
+      <p class="text-gray-500">載入題目中...</p>
+    </div>
+
+    <div id="questionInfo" class="mb-4 flex items-center justify-between">
       <div class="flex items-center gap-3">
-        <span class="px-3 py-1 bg-indigo-100 text-indigo-700 rounded-full text-sm font-medium" id="questionNum">1 / 10</span>
-        <span class="px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-sm" id="typeBadge">單選題</span>
-        <span class="px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-sm" id="subjectBadge">數學</span>
+        <span class="px-4 py-1.5 bg-indigo-600 text-white rounded-full text-sm font-bold" id="questionNum">1 / 10</span>
+        <span class="px-3 py-1.5 bg-purple-100 text-purple-700 rounded-full text-sm" id="typeBadge">📝 單選題</span>
+        <span class="px-3 py-1.5 bg-gray-100 text-gray-700 rounded-full text-sm" id="subjectBadge">數學</span>
+      </div>
+      <div class="flex items-center gap-2">
+        <span id="streakEmoji">🔥</span>
+        <span class="font-bold text-orange-500" id="streak">0</span>
       </div>
     </div>
 
-    <!-- 題目卡片 -->
-    <div class="bg-white rounded-xl shadow-lg p-6 mb-6">
-      <h2 class="text-xl font-bold text-gray-800 mb-4" id="questionStem">題目載入中...</h2>
-      
-      <!-- 動態內容區 -->
-      <div id="questionContent">
-        <!-- 根據題型動態渲染 -->
-      </div>
+    <div id="questionCard" class="bg-white rounded-2xl shadow-lg p-6 mb-6 animate-fade-in">
+      <h2 class="text-xl font-bold text-gray-800 mb-6" id="questionStem">題目載入中...</h2>
+      <div id="questionContent"></div>
     </div>
 
-    <!-- 提交按鈕 -->
     <div class="flex justify-center gap-4">
-      <button id="submitBtn" onclick="checkAnswer()" 
-              class="px-8 py-3 bg-indigo-600 text-white rounded-lg font-bold hover:bg-indigo-700 transition">
-        確認答案
-      </button>
-      <button id="nextBtn" onclick="nextQuestion()" 
-              class="px-8 py-3 bg-gray-200 text-gray-700 rounded-lg font-bold hover:bg-gray-300 transition hidden">
-        下一題 →
-      </button>
+      <button id="submitBtn" onclick="checkAnswer()" class="px-10 py-3 bg-indigo-600 text-white rounded-xl font-bold hover:bg-indigo-700">✓ 確認答案</button>
+      <button id="nextBtn" onclick="nextQuestion()" class="px-10 py-3 bg-purple-600 text-white rounded-xl font-bold hover:bg-purple-700 hidden">下一題 →</button>
     </div>
 
-    <!-- 解析區 -->
-    <div id="explanationBox" class="mt-6 bg-green-50 border border-green-200 rounded-xl p-4 hidden">
+    <div id="explanationBox" class="mt-6 bg-green-50 border border-green-200 rounded-xl p-5 hidden">
       <h3 class="font-bold text-green-800 mb-2">📖 解析</h3>
       <p id="explanationText" class="text-green-700"></p>
     </div>
   </main>
 
-  <!-- 設定模態框 -->
   <div id="settingsModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-    <div class="bg-white rounded-xl p-6 max-w-md w-full mx-4">
-      <h2 class="text-xl font-bold mb-4">🎯 選擇練習模式</h2>
-      
-      <div class="space-y-4">
+    <div class="bg-white rounded-2xl p-8 max-w-md w-full mx-4 shadow-2xl">
+      <h2 class="text-2xl font-bold mb-6">🎯 選擇練習模式</h2>
+      <div class="space-y-5">
         <div>
-          <label class="block text-sm font-medium text-gray-700 mb-1">科目</label>
-          <select id="subjectSelect" class="w-full border rounded-lg px-4 py-2">
+          <label class="block text-sm font-semibold text-gray-700 mb-2">📚 科目</label>
+          <select id="subjectSelect" class="w-full border-2 rounded-xl px-4 py-3">
             <option value="">全部科目</option>
             <option value="數學">數學</option>
             <option value="物理">物理</option>
@@ -212,521 +112,319 @@
             <option value="地科">地科</option>
           </select>
         </div>
-        
         <div>
-          <label class="block text-sm font-medium text-gray-700 mb-1">題型</label>
-          <select id="typeSelect" class="w-full border rounded-lg px-4 py-2">
-            <option value="mixed">混合題型</option>
-            <option value="single_choice">單選題</option>
-            <option value="matching">配對題</option>
-            <option value="ordering">排序題</option>
-            <option value="fill_blank">填空題</option>
-            <option value="multiple_select">多選題</option>
+          <label class="block text-sm font-semibold text-gray-700 mb-2">📝 題型</label>
+          <select id="typeSelect" class="w-full border-2 rounded-xl px-4 py-3">
+            <option value="mixed">🎲 混合題型</option>
+            <option value="single_choice">📝 單選題</option>
+            <option value="matching">🔗 配對題</option>
+            <option value="ordering">📋 排序題</option>
+            <option value="fill_blank">✏️ 填空題</option>
+            <option value="multiple_select">☑️ 多選題</option>
           </select>
         </div>
-        
         <div>
-          <label class="block text-sm font-medium text-gray-700 mb-1">題數</label>
-          <select id="countSelect" class="w-full border rounded-lg px-4 py-2">
+          <label class="block text-sm font-semibold text-gray-700 mb-2">🔢 題數</label>
+          <select id="countSelect" class="w-full border-2 rounded-xl px-4 py-3">
             <option value="5">5 題</option>
             <option value="10" selected>10 題</option>
             <option value="20">20 題</option>
           </select>
         </div>
       </div>
-      
-      <button onclick="startQuiz()" 
-              class="w-full mt-6 px-6 py-3 bg-indigo-600 text-white rounded-lg font-bold hover:bg-indigo-700">
-        開始練習 🚀
-      </button>
+      <button onclick="startQuiz()" class="w-full mt-8 px-6 py-4 bg-indigo-600 text-white rounded-xl font-bold text-lg hover:bg-indigo-700">開始練習 🚀</button>
     </div>
   </div>
 
+  <div id="scorePopup" class="score-popup hidden"></div>
+
   <script>
-    // ============================================================
-    // 設定
-    // ============================================================
-    const API_BASE = 'https://beidou-edu-api.onrender.com'; // 修改為實際 API
-    // const API_BASE = 'http://localhost:10000'; // 本地測試用
-    
-    let questions = [];
-    let currentIndex = 0;
-    let score = 0;
-    let userAnswers = {};
-    let timer = 0;
-    let timerInterval = null;
-    
-    // ============================================================
-    // 初始化
-    // ============================================================
-    document.addEventListener('DOMContentLoaded', () => {
-      // 顯示設定模態框
-    });
-    
+    const API_BASE = 'https://beidou-edu-server-1.onrender.com';
+    let questions = [], currentIndex = 0, score = 0, streak = 0, userAnswers = {}, timer = 0, timerInterval = null;
+    const typeIcons = { 'single_choice': '📝', 'matching': '🔗', 'ordering': '📋', 'fill_blank': '✏️', 'multiple_select': '☑️' };
+    const typeNames = { 'single_choice': '單選題', 'matching': '配對題', 'ordering': '排序題', 'fill_blank': '填空題', 'multiple_select': '多選題' };
+
     async function startQuiz() {
       const subject = document.getElementById('subjectSelect').value;
       const type = document.getElementById('typeSelect').value;
       const count = parseInt(document.getElementById('countSelect').value);
-      
       document.getElementById('settingsModal').classList.add('hidden');
-      
-      // 載入題目
+      document.getElementById('loadingBox').classList.remove('hidden');
+      document.getElementById('questionCard').classList.add('hidden');
       try {
-        if (type === 'mixed') {
-          await loadMixedQuestions(subject, count);
-        } else if (type === 'single_choice') {
-          await loadSingleChoice(subject, count);
-        } else {
-          await loadNewType(type, subject, count);
-        }
-        
+        if (type === 'mixed') await loadMixedQuestions(subject, count);
+        else if (type === 'single_choice') await loadSingleChoice(subject, count);
+        else await loadNewType(type, subject, count);
+        if (questions.length === 0) throw new Error('沒有找到題目');
+        document.getElementById('loadingBox').classList.add('hidden');
+        document.getElementById('questionCard').classList.remove('hidden');
         startTimer();
         renderQuestion();
       } catch (error) {
-        console.error('載入題目失敗:', error);
-        alert('載入題目失敗，請重試');
+        console.error('載入失敗:', error);
+        document.getElementById('loadingBox').classList.add('hidden');
+        alert('載入失敗: ' + error.message);
+        document.getElementById('settingsModal').classList.remove('hidden');
       }
     }
-    
-    // ============================================================
-    // API 呼叫
-    // ============================================================
+
     async function loadSingleChoice(subject, count) {
-      const url = `${API_BASE}/api/v2/questions?count=${count}${subject ? '&subject=' + subject : ''}`;
+      const url = `${API_BASE}/api/v2/questions?count=${count}${subject ? '&subject=' + encodeURIComponent(subject) : ''}`;
       const res = await fetch(url);
       const data = await res.json();
+      if (!data.success) throw new Error(data.error);
       questions = data.data || [];
     }
-    
+
     async function loadNewType(type, subject, count) {
-      const url = `${API_BASE}/api/v2/types/${type}?count=${count}${subject ? '&subject=' + subject : ''}`;
+      const url = `${API_BASE}/api/v2/types/${type}?count=${count}${subject ? '&subject=' + encodeURIComponent(subject) : ''}`;
       const res = await fetch(url);
       const data = await res.json();
+      if (!data.success) throw new Error(data.error);
       questions = data.data || [];
     }
-    
+
     async function loadMixedQuestions(subject, count) {
-      // 混合載入各題型
-      const single = Math.ceil(count * 0.4);
-      const others = Math.floor(count * 0.15);
-      
-      const [q1, q2, q3, q4, q5] = await Promise.all([
-        fetch(`${API_BASE}/api/v2/questions?count=${single}${subject ? '&subject=' + subject : ''}`).then(r => r.json()),
-        fetch(`${API_BASE}/api/v2/types/matching?count=${others}${subject ? '&subject=' + subject : ''}`).then(r => r.json()),
-        fetch(`${API_BASE}/api/v2/types/ordering?count=${others}${subject ? '&subject=' + subject : ''}`).then(r => r.json()),
-        fetch(`${API_BASE}/api/v2/types/fill_blank?count=${others}${subject ? '&subject=' + subject : ''}`).then(r => r.json()),
-        fetch(`${API_BASE}/api/v2/types/multiple_select?count=${others}${subject ? '&subject=' + subject : ''}`).then(r => r.json())
+      const single = Math.ceil(count * 0.4), others = Math.max(1, Math.floor(count * 0.15));
+      const sp = subject ? '&subject=' + encodeURIComponent(subject) : '';
+      const results = await Promise.allSettled([
+        fetch(`${API_BASE}/api/v2/questions?count=${single}${sp}`).then(r => r.json()),
+        fetch(`${API_BASE}/api/v2/types/matching?count=${others}${sp}`).then(r => r.json()),
+        fetch(`${API_BASE}/api/v2/types/ordering?count=${others}${sp}`).then(r => r.json()),
+        fetch(`${API_BASE}/api/v2/types/fill_blank?count=${others}${sp}`).then(r => r.json()),
+        fetch(`${API_BASE}/api/v2/types/multiple_select?count=${others}${sp}`).then(r => r.json())
       ]);
-      
-      questions = [
-        ...(q1.data || []),
-        ...(q2.data || []),
-        ...(q3.data || []),
-        ...(q4.data || []),
-        ...(q5.data || [])
-      ];
-      
-      // 打亂順序
-      questions = questions.sort(() => Math.random() - 0.5);
+      questions = [];
+      results.forEach(r => { if (r.status === 'fulfilled' && r.value.success) questions.push(...(r.value.data || [])); });
+      questions = questions.sort(() => Math.random() - 0.5).slice(0, count);
     }
-    
-    // ============================================================
-    // 計時器
-    // ============================================================
+
     function startTimer() {
       timer = 0;
       timerInterval = setInterval(() => {
         timer++;
-        const mins = Math.floor(timer / 60).toString().padStart(2, '0');
-        const secs = (timer % 60).toString().padStart(2, '0');
-        document.getElementById('timer').textContent = `⏱️ ${mins}:${secs}`;
+        document.getElementById('timer').textContent = `${Math.floor(timer/60).toString().padStart(2,'0')}:${(timer%60).toString().padStart(2,'0')}`;
       }, 1000);
     }
-    
-    // ============================================================
-    // 渲染題目
-    // ============================================================
+
+    function showScorePopup(correct, points) {
+      const popup = document.getElementById('scorePopup');
+      popup.textContent = correct ? `+${points}` : '✗';
+      popup.className = `score-popup ${correct ? 'score-correct' : 'score-wrong'}`;
+      popup.classList.remove('hidden');
+      setTimeout(() => popup.classList.add('hidden'), 1000);
+    }
+
+    function updateStreak(correct) {
+      if (correct) { streak++; document.getElementById('streakEmoji').textContent = streak >= 5 ? '🔥🔥' : '🔥'; }
+      else { streak = 0; document.getElementById('streakEmoji').textContent = '💪'; }
+      document.getElementById('streak').textContent = streak;
+    }
+
     function renderQuestion() {
-      if (currentIndex >= questions.length) {
-        showResult();
-        return;
-      }
-      
+      if (currentIndex >= questions.length) { showResult(); return; }
       const q = questions[currentIndex];
-      const progress = ((currentIndex + 1) / questions.length) * 100;
-      document.getElementById('progressBar').style.width = `${progress}%`;
+      document.getElementById('progressBar').style.width = `${((currentIndex + 1) / questions.length) * 100}%`;
       document.getElementById('questionNum').textContent = `${currentIndex + 1} / ${questions.length}`;
       document.getElementById('subjectBadge').textContent = q.subject || '綜合';
-      
-      // 根據題型渲染
       const type = q.type || 'single_choice';
-      const typeNames = {
-        'single_choice': '單選題',
-        'matching': '配對題',
-        'ordering': '排序題',
-        'fill_blank': '填空題',
-        'multiple_select': '多選題'
-      };
-      document.getElementById('typeBadge').textContent = typeNames[type] || type;
-      
+      document.getElementById('typeBadge').textContent = `${typeIcons[type] || '📝'} ${typeNames[type] || type}`;
       switch (type) {
-        case 'single_choice':
-          renderSingleChoice(q);
-          break;
-        case 'matching':
-          renderMatching(q);
-          break;
-        case 'ordering':
-          renderOrdering(q);
-          break;
-        case 'fill_blank':
-          renderFillBlank(q);
-          break;
-        case 'multiple_select':
-          renderMultipleSelect(q);
-          break;
+        case 'single_choice': renderSingleChoice(q); break;
+        case 'matching': renderMatching(q); break;
+        case 'ordering': renderOrdering(q); break;
+        case 'fill_blank': renderFillBlank(q); break;
+        case 'multiple_select': renderMultipleSelect(q); break;
       }
-      
-      // 重設按鈕狀態
       document.getElementById('submitBtn').classList.remove('hidden');
       document.getElementById('nextBtn').classList.add('hidden');
       document.getElementById('explanationBox').classList.add('hidden');
       userAnswers = {};
     }
-    
-    // ============================================================
-    // 單選題
-    // ============================================================
+
     function renderSingleChoice(q) {
       document.getElementById('questionStem').textContent = q.stem || q.question;
-      
-      const options = q.options || [];
-      const html = options.map((opt, i) => `
-        <div class="option-card rounded-lg p-4 mb-3" onclick="selectOption(${i})" data-index="${i}">
-          <span class="font-bold mr-2">${String.fromCharCode(65 + i)}.</span>
-          <span>${opt}</span>
+      document.getElementById('questionContent').innerHTML = (q.options || []).map((opt, i) => `
+        <div class="option-card rounded-xl p-4 mb-3" onclick="selectOption(${i})" data-index="${i}">
+          <span class="inline-flex items-center justify-center w-8 h-8 bg-gray-100 rounded-full font-bold mr-3">${String.fromCharCode(65+i)}</span>${opt}
         </div>
       `).join('');
-      
-      document.getElementById('questionContent').innerHTML = html;
     }
-    
-    function selectOption(index) {
+    function selectOption(i) {
       document.querySelectorAll('.option-card').forEach(el => el.classList.remove('selected'));
-      document.querySelector(`.option-card[data-index="${index}"]`).classList.add('selected');
-      userAnswers.selected = index;
+      document.querySelector(`.option-card[data-index="${i}"]`).classList.add('selected');
+      userAnswers.selected = i;
     }
-    
-    // ============================================================
-    // 配對題
-    // ============================================================
+
     function renderMatching(q) {
       document.getElementById('questionStem').textContent = q.instruction;
-      
-      const leftItems = q.leftItems || [];
-      const rightItems = q.rightItems || [];
-      
-      const html = `
-        <div class="grid grid-cols-2 gap-8">
-          <div class="space-y-3" id="leftColumn">
-            ${leftItems.map((item, i) => `
-              <div class="matching-item" data-side="left" data-index="${i}" onclick="selectMatching('left', ${i})">
-                ${i + 1}. ${item}
-              </div>
-            `).join('')}
-          </div>
-          <div class="space-y-3" id="rightColumn">
-            ${rightItems.map((item, i) => `
-              <div class="matching-item" data-side="right" data-index="${i}" onclick="selectMatching('right', ${i})">
-                ${String.fromCharCode(65 + i)}. ${item}
-              </div>
-            `).join('')}
-          </div>
+      document.getElementById('questionContent').innerHTML = `
+        <div class="grid grid-cols-2 gap-6">
+          <div id="leftColumn" class="space-y-3">${(q.leftItems||[]).map((item,i) => `<div class="matching-item" data-side="left" data-index="${i}" onclick="selectMatching('left',${i})"><span class="inline-flex items-center justify-center w-6 h-6 bg-indigo-100 text-indigo-700 rounded-full text-sm font-bold mr-3">${i+1}</span>${item}</div>`).join('')}</div>
+          <div id="rightColumn" class="space-y-3">${(q.rightItems||[]).map((item,i) => `<div class="matching-item" data-side="right" data-index="${i}" onclick="selectMatching('right',${i})"><span class="inline-flex items-center justify-center w-6 h-6 bg-purple-100 text-purple-700 rounded-full text-sm font-bold mr-3">${String.fromCharCode(65+i)}</span>${item}</div>`).join('')}</div>
         </div>
-        <div class="mt-4 text-sm text-gray-500">點擊左欄項目，再點擊右欄對應項目進行配對</div>
-      `;
-      
-      document.getElementById('questionContent').innerHTML = html;
-      userAnswers.matches = {};
-      userAnswers.selectedLeft = null;
+        <div class="mt-4 p-3 bg-blue-50 rounded-lg text-sm text-blue-600">💡 點擊左欄，再點擊右欄配對</div>`;
+      userAnswers.matches = {}; userAnswers.selectedLeft = null;
     }
-    
-    function selectMatching(side, index) {
+    function selectMatching(side, i) {
       if (side === 'left') {
         document.querySelectorAll('#leftColumn .matching-item').forEach(el => el.classList.remove('selected'));
-        document.querySelector(`#leftColumn .matching-item[data-index="${index}"]`).classList.add('selected');
-        userAnswers.selectedLeft = index;
-      } else if (side === 'right' && userAnswers.selectedLeft !== null) {
-        // 配對完成
-        userAnswers.matches[userAnswers.selectedLeft] = index;
-        
-        // 更新視覺
-        const leftEl = document.querySelector(`#leftColumn .matching-item[data-index="${userAnswers.selectedLeft}"]`);
-        const rightEl = document.querySelector(`#rightColumn .matching-item[data-index="${index}"]`);
-        leftEl.classList.remove('selected');
-        leftEl.classList.add('matched');
-        rightEl.classList.add('matched');
-        
+        document.querySelector(`#leftColumn .matching-item[data-index="${i}"]`).classList.add('selected');
+        userAnswers.selectedLeft = i;
+      } else if (userAnswers.selectedLeft !== null) {
+        userAnswers.matches[userAnswers.selectedLeft] = i;
+        document.querySelector(`#leftColumn .matching-item[data-index="${userAnswers.selectedLeft}"]`).classList.replace('selected','matched');
+        document.querySelector(`#rightColumn .matching-item[data-index="${i}"]`).classList.add('matched');
         userAnswers.selectedLeft = null;
       }
     }
-    
-    // ============================================================
-    // 排序題
-    // ============================================================
+
     function renderOrdering(q) {
       document.getElementById('questionStem').textContent = q.instruction;
-      
-      const items = q.items || [];
-      
-      const html = `
-        <div id="sortableList" class="space-y-3">
-          ${items.map((item, i) => `
-            <div class="sortable-item flex items-center" draggable="true" data-index="${i}">
-              <span class="handle">☰</span>
-              <span class="font-bold mr-2">${i + 1}.</span>
-              <span>${item}</span>
-            </div>
-          `).join('')}
-        </div>
-        <div class="mt-4 text-sm text-gray-500">拖曳項目調整順序</div>
-      `;
-      
-      document.getElementById('questionContent').innerHTML = html;
+      document.getElementById('questionContent').innerHTML = `
+        <div id="sortableList" class="space-y-3">${(q.items||[]).map((item,i) => `<div class="sortable-item" draggable="true" data-index="${i}" data-original="${i}"><span class="handle">☰</span><span class="number">${i+1}</span>${item}</div>`).join('')}</div>
+        <div class="mt-4 p-3 bg-blue-50 rounded-lg text-sm text-blue-600">💡 拖曳調整順序</div>`;
       initSortable();
     }
-    
     function initSortable() {
       const list = document.getElementById('sortableList');
       let draggedItem = null;
-      
       list.querySelectorAll('.sortable-item').forEach(item => {
-        item.addEventListener('dragstart', function(e) {
-          draggedItem = this;
-          this.classList.add('dragging');
-        });
-        
-        item.addEventListener('dragend', function() {
-          this.classList.remove('dragging');
-          updateSortOrder();
-        });
-        
-        item.addEventListener('dragover', function(e) {
-          e.preventDefault();
-          const afterElement = getDragAfterElement(list, e.clientY);
-          if (afterElement == null) {
-            list.appendChild(draggedItem);
-          } else {
-            list.insertBefore(draggedItem, afterElement);
-          }
-        });
+        item.addEventListener('dragstart', function() { draggedItem = this; this.classList.add('dragging'); });
+        item.addEventListener('dragend', function() { this.classList.remove('dragging'); updateSortNumbers(); updateSortOrder(); });
+        item.addEventListener('dragover', function(e) { e.preventDefault(); const after = getDragAfterElement(list, e.clientY); after ? list.insertBefore(draggedItem, after) : list.appendChild(draggedItem); });
       });
     }
-    
     function getDragAfterElement(container, y) {
-      const elements = [...container.querySelectorAll('.sortable-item:not(.dragging)')];
-      return elements.reduce((closest, child) => {
+      return [...container.querySelectorAll('.sortable-item:not(.dragging)')].reduce((closest, child) => {
         const box = child.getBoundingClientRect();
         const offset = y - box.top - box.height / 2;
-        if (offset < 0 && offset > closest.offset) {
-          return { offset, element: child };
-        } else {
-          return closest;
-        }
+        return offset < 0 && offset > closest.offset ? { offset, element: child } : closest;
       }, { offset: Number.NEGATIVE_INFINITY }).element;
     }
-    
-    function updateSortOrder() {
-      const items = document.querySelectorAll('#sortableList .sortable-item');
-      userAnswers.order = Array.from(items).map(el => parseInt(el.dataset.index));
-    }
-    
-    // ============================================================
-    // 填空題
-    // ============================================================
+    function updateSortNumbers() { document.querySelectorAll('#sortableList .sortable-item').forEach((el, i) => el.querySelector('.number').textContent = i + 1); }
+    function updateSortOrder() { userAnswers.order = Array.from(document.querySelectorAll('#sortableList .sortable-item')).map(el => parseInt(el.dataset.original)); }
+
     function renderFillBlank(q) {
       document.getElementById('questionStem').textContent = q.stem;
-      
-      const html = `
-        <div class="flex flex-col items-center gap-4">
-          <input type="text" id="fillBlankInput" class="fill-blank-input" placeholder="輸入答案" autofocus>
-          ${q.hint ? `<div class="text-sm text-gray-500">提示: ${q.hint}</div>` : ''}
-        </div>
-      `;
-      
-      document.getElementById('questionContent').innerHTML = html;
+      document.getElementById('questionContent').innerHTML = `
+        <div class="flex flex-col items-center gap-4 py-4">
+          <input type="text" id="fillBlankInput" class="fill-blank-input" placeholder="輸入答案" onkeypress="if(event.key==='Enter')checkAnswer()">
+          ${q.hint ? `<div class="text-sm text-gray-500">💡 提示: ${q.hint}</div>` : ''}
+        </div>`;
+      setTimeout(() => document.getElementById('fillBlankInput').focus(), 100);
     }
-    
-    // ============================================================
-    // 多選題
-    // ============================================================
+
     function renderMultipleSelect(q) {
       document.getElementById('questionStem').textContent = q.stem;
-      
-      const options = q.options || [];
-      
-      const html = `
-        <div class="space-y-3">
-          ${options.map((opt, i) => `
-            <div class="multi-option" onclick="toggleMultiOption(${i})" data-index="${i}">
-              <div class="checkbox">✓</div>
-              <span class="font-bold">${String.fromCharCode(65 + i)}.</span>
-              <span>${opt}</span>
-            </div>
-          `).join('')}
-        </div>
-        <div class="mt-4 text-sm text-gray-500">可選擇多個答案</div>
-      `;
-      
-      document.getElementById('questionContent').innerHTML = html;
+      document.getElementById('questionContent').innerHTML = `
+        <div class="space-y-3">${(q.options||[]).map((opt,i) => `<div class="multi-option" onclick="toggleMultiOption(${i})" data-index="${i}"><div class="checkbox">✓</div><span class="font-bold mr-2">${String.fromCharCode(65+i)}.</span>${opt}</div>`).join('')}</div>
+        <div class="mt-4 p-3 bg-blue-50 rounded-lg text-sm text-blue-600">💡 可選多個答案（部分給分）</div>`;
       userAnswers.selected = [];
     }
-    
-    function toggleMultiOption(index) {
-      const el = document.querySelector(`.multi-option[data-index="${index}"]`);
-      const letter = String.fromCharCode(65 + index);
-      
-      if (userAnswers.selected.includes(letter)) {
-        userAnswers.selected = userAnswers.selected.filter(x => x !== letter);
-        el.classList.remove('selected');
-      } else {
-        userAnswers.selected.push(letter);
-        el.classList.add('selected');
-      }
+    function toggleMultiOption(i) {
+      const el = document.querySelector(`.multi-option[data-index="${i}"]`);
+      const letter = String.fromCharCode(65 + i);
+      if (userAnswers.selected.includes(letter)) { userAnswers.selected = userAnswers.selected.filter(x => x !== letter); el.classList.remove('selected'); }
+      else { userAnswers.selected.push(letter); el.classList.add('selected'); }
     }
-    
-    // ============================================================
-    // 檢查答案
-    // ============================================================
+
     async function checkAnswer() {
       const q = questions[currentIndex];
       const type = q.type || 'single_choice';
-      
-      let userAnswer;
-      let correct = false;
-      
+      let correct = false, points = 0;
+
       switch (type) {
         case 'single_choice':
-          if (userAnswers.selected === undefined) {
-            alert('請選擇答案');
-            return;
-          }
-          userAnswer = String.fromCharCode(65 + userAnswers.selected);
-          correct = userAnswer === q.answer;
-          
-          // 顯示對錯
+          if (userAnswers.selected === undefined) { alert('請選擇答案'); return; }
+          const userAns = String.fromCharCode(65 + userAnswers.selected);
+          correct = userAns === q.answer;
+          points = correct ? 100 : 0;
           document.querySelectorAll('.option-card').forEach((el, i) => {
             el.classList.add('disabled');
-            const letter = String.fromCharCode(65 + i);
-            if (letter === q.answer) el.classList.add('correct');
-            else if (i === userAnswers.selected) el.classList.add('wrong');
+            if (String.fromCharCode(65+i) === q.answer) el.classList.add('correct');
+            else if (i === userAnswers.selected && !correct) el.classList.add('wrong');
           });
           break;
-          
         case 'matching':
-          if (Object.keys(userAnswers.matches).length < (q.leftItems || []).length) {
-            alert('請完成所有配對');
-            return;
+          const leftCount = (q.leftItems||[]).length;
+          if (Object.keys(userAnswers.matches).length < leftCount) { alert('請完成所有配對'); return; }
+          let matchAns = []; for (let i = 0; i < leftCount; i++) matchAns.push(userAnswers.matches[i]);
+          correct = JSON.stringify(matchAns) === JSON.stringify(q.answer);
+          points = correct ? 100 : 0;
+          for (let i = 0; i < leftCount; i++) {
+            const leftEl = document.querySelector(`#leftColumn .matching-item[data-index="${i}"]`);
+            const rightEl = document.querySelector(`#rightColumn .matching-item[data-index="${userAnswers.matches[i]}"]`);
+            if (userAnswers.matches[i] === q.answer[i]) { leftEl.classList.add('matched'); rightEl.classList.add('matched'); }
+            else { leftEl.classList.add('wrong-match'); rightEl.classList.add('wrong-match'); }
           }
-          userAnswer = Object.values(userAnswers.matches);
-          correct = JSON.stringify(userAnswer) === JSON.stringify(q.answer);
           break;
-          
         case 'ordering':
           updateSortOrder();
-          if (!userAnswers.order) {
-            alert('請排序項目');
-            return;
-          }
-          userAnswer = userAnswers.order;
-          correct = JSON.stringify(userAnswer) === JSON.stringify(q.answer);
+          if (!userAnswers.order) userAnswers.order = Array.from(document.querySelectorAll('#sortableList .sortable-item')).map(el => parseInt(el.dataset.original));
+          correct = JSON.stringify(userAnswers.order) === JSON.stringify(q.answer);
+          points = correct ? 100 : 0;
           break;
-          
         case 'fill_blank':
           const input = document.getElementById('fillBlankInput');
-          userAnswer = input.value.trim();
-          if (!userAnswer) {
-            alert('請輸入答案');
-            return;
-          }
-          correct = String(userAnswer).toLowerCase() === String(q.answer).toLowerCase();
+          if (!input.value.trim()) { alert('請輸入答案'); return; }
+          correct = input.value.trim().toLowerCase() === String(q.answer).toLowerCase();
+          points = correct ? 100 : 0;
           input.classList.add(correct ? 'correct' : 'wrong');
+          input.disabled = true;
           break;
-          
         case 'multiple_select':
-          if (userAnswers.selected.length === 0) {
-            alert('請選擇至少一個答案');
-            return;
-          }
-          userAnswer = userAnswers.selected.sort();
-          const correctAns = (q.answer || []).sort();
-          correct = JSON.stringify(userAnswer) === JSON.stringify(correctAns);
-          
-          // 部分給分計算
-          const correctSet = new Set(correctAns);
-          const userSet = new Set(userAnswer);
+          if (userAnswers.selected.length === 0) { alert('請選擇至少一個答案'); return; }
+          const correctAns = (q.answer||[]).sort();
+          const userSel = userAnswers.selected.sort();
+          const correctSet = new Set(correctAns), userSet = new Set(userSel);
           const correctCount = [...userSet].filter(x => correctSet.has(x)).length;
           const wrongCount = [...userSet].filter(x => !correctSet.has(x)).length;
-          
-          if (wrongCount === 0 && correctCount === correctSet.size) {
-            score += 100;
-          } else if (wrongCount <= 1) {
-            score += 60;
-          } else if (wrongCount <= 2) {
-            score += 20;
-          }
+          if (wrongCount === 0 && correctCount === correctSet.size) { points = 100; correct = true; }
+          else if (wrongCount <= 1 && correctCount > 0) points = 60;
+          else if (wrongCount <= 2 && correctCount > 0) points = 20;
+          document.querySelectorAll('.multi-option').forEach((el, i) => {
+            const letter = String.fromCharCode(65 + i);
+            if (correctSet.has(letter)) el.classList.add('correct-option');
+            else if (userSet.has(letter)) el.classList.add('wrong-option');
+          });
           break;
       }
-      
-      if (type !== 'multiple_select') {
-        score += correct ? 100 : 0;
-      }
-      
-      document.getElementById('score').textContent = `📊 ${Math.round(score / (currentIndex + 1))}分`;
-      
-      // 顯示解析
-      if (q.explanation) {
-        document.getElementById('explanationText').textContent = q.explanation;
-        document.getElementById('explanationBox').classList.remove('hidden');
-      }
-      
-      // 切換按鈕
+
+      score += points;
+      document.getElementById('score').textContent = `${Math.round(score / (currentIndex + 1))} 分`;
+      showScorePopup(points > 0, points);
+      updateStreak(points >= 60);
+      if (q.explanation) { document.getElementById('explanationText').textContent = q.explanation; document.getElementById('explanationBox').classList.remove('hidden'); }
       document.getElementById('submitBtn').classList.add('hidden');
       document.getElementById('nextBtn').classList.remove('hidden');
     }
-    
-    // ============================================================
-    // 下一題
-    // ============================================================
-    function nextQuestion() {
-      currentIndex++;
-      renderQuestion();
-    }
-    
-    // ============================================================
-    // 顯示結果
-    // ============================================================
+
+    function nextQuestion() { currentIndex++; renderQuestion(); }
+
     function showResult() {
       clearInterval(timerInterval);
-      
-      const avgScore = Math.round(score / questions.length);
-      const mins = Math.floor(timer / 60);
-      const secs = timer % 60;
-      
-      document.getElementById('questionContent').innerHTML = `
+      const avgScore = questions.length > 0 ? Math.round(score / questions.length) : 0;
+      const mins = Math.floor(timer / 60), secs = timer % 60;
+      let grade = '', emoji = '';
+      if (avgScore >= 90) { grade = 'S'; emoji = '🏆'; }
+      else if (avgScore >= 80) { grade = 'A'; emoji = '🎉'; }
+      else if (avgScore >= 70) { grade = 'B'; emoji = '👍'; }
+      else if (avgScore >= 60) { grade = 'C'; emoji = '💪'; }
+      else { grade = 'D'; emoji = '📚'; }
+      document.getElementById('questionInfo').classList.add('hidden');
+      document.getElementById('questionCard').innerHTML = `
         <div class="text-center py-8">
-          <div class="text-6xl mb-4">${avgScore >= 80 ? '🎉' : avgScore >= 60 ? '👍' : '💪'}</div>
-          <h2 class="text-2xl font-bold mb-2">練習完成！</h2>
-          <div class="text-4xl font-bold text-indigo-600 mb-4">${avgScore} 分</div>
-          <div class="text-gray-500 mb-6">用時 ${mins} 分 ${secs} 秒</div>
+          <div class="text-8xl mb-6">${emoji}</div>
+          <h2 class="text-3xl font-bold mb-2">練習完成！</h2>
+          <div class="text-6xl font-bold text-indigo-600 mb-2">${avgScore} 分</div>
+          <div class="text-2xl font-bold text-gray-400 mb-4">等級 ${grade}</div>
+          <div class="text-gray-500 mb-6">⏱️ ${mins}分${secs}秒 | 🔥 連勝 ${streak}</div>
           <div class="flex justify-center gap-4">
-            <button onclick="location.reload()" class="px-6 py-2 bg-indigo-600 text-white rounded-lg">再練一次</button>
-            <a href="dashboard.html" class="px-6 py-2 bg-gray-200 text-gray-700 rounded-lg">返回首頁</a>
+            <button onclick="location.reload()" class="px-8 py-3 bg-indigo-600 text-white rounded-xl font-bold">🔄 再練一次</button>
+            <a href="dashboard.html" class="px-8 py-3 bg-gray-200 text-gray-700 rounded-xl font-bold">🏠 返回首頁</a>
           </div>
-        </div>
-      `;
-      
-      document.getElementById('questionStem').textContent = '';
+        </div>`;
       document.getElementById('submitBtn').classList.add('hidden');
       document.getElementById('nextBtn').classList.add('hidden');
     }
