@@ -458,6 +458,91 @@
       if (q.explanation) { document.getElementById('explanationText').textContent = q.explanation; document.getElementById('explanationBox').classList.remove('hidden'); }
       document.getElementById('submitBtn').classList.add('hidden');
       document.getElementById('nextBtn').classList.remove('hidden');
+      
+      // P2-C1: localStorage 進度儲存
+      saveProgress(q.subject || '綜合', points >= 60);
+      
+      // P2-C2: 錯題記錄
+      if (points < 60) {
+        saveWrongAnswer(q, type === 'single_choice' ? String.fromCharCode(65 + singleAnswer) : 
+                        type === 'matching' ? matchingData.matches :
+                        type === 'ordering' ? orderingData :
+                        type === 'fill_blank' ? document.getElementById('fillBlankInput')?.value :
+                        multiAnswers);
+      }
+    }
+
+    // ===== P2-C1: 進度儲存 =====
+    function saveProgress(subject, correct) {
+      try {
+        const key = 'beidou_progress';
+        const progress = JSON.parse(localStorage.getItem(key) || '{}');
+        if (!progress[subject]) progress[subject] = { correct: 0, total: 0, xp: 0 };
+        progress[subject].total++;
+        if (correct) {
+          progress[subject].correct++;
+          progress[subject].xp += 10;
+        } else {
+          progress[subject].xp += 2;
+        }
+        progress.lastUpdate = new Date().toISOString();
+        localStorage.setItem(key, JSON.stringify(progress));
+        
+        // 同步到後端 (如果有 token)
+        const token = localStorage.getItem('beidou_token');
+        if (token) {
+          fetch(`${API_BASE}/api/progress`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+            body: JSON.stringify({ subject, correct })
+          }).catch(() => {});
+        }
+      } catch (e) { console.warn('進度儲存失敗', e); }
+    }
+    
+    // ===== P2-C2: 錯題記錄 =====
+    function saveWrongAnswer(q, userAnswer) {
+      try {
+        const key = 'beidou_wrong_answers';
+        const wrongs = JSON.parse(localStorage.getItem(key) || '[]');
+        wrongs.push({
+          id: q.id,
+          type: q.type || 'single_choice',
+          subject: q.subject || '綜合',
+          stem: q.stem || q.question || q.instruction,
+          userAnswer,
+          correctAnswer: q.answer,
+          timestamp: new Date().toISOString()
+        });
+        // 只保留最近 100 題
+        if (wrongs.length > 100) wrongs.shift();
+        localStorage.setItem(key, JSON.stringify(wrongs));
+      } catch (e) { console.warn('錯題儲存失敗', e); }
+    }
+    
+    // ===== P2-C3: 取得本地統計 =====
+    function getLocalStats() {
+      try {
+        const progress = JSON.parse(localStorage.getItem('beidou_progress') || '{}');
+        const wrongs = JSON.parse(localStorage.getItem('beidou_wrong_answers') || '[]');
+        let totalCorrect = 0, totalQuestions = 0, totalXp = 0;
+        const subjects = [];
+        for (const [subj, data] of Object.entries(progress)) {
+          if (subj === 'lastUpdate') continue;
+          totalCorrect += data.correct || 0;
+          totalQuestions += data.total || 0;
+          totalXp += data.xp || 0;
+          subjects.push({ subject: subj, ...data, accuracy: data.total > 0 ? Math.round(data.correct / data.total * 100) : 0 });
+        }
+        return {
+          totalQuestions,
+          correctAnswers: totalCorrect,
+          accuracy: totalQuestions > 0 ? Math.round(totalCorrect / totalQuestions * 100) : 0,
+          xpEarned: totalXp,
+          wrongCount: wrongs.length,
+          subjects
+        };
+      } catch (e) { return { totalQuestions: 0, correctAnswers: 0, accuracy: 0, xpEarned: 0, wrongCount: 0, subjects: [] }; }
     }
 
     function nextQuestion() { currentIndex++; renderQuestion(); }
@@ -472,6 +557,10 @@
       else if (avgScore >= 70) { grade = 'B'; emoji = '👍'; }
       else if (avgScore >= 60) { grade = 'C'; emoji = '💪'; }
       else { grade = 'D'; emoji = '📚'; }
+      
+      // P2-C3: 取得累計統計
+      const stats = getLocalStats();
+      
       document.getElementById('questionInfo').classList.add('hidden');
       document.getElementById('questionCard').innerHTML = `
         <div class="text-center py-8">
@@ -479,9 +568,18 @@
           <h2 class="text-3xl font-bold mb-2">練習完成！</h2>
           <div class="text-6xl font-bold text-indigo-600 mb-2">${avgScore} 分</div>
           <div class="text-2xl font-bold text-gray-400 mb-4">等級 ${grade}</div>
-          <div class="text-gray-500 mb-6">⏱️ ${mins}分${secs}秒 | 🔥 連勝 ${streak}</div>
+          <div class="text-gray-500 mb-4">⏱️ ${mins}分${secs}秒 | 🔥 連勝 ${streak}</div>
+          <div class="bg-gray-100 rounded-xl p-4 mb-6 text-left max-w-md mx-auto">
+            <div class="text-sm text-gray-600 mb-2">📊 累計統計</div>
+            <div class="grid grid-cols-3 gap-2 text-center">
+              <div><div class="text-xl font-bold text-indigo-600">${stats.totalQuestions}</div><div class="text-xs text-gray-500">總答題</div></div>
+              <div><div class="text-xl font-bold text-green-600">${stats.accuracy}%</div><div class="text-xs text-gray-500">正確率</div></div>
+              <div><div class="text-xl font-bold text-amber-600">${stats.xpEarned}</div><div class="text-xs text-gray-500">XP</div></div>
+            </div>
+          </div>
           <div class="flex justify-center gap-4">
             <button onclick="location.reload()" class="px-8 py-3 bg-indigo-600 text-white rounded-xl font-bold">🔄 再練一次</button>
+            <a href="wrong_book.html" class="px-8 py-3 bg-red-100 text-red-700 rounded-xl font-bold">📕 錯題本 (${stats.wrongCount})</a>
             <a href="dashboard.html" class="px-8 py-3 bg-gray-200 text-gray-700 rounded-xl font-bold">🏠 返回首頁</a>
           </div>
         </div>`;

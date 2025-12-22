@@ -47,15 +47,21 @@
                             </svg>
                         </button>
                         <div class="absolute top-full left-0 bg-slate-800 rounded-lg shadow-xl py-2 w-48 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all">
-                            <a href="quiz_ui.html?mode=trial&subject=數學" class="block px-4 py-2 hover:bg-slate-700">📐 數學</a>
-                            <a href="quiz_ui.html?mode=trial&subject=物理" class="block px-4 py-2 hover:bg-slate-700">⚡ 物理</a>
-                            <a href="quiz_ui.html?mode=trial&subject=化學" class="block px-4 py-2 hover:bg-slate-700">🧪 化學</a>
-                            <a href="quiz_ui.html?mode=trial&subject=英文" class="block px-4 py-2 hover:bg-slate-700">🔤 英文</a>
-                            <a href="quiz_ui.html?mode=trial&subject=國文" class="block px-4 py-2 hover:bg-slate-700">📚 國文</a>
+                            <a href="quiz_ui_v2.html?subject=數學" class="block px-4 py-2 hover:bg-slate-700">📐 數學</a>
+                            <a href="quiz_ui_v2.html?subject=物理" class="block px-4 py-2 hover:bg-slate-700">⚡ 物理</a>
+                            <a href="quiz_ui_v2.html?subject=化學" class="block px-4 py-2 hover:bg-slate-700">🧪 化學</a>
+                            <a href="quiz_ui_v2.html?subject=英文" class="block px-4 py-2 hover:bg-slate-700">🔤 英文</a>
+                            <a href="quiz_ui_v2.html?subject=國文" class="block px-4 py-2 hover:bg-slate-700">📚 國文</a>
                             <div class="border-t border-slate-600 my-1"></div>
-                            <a href="quiz_ui.html" class="block px-4 py-2 hover:bg-slate-700 text-blue-400">查看全部 →</a>
+                            <a href="quiz_ui_v2.html" class="block px-4 py-2 hover:bg-slate-700 text-cyan-400">🧩 多元題型 →</a>
                         </div>
                     </div>
+                    
+                    <!-- 新增：AI課程 -->
+                    <a href="courses.html" class="px-4 py-2 text-gray-300 hover:text-white flex items-center gap-1">
+                        AI課程
+                        <span class="bg-amber-500 text-white text-xs px-1.5 py-0.5 rounded-full">HOT</span>
+                    </a>
                     
                     <a href="#features" class="px-4 py-2 text-gray-300 hover:text-white">功能特色</a>
                     <a href="#pricing" class="px-4 py-2 text-gray-300 hover:text-white">訂閱方案</a>
@@ -272,6 +278,49 @@
                         讓學習像打遊戲一樣有成就感
                     </p>
                 </div>
+            </div>
+
+            <!-- 新增：多元題型 + AI課程 -->
+            <div class="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto mt-12">
+                <!-- 多元題型練習 -->
+                <a href="quiz_ui_v2.html" class="bg-gradient-to-br from-cyan-900 to-slate-800 p-8 rounded-2xl card-hover block group">
+                    <div class="flex items-center gap-4 mb-4">
+                        <div class="w-14 h-14 bg-cyan-500/20 rounded-xl flex items-center justify-center text-3xl">
+                            🧩
+                        </div>
+                        <div>
+                            <span class="bg-cyan-500 text-white text-xs px-2 py-1 rounded-full">NEW</span>
+                            <h3 class="text-xl font-bold">多元題型練習</h3>
+                        </div>
+                    </div>
+                    <p class="text-gray-300 mb-4">
+                        單選、多選、配對、排序、填空<br>
+                        <span class="text-cyan-400">15,000+ 題目</span> 全面訓練
+                    </p>
+                    <div class="text-cyan-400 group-hover:translate-x-2 transition-transform">
+                        立即體驗 →
+                    </div>
+                </a>
+
+                <!-- AI 認證課程 -->
+                <a href="courses.html" class="bg-gradient-to-br from-amber-900 to-slate-800 p-8 rounded-2xl card-hover block group">
+                    <div class="flex items-center gap-4 mb-4">
+                        <div class="w-14 h-14 bg-amber-500/20 rounded-xl flex items-center justify-center text-3xl">
+                            🎓
+                        </div>
+                        <div>
+                            <span class="bg-amber-500 text-white text-xs px-2 py-1 rounded-full">HOT</span>
+                            <h3 class="text-xl font-bold">AI 認證課程</h3>
+                        </div>
+                    </div>
+                    <p class="text-gray-300 mb-4">
+                        Google AI / AWS / Azure / iPAS<br>
+                        <span class="text-amber-400">完整備考</span> + 模擬測驗
+                    </p>
+                    <div class="text-amber-400 group-hover:translate-x-2 transition-transform">
+                        瀏覽課程 →
+                    </div>
+                </a>
             </div>
         </div>
     </section>
