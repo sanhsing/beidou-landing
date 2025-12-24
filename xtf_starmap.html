@@ -272,7 +272,7 @@
         // 載入數據
         async function loadData() {
             try {
-                const res = await fetch(`${API_BASE}/xtf-list?limit=1000`);
+                const res = await fetch(`${API_BASE}/xtf/v2/list?limit=1000`);
                 const data = await res.json();
                 
                 if (data.success) {

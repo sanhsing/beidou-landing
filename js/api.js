@@ -229,3 +229,136 @@ const BeidouAPI = (function() {
 
 // 全域匯出
 window.BeidouAPI = BeidouAPI;
+
+// ============================================================
+// XTF v2 統一知識節點 API (2025-12-24 新增)
+// ============================================================
+
+BeidouAPI.xtfV2 = {
+  /**
+   * 取得節點列表 (星圖用)
+   * @param {Object} params - {type: 'gsat'|'ai'|'all', subject: '數學', limit: 100}
+   */
+  list: (params = {}) => {
+    const query = new URLSearchParams(params).toString();
+    return BeidouAPI.request(`/xtf/v2/list?${query}`);
+  },
+
+  /**
+   * 取得單一節點詳情 (字卡用)
+   * @param {string} nodeId - 節點ID
+   */
+  node: (nodeId) => BeidouAPI.request(`/xtf/v2/node/${nodeId}`),
+
+  /**
+   * 隨機取得節點 (字卡複習用)
+   * @param {Object} params - {type, subject, cert, count}
+   */
+  random: (params = {}) => {
+    const query = new URLSearchParams(params).toString();
+    return BeidouAPI.request(`/xtf/v2/random?${query}`);
+  },
+
+  /**
+   * 搜尋節點
+   * @param {string} q - 搜尋關鍵字
+   */
+  search: (q, limit = 20) => 
+    BeidouAPI.request(`/xtf/v2/search?q=${encodeURIComponent(q)}&limit=${limit}`),
+
+  /**
+   * 取得科目/認證列表
+   */
+  subjects: () => BeidouAPI.request('/xtf/v2/subjects'),
+
+  /**
+   * 取得統計資訊
+   */
+  stats: () => BeidouAPI.request('/xtf/v2/stats')
+};
+
+console.log('🌟 BeidouAPI.xtfV2 已載入');
+
+// ============================================================
+// 智能學習引擎 API (2025-12-24 新增)
+// ============================================================
+
+BeidouAPI.learn = {
+  /**
+   * 提交答題記錄
+   * @param {Object} data - {user_id, question_id, node_id, subject, is_correct, time_spent}
+   */
+  submitAnswer: (data) => BeidouAPI.request('/learn/answer', {
+    method: 'POST',
+    body: JSON.stringify(data)
+  }),
+
+  /**
+   * 取得弱點診斷報告
+   * @param {string} userId
+   * @param {Object} params - {days, subject}
+   */
+  diagnosis: (userId, params = {}) => {
+    const query = new URLSearchParams(params).toString();
+    return BeidouAPI.request(`/learn/diagnosis/${userId}?${query}`);
+  },
+
+  /**
+   * 取得推薦學習路徑
+   * @param {string} userId
+   * @param {Object} params - {subject, limit}
+   */
+  path: (userId, params = {}) => {
+    const query = new URLSearchParams(params).toString();
+    return BeidouAPI.request(`/learn/path/${userId}?${query}`);
+  },
+
+  /**
+   * 取得待複習項目 (艾賓浩斯)
+   * @param {string} userId
+   * @param {Object} params - {subject, limit}
+   */
+  review: (userId, params = {}) => {
+    const query = new URLSearchParams(params).toString();
+    return BeidouAPI.request(`/learn/review/${userId}?${query}`);
+  },
+
+  /**
+   * 完成複習
+   * @param {Object} data - {user_id, node_id, quality: 1-5}
+   */
+  completeReview: (data) => BeidouAPI.request('/learn/review/complete', {
+    method: 'POST',
+    body: JSON.stringify(data)
+  }),
+
+  /**
+   * 取得學習統計
+   * @param {string} userId
+   * @param {number} days - 統計天數
+   */
+  stats: (userId, days = 7) => 
+    BeidouAPI.request(`/learn/stats/${userId}?days=${days}`),
+
+  /**
+   * 取得遺忘預測
+   * @param {string} userId
+   * @param {number} days - 預測天數
+   */
+  predict: (userId, days = 7) => 
+    BeidouAPI.request(`/learn/predict/${userId}?days=${days}`)
+};
+
+console.log('🧠 BeidouAPI.learn 智能學習引擎已載入');
+
+// v2.0 新增：批量答題
+BeidouAPI.learn.submitBatch = (data) => BeidouAPI.request('/learn/answer/batch', {
+  method: 'POST',
+  body: JSON.stringify(data)
+});
+
+// v2.0 新增：視覺化數據
+BeidouAPI.learn.visual = (userId, days = 30) => 
+  BeidouAPI.request(`/learn/diagnosis/${userId}/visual?days=${days}`);
+
+console.log('🧠 BeidouAPI.learn v2.0 已更新');
