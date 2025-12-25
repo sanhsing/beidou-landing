@@ -27,32 +27,11 @@ export default function GSATPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  // 選擇科目
-  if (!subject) {
-    return (
-      <div className="p-4 pb-20">
-        <h1 className="text-xl font-bold mb-4">📚 學測練習</h1>
-        <div className="grid grid-cols-2 gap-3">
-          {SUBJECTS.map((s) => (
-            <button
-              key={s.id}
-              onClick={() => navigate(`/gsat/${s.id}`)}
-              className="bg-white rounded-xl p-4 shadow-sm border border-gray-100 hover:border-blue-300 transition-all"
-            >
-              <div className="text-3xl mb-2">{s.icon}</div>
-              <div className="font-medium">{s.name}</div>
-            </button>
-          ))}
-        </div>
-      </div>
-    );
-  }
-
   const currentSubject = SUBJECTS.find((s) => s.id === subject);
 
-  // 載入題目
+  // 載入題目 - Hooks 必須在條件判斷之前
   useEffect(() => {
-    if (subject) {
+    if (subject && currentSubject) {
       loadQuestions();
     }
   }, [subject]);
@@ -68,6 +47,8 @@ export default function GSATPage() {
         setQuestions(data.data);
         setCurrentIndex(0);
         setScore({ correct: 0, total: 0 });
+        setSelectedAnswer(null);
+        setShowResult(false);
       } else {
         setError('沒有找到題目');
       }
@@ -97,6 +78,27 @@ export default function GSATPage() {
       setShowResult(false);
     }
   };
+
+  // 選擇科目頁面
+  if (!subject) {
+    return (
+      <div className="p-4 pb-20">
+        <h1 className="text-xl font-bold mb-4">📚 學測練習</h1>
+        <div className="grid grid-cols-2 gap-3">
+          {SUBJECTS.map((s) => (
+            <button
+              key={s.id}
+              onClick={() => navigate(`/gsat/${s.id}`)}
+              className="bg-white rounded-xl p-4 shadow-sm border border-gray-100 hover:border-blue-300 transition-all active:scale-95"
+            >
+              <div className="text-3xl mb-2">{s.icon}</div>
+              <div className="font-medium">{s.name}</div>
+            </button>
+          ))}
+        </div>
+      </div>
+    );
+  }
 
   const currentQuestion = questions[currentIndex];
 
@@ -206,7 +208,7 @@ export default function GSATPage() {
       )}
 
       {!loading && !error && questions.length === 0 && (
-        <div className="text-center py-10 text-gray-500">尚未連接後端API</div>
+        <div className="text-center py-10 text-gray-500">載入題目中...</div>
       )}
     </div>
   );
