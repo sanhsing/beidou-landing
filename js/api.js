@@ -366,3 +366,62 @@ BeidouAPI.learn.visual = (userId, days = 30) =>
   BeidouAPI.request(`/learn/diagnosis/${userId}/visual?days=${days}`);
 
 console.log('🧠 BeidouAPI.learn v2.0 已更新');
+
+// ============================================================
+// RPG 戰鬥 API (v59 新增)
+// ============================================================
+
+BeidouAPI.battle = {
+  // 開始 PvE 戰鬥
+  start: (params) => BeidouAPI.request('/battle/start', {
+    method: 'POST',
+    body: JSON.stringify(params)
+  }),
+  
+  // 提交答案
+  answer: (battleId, answer) => BeidouAPI.request('/battle/answer', {
+    method: 'POST',
+    body: JSON.stringify({ battle_id: battleId, answer })
+  }),
+  
+  // 取得戰鬥狀態
+  status: (battleId) => BeidouAPI.request(`/battle/status/${battleId}`)
+};
+
+// 怪獸 API
+BeidouAPI.monsters = {
+  list: (params = {}) => {
+    const query = new URLSearchParams(params).toString();
+    return BeidouAPI.request(`/monsters?${query}`);
+  },
+  detail: (monsterId) => BeidouAPI.request(`/monsters/${monsterId}`),
+  subjects: () => BeidouAPI.request('/monsters/subjects')
+};
+
+// PvP API
+BeidouAPI.pvp = {
+  leaderboard: (limit = 20) => BeidouAPI.request(`/pvp/leaderboard?limit=${limit}`),
+  ranks: () => BeidouAPI.request('/pvp/ranks'),
+  bots: () => BeidouAPI.request('/pvp/bots')
+};
+
+// 每日 API
+BeidouAPI.daily = {
+  status: (playerId) => BeidouAPI.request(`/daily/status?player_id=${playerId || 1}`),
+  checkin: (playerId) => BeidouAPI.request('/daily/checkin', {
+    method: 'POST',
+    body: JSON.stringify({ player_id: playerId || 1 })
+  })
+};
+
+// 成就/稱號 API
+BeidouAPI.achievements = {
+  list: () => BeidouAPI.request('/achievements'),
+  player: (playerId) => BeidouAPI.request(`/achievements/${playerId}`)
+};
+
+BeidouAPI.titles = {
+  list: (rarity) => BeidouAPI.request(`/titles${rarity ? '?rarity=' + rarity : ''}`)
+};
+
+console.log('⚔️ BeidouAPI.battle v59 已載入');
