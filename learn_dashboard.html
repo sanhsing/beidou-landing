@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>智能學習 - 北斗教育</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="js/api.js"></script>
+    <style>
+        .glass { background: rgba(255,255,255,0.05); backdrop-filter: blur(10px); }
+        .fade-in { animation: fadeIn 0.5s ease-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; } }
+        .urgency-critical { border-left: 4px solid #EF4444; }
+        .urgency-high { border-left: 4px solid #F59E0B; }
+        .urgency-normal { border-left: 4px solid #3B82F6; }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-slate-900 via-indigo-900 to-slate-900 min-h-screen text-white">
+    
+    <header class="bg-black/30 backdrop-blur-md border-b border-white/10 sticky top-0 z-50">
+        <div class="max-w-6xl mx-auto px-4 py-4 flex justify-between items-center">
+            <div class="flex items-center gap-3">
+                <a href="index.html" class="text-2xl">🧠</a>
+                <span class="text-xl font-bold">智能學習引擎</span>
+                <span class="text-xs bg-green-600 px-2 py-0.5 rounded">v2.0</span>
+            </div>
+            <div class="flex gap-3">
+                <a href="dashboard.html" class="bg-white/10 px-4 py-2 rounded-lg hover:bg-white/20">儀表板</a>
+                <a href="quiz_ui_v2.html" class="bg-blue-600 px-4 py-2 rounded-lg hover:bg-blue-500">開始練習</a>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-6xl mx-auto px-4 py-8">
+        
+        <!-- 統計卡片 -->
+        <section class="grid grid-cols-2 md:grid-cols-5 gap-4 mb-8 fade-in">
+            <div class="glass rounded-xl p-4 text-center border border-white/10">
+                <div class="text-3xl font-bold text-red-400" id="statDue">-</div>
+                <div class="text-sm text-gray-400">待複習</div>
+            </div>
+            <div class="glass rounded-xl p-4 text-center border border-white/10">
+                <div class="text-3xl font-bold text-green-400" id="statMastered">-</div>
+                <div class="text-sm text-gray-400">已掌握</div>
+            </div>
+            <div class="glass rounded-xl p-4 text-center border border-white/10">
+                <div class="text-3xl font-bold text-yellow-400" id="statLearning">-</div>
+                <div class="text-sm text-gray-400">學習中</div>
+            </div>
+            <div class="glass rounded-xl p-4 text-center border border-white/10">
+                <div class="text-3xl font-bold text-purple-400" id="statAccuracy">-</div>
+                <div class="text-sm text-gray-400">正確率</div>
+            </div>
+            <div class="glass rounded-xl p-4 text-center border border-white/10">
+                <div class="text-3xl font-bold text-orange-400" id="statStreak">-</div>
+                <div class="text-sm text-gray-400">連續天數</div>
+            </div>
+        </section>
+
+        <!-- 圖表區 -->
+        <div class="grid md:grid-cols-2 gap-6 mb-8">
+            <!-- 科目雷達圖 -->
+            <section class="glass rounded-2xl p-6 border border-white/10 fade-in">
+                <h2 class="text-lg font-bold mb-4 flex items-center gap-2">
+                    📊 科目表現雷達圖
+                </h2>
+                <div class="aspect-square max-h-72 mx-auto">
+                    <canvas id="radarChart"></canvas>
+                </div>
+            </section>
+
+            <!-- 趨勢圖 -->
+            <section class="glass rounded-2xl p-6 border border-white/10 fade-in">
+                <h2 class="text-lg font-bold mb-4 flex items-center gap-2">
+                    📈 正確率趨勢
+                </h2>
+                <div class="h-72">
+                    <canvas id="trendChart"></canvas>
+                </div>
+            </section>
+        </div>
+
+        <!-- 主要功能區 -->
+        <div class="grid md:grid-cols-2 gap-6 mb-8">
+            
+            <!-- 待複習區 -->
+            <section class="glass rounded-2xl p-6 border border-white/10 fade-in">
+                <div class="flex justify-between items-center mb-4">
+                    <h2 class="text-lg font-bold flex items-center gap-2">
+                        ⏰ 待複習項目
+                    </h2>
+                    <button onclick="loadReview()" class="text-blue-400 hover:text-blue-300 text-sm">🔄 刷新</button>
+                </div>
+                <div id="reviewList" class="space-y-2 max-h-64 overflow-y-auto">
+                    <div class="text-center text-gray-500 py-8">載入中...</div>
+                </div>
+                <button onclick="startReview()" id="startReviewBtn" class="w-full mt-4 bg-blue-600 hover:bg-blue-500 py-3 rounded-xl font-medium hidden">
+                    開始複習 (<span id="reviewCount">0</span> 項)
+                </button>
+            </section>
+
+            <!-- 弱點診斷區 -->
+            <section class="glass rounded-2xl p-6 border border-white/10 fade-in">
+                <div class="flex justify-between items-center mb-4">
+                    <h2 class="text-lg font-bold flex items-center gap-2">
+                        🎯 弱點診斷
+                    </h2>
+                    <div class="flex gap-2">
+                        <select id="diagnosisMode" class="bg-white/10 text-xs rounded px-2 py-1">
+                            <option value="quick">快速 (3次)</option>
+                            <option value="standard" selected>標準 (5次)</option>
+                            <option value="confident">高信賴 (10次)</option>
+                        </select>
+                        <button onclick="runDiagnosis()" class="bg-purple-600 hover:bg-purple-500 px-3 py-1 rounded text-sm">
+                            診斷
+                        </button>
+                    </div>
+                </div>
+                <div id="diagnosisResult" class="space-y-3 max-h-64 overflow-y-auto">
+                    <div class="text-center text-gray-500 py-8">
+                        <p>選擇診斷模式後點擊「診斷」</p>
+                        <p class="text-xs mt-2">快速=3次答題 / 標準=5次 / 高信賴=10次</p>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <!-- 弱點熱力圖 -->
+        <section class="glass rounded-2xl p-6 border border-white/10 mb-8 fade-in">
+            <h2 class="text-lg font-bold mb-4">🔥 弱點熱力圖 (正確率越低越紅)</h2>
+            <div id="heatmapContainer" class="flex flex-wrap gap-2">
+                <div class="text-gray-500 text-center w-full py-4">執行診斷後顯示</div>
+            </div>
+        </section>
+
+        <!-- 學習路徑 -->
+        <section class="glass rounded-2xl p-6 border border-white/10 mb-8 fade-in">
+            <div class="flex justify-between items-center mb-4">
+                <h2 class="text-lg font-bold flex items-center gap-2">
+                    🛤️ 推薦學習路徑
+                </h2>
+                <div class="flex gap-2">
+                    <select id="pathSubject" class="bg-white/10 border border-white/20 rounded-lg px-3 py-1 text-sm">
+                        <option value="">全部科目</option>
+                        <option value="數學">數學</option>
+                        <option value="物理">物理</option>
+                        <option value="化學">化學</option>
+                        <option value="生物">生物</option>
+                        <option value="AI">AI認證</option>
+                    </select>
+                    <button onclick="loadPath()" class="bg-green-600 hover:bg-green-500 px-3 py-1 rounded-lg text-sm">
+                        生成
+                    </button>
+                </div>
+            </div>
+            <div id="learningPath" class="space-y-2">
+                <div class="text-center text-gray-500 py-4">選擇科目後生成路徑</div>
+            </div>
+        </section>
+
+        <!-- 複習預測 -->
+        <section class="glass rounded-2xl p-6 border border-white/10 fade-in">
+            <h2 class="text-lg font-bold mb-4">📅 未來 7 天複習預測</h2>
+            <div id="forecastChart" class="grid grid-cols-7 gap-3">
+                <!-- 動態 -->
+            </div>
+            <p id="forecastTip" class="text-center text-gray-400 mt-4 text-sm"></p>
+        </section>
+    </main>
+
+    <script>
+    const userId = localStorage.getItem('beidou_user_id') || 'guest';
+    let radarChart = null;
+    let trendChart = null;
+
+    async function init() {
+        await Promise.all([
+            loadStats(),
+            loadReview(),
+            loadForecast(),
+            loadVisualData()
+        ]);
+    }
+
+    async function loadStats() {
+        try {
+            const result = await BeidouAPI.learn.stats(userId, 30);
+            if (result.success) {
+                const d = result.data;
+                document.getElementById('statDue').textContent = d.due_reviews;
+                document.getElementById('statMastered').textContent = 
+                    d.mastery_distribution.find(m => m.level === 'mastered')?.count || 0;
+                document.getElementById('statLearning').textContent = 
+                    d.mastery_distribution.find(m => m.level === 'learning')?.count || 0;
+                document.getElementById('statAccuracy').textContent = (d.overall.accuracy || 0) + '%';
+                document.getElementById('statStreak').textContent = d.streak_days;
+            }
+        } catch (err) {
+            console.error('載入統計失敗:', err);
+        }
+    }
+
+    async function loadVisualData() {
+        try {
+            const result = await BeidouAPI.request(`/learn/diagnosis/${userId}/visual?days=30`);
+            if (!result.success) return;
+
+            const { radar, trend, mastery, weak_top10 } = result.data;
+
+            // 雷達圖
+            if (radar && radar.length > 0) {
+                renderRadarChart(radar);
+            }
+
+            // 趨勢圖
+            if (trend && trend.length > 0) {
+                renderTrendChart(trend);
+            }
+        } catch (err) {
+            console.error('載入視覺化失敗:', err);
+        }
+    }
+
+    function renderRadarChart(data) {
+        const ctx = document.getElementById('radarChart').getContext('2d');
+        if (radarChart) radarChart.destroy();
+        
+        radarChart = new Chart(ctx, {
+            type: 'radar',
+            data: {
+                labels: data.map(d => d.axis),
+                datasets: [{
+                    label: '正確率 %',
+                    data: data.map(d => d.value),
+                    backgroundColor: 'rgba(99, 102, 241, 0.2)',
+                    borderColor: 'rgba(99, 102, 241, 1)',
+                    borderWidth: 2,
+                    pointBackgroundColor: 'rgba(99, 102, 241, 1)'
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: true,
+                scales: {
+                    r: {
+                        beginAtZero: true,
+                        max: 100,
+                        ticks: { color: '#9CA3AF', stepSize: 20 },
+                        grid: { color: 'rgba(255,255,255,0.1)' },
+                        pointLabels: { color: '#E5E7EB', font: { size: 12 } }
+                    }
+                },
+                plugins: { legend: { display: false } }
+            }
+        });
+    }
+
+    function renderTrendChart(data) {
+        const ctx = document.getElementById('trendChart').getContext('2d');
+        if (trendChart) trendChart.destroy();
+        
+        trendChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: data.map(d => d.date.slice(5)),
+                datasets: [{
+                    label: '正確率',
+                    data: data.map(d => d.accuracy),
+                    borderColor: '#10B981',
+                    backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                    fill: true,
+                    tension: 0.3
+                }, {
+                    label: '答題數',
+                    data: data.map(d => d.attempts),
+                    borderColor: '#3B82F6',
+                    backgroundColor: 'transparent',
+                    tension: 0.3,
+                    yAxisID: 'y1'
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: { beginAtZero: true, max: 100, ticks: { color: '#9CA3AF' }, grid: { color: 'rgba(255,255,255,0.1)' } },
+                    y1: { position: 'right', beginAtZero: true, ticks: { color: '#9CA3AF' }, grid: { display: false } },
+                    x: { ticks: { color: '#9CA3AF' }, grid: { color: 'rgba(255,255,255,0.05)' } }
+                },
+                plugins: { legend: { labels: { color: '#E5E7EB' } } }
+            }
+        });
+    }
+
+    async function loadReview() {
+        try {
+            const result = await BeidouAPI.learn.review(userId, { limit: 10 });
+            const container = document.getElementById('reviewList');
+            
+            if (!result.success || result.data.items.length === 0) {
+                container.innerHTML = '<div class="text-center text-green-400 py-8">🎉 沒有待複習！</div>';
+                document.getElementById('startReviewBtn').classList.add('hidden');
+                return;
+            }
+
+            container.innerHTML = result.data.items.map(item => `
+                <div class="bg-white/5 rounded-lg p-3 flex justify-between items-center urgency-${item.urgency}">
+                    <div>
+                        <div class="font-medium text-sm">${item.mastery_icon} ${item.node_id}</div>
+                        <div class="text-xs text-gray-400">${item.subject || '-'} · ${item.mastery_label}</div>
+                    </div>
+                    <div class="text-right">
+                        <div class="text-xs ${item.urgency === 'critical' ? 'text-red-400' : item.urgency === 'high' ? 'text-yellow-400' : 'text-blue-400'}">
+                            ${item.overdue_hours > 0 ? `逾期 ${item.overdue_hours}h` : '到期'}
+                        </div>
+                        <div class="text-xs text-gray-500">${item.accuracy || 0}%</div>
+                    </div>
+                </div>
+            `).join('');
+
+            document.getElementById('reviewCount').textContent = result.data.due_count;
+            document.getElementById('startReviewBtn').classList.remove('hidden');
+        } catch (err) {
+            console.error('載入複習失敗:', err);
+        }
+    }
+
+    async function runDiagnosis() {
+        const mode = document.getElementById('diagnosisMode').value;
+        const container = document.getElementById('diagnosisResult');
+        const heatmap = document.getElementById('heatmapContainer');
+        
+        container.innerHTML = '<div class="text-center py-8">🔍 分析中...</div>';
+
+        try {
+            const result = await BeidouAPI.request(`/learn/diagnosis/${userId}?days=30&mode=${mode}`);
+            
+            if (!result.success) {
+                container.innerHTML = '<div class="text-center text-red-400 py-8">診斷失敗</div>';
+                return;
+            }
+
+            const d = result.data;
+            
+            // 摘要區
+            let html = `
+                <div class="bg-gradient-to-r from-blue-900/50 to-purple-900/50 rounded-lg p-4">
+                    <div class="flex justify-between items-center">
+                        <div>
+                            <div class="text-2xl font-bold">${d.summary.overall_accuracy}%</div>
+                            <div class="text-xs text-gray-400">${d.summary.total_attempts} 次練習 · ${d.summary.total_nodes} 個節點</div>
+                        </div>
+                        <div class="text-right">
+                            <div class="text-red-400 text-sm">🔴 弱 ${d.summary.weak_count}</div>
+                            <div class="text-yellow-400 text-sm">🟡 邊緣 ${d.summary.borderline_count}</div>
+                            <div class="text-green-400 text-sm">🟢 強 ${d.summary.strong_count}</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="text-sm text-gray-300 mt-3">${d.message}</div>
+            `;
+
+            // 弱點科目
+            const weakSubjects = d.subjects.filter(s => s.status === 'critical' || s.status === 'weak');
+            if (weakSubjects.length > 0) {
+                html += `<div class="mt-3 space-y-1">`;
+                weakSubjects.forEach(s => {
+                    html += `
+                        <div class="flex justify-between text-sm">
+                            <span style="color:${s.color}">● ${s.subject}</span>
+                            <span class="text-gray-400">${s.accuracy}% (${s.total}次)</span>
+                        </div>
+                    `;
+                });
+                html += `</div>`;
+            }
+
+            // 建議
+            if (d.recommendations && d.recommendations.length > 0) {
+                html += `<div class="mt-3 space-y-1">`;
+                d.recommendations.forEach(r => {
+                    const color = r.priority === 'high' ? 'text-red-400' : r.priority === 'medium' ? 'text-yellow-400' : 'text-gray-400';
+                    html += `<div class="text-xs ${color}">💡 ${r.message}</div>`;
+                });
+                html += `</div>`;
+            }
+
+            container.innerHTML = html;
+
+            // 熱力圖
+            if (d.visualization && d.visualization.heatmap) {
+                heatmap.innerHTML = d.visualization.heatmap.map(h => {
+                    const red = Math.round(h.intensity * 2.55);
+                    const green = Math.round((100 - h.intensity) * 2.55);
+                    return `
+                        <div class="px-3 py-2 rounded text-xs text-center" 
+                             style="background: rgba(${red}, ${green}, 50, 0.5)"
+                             title="${h.node_id}: ${h.accuracy}%">
+                            ${h.node_id.slice(-6)}
+                            <div class="text-[10px]">${h.accuracy}%</div>
+                        </div>
+                    `;
+                }).join('');
+            }
+
+        } catch (err) {
+            console.error('診斷失敗:', err);
+            container.innerHTML = '<div class="text-center text-red-400 py-8">診斷錯誤</div>';
+        }
+    }
+
+    async function loadPath() {
+        const subject = document.getElementById('pathSubject').value;
+        const container = document.getElementById('learningPath');
+        container.innerHTML = '<div class="text-center py-4">🛤️ 生成中...</div>';
+
+        try {
+            const result = await BeidouAPI.learn.path(userId, { subject, limit: 8 });
+
+            if (!result.success || result.data.path.length === 0) {
+                container.innerHTML = '<div class="text-center text-green-400 py-4">✅ 沒有需要加強的！</div>';
+                return;
+            }
+
+            container.innerHTML = `
+                <div class="text-xs text-gray-400 mb-3">預估 ${result.data.estimated_time}</div>
+                ${result.data.path.map(step => `
+                    <div class="bg-white/5 rounded-lg p-3 flex items-center gap-3 ${step.priority === 'high' ? 'border-l-4 border-red-500' : ''}">
+                        <div class="text-xl">${step.icon}</div>
+                        <div class="flex-1">
+                            <div class="font-medium text-sm">${step.mastery_icon || ''} ${step.node_id || step.type}</div>
+                            <div class="text-xs text-gray-400">${step.reason}</div>
+                        </div>
+                        <div class="text-xs bg-white/10 px-2 py-1 rounded">Step ${step.step}</div>
+                    </div>
+                `).join('')}
+            `;
+        } catch (err) {
+            console.error('路徑失敗:', err);
+            container.innerHTML = '<div class="text-center text-red-400 py-4">生成失敗</div>';
+        }
+    }
+
+    async function loadForecast() {
+        try {
+            const result = await BeidouAPI.learn.predict(userId, 7);
+            const container = document.getElementById('forecastChart');
+            const tip = document.getElementById('forecastTip');
+
+            if (!result.success) return;
+
+            const d = result.data;
+            const max = Math.max(...d.daily_forecast.map(f => f.due_count), 1);
+
+            container.innerHTML = d.daily_forecast.map(f => {
+                const h = Math.max(20, (f.due_count / max) * 80);
+                const color = f.due_count === 0 ? 'bg-green-600' : f.due_count > 5 ? 'bg-red-500' : 'bg-yellow-500';
+                return `
+                    <div class="flex flex-col items-center">
+                        <div class="text-xs mb-1 ${f.due_count > 5 ? 'text-red-400' : 'text-gray-400'}">${f.due_count}</div>
+                        <div class="w-full rounded-t ${color}" style="height:${h}px"></div>
+                        <div class="text-xs text-gray-500 mt-1">${f.label}</div>
+                    </div>
+                `;
+            }).join('');
+
+            tip.textContent = d.recommendation;
+        } catch (err) {
+            console.error('預測失敗:', err);
+        }
+    }
+
+    function startReview() {
+        window.location.href = `xtf_flashcard_v2.html?mode=review&user=${userId}`;
+    }
+
+    init();
+    </script>
+</body>
+</html>

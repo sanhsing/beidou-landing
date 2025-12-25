@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>學習儀表板 - 北斗教育</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="js/components.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <style>
+    .chart-container { position: relative; height: 200px; }
+    .quick-action { transition: transform 0.2s; }
+    .quick-action:hover { transform: translateY(-2px); }
+  </style>
+</head>
+<body class="bg-gray-100 min-h-screen">
+  <!-- 頂部導航 -->
+  <nav class="bg-white shadow-sm sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <span class="text-2xl">🌟</span>
+        <span class="font-bold text-xl text-indigo-600">北斗教育</span>
+      </div>
+      <div class="flex items-center gap-4">
+        <span id="userName" class="text-gray-600">載入中...</span>
+        <button onclick="logout()" class="btn btn-secondary text-sm">登出</button>
+      </div>
+    </div>
+  </nav>
+
+  <main class="max-w-7xl mx-auto px-4 py-6">
+    <!-- 歡迎區 -->
+    <div class="mb-6">
+      <h1 class="text-2xl font-bold text-gray-800">
+        <span id="greeting">早安</span>，<span id="displayName">同學</span>！
+      </h1>
+      <p class="text-gray-500 mt-1">繼續你的學習之旅吧 ✨</p>
+    </div>
+
+    <!-- 今日統計 -->
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+      <div class="stat-card">
+        <div class="stat-icon">📚</div>
+        <div class="stat-content">
+          <div class="stat-value" id="todayQuestions">-</div>
+          <div class="stat-label">今日答題</div>
+        </div>
+      </div>
+      <div class="stat-card success">
+        <div class="stat-icon">✓</div>
+        <div class="stat-content">
+          <div class="stat-value" id="todayAccuracy">-%</div>
+          <div class="stat-label">今日正確率</div>
+        </div>
+      </div>
+      <div class="stat-card warning">
+        <div class="stat-icon">🔥</div>
+        <div class="stat-content">
+          <div class="stat-value" id="streakDays">0</div>
+          <div class="stat-label">連續學習</div>
+        </div>
+      </div>
+      <div class="stat-card info">
+        <div class="stat-icon">🏆</div>
+        <div class="stat-content">
+          <div class="stat-value" id="currentRank">-</div>
+          <div class="stat-label">當前排名</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 主要內容區 -->
+    <div class="grid md:grid-cols-3 gap-6">
+      <!-- 左側：總體進度 -->
+      <div class="md:col-span-2 space-y-6">
+        <!-- 總體掌握度 -->
+        <div class="card">
+          <div class="card-header">
+            <h2 class="card-title">📊 總體學習進度</h2>
+            <span class="badge badge-primary" id="totalNodes">0 節點</span>
+          </div>
+          <div class="flex items-center gap-8">
+            <div class="w-32 h-32">
+              <canvas id="masteryRing"></canvas>
+            </div>
+            <div class="flex-1">
+              <div class="mb-4">
+                <div class="flex justify-between text-sm mb-1">
+                  <span class="text-gray-600">總掌握度</span>
+                  <span class="font-semibold" id="overallMastery">0%</span>
+                </div>
+                <div class="progress-bar">
+                  <div class="fill" id="masteryBar" style="width: 0%"></div>
+                </div>
+              </div>
+              <div class="grid grid-cols-3 gap-4 text-center">
+                <div>
+                  <div class="text-2xl font-bold text-green-500" id="excellentCount">0</div>
+                  <div class="text-xs text-gray-500">優秀</div>
+                </div>
+                <div>
+                  <div class="text-2xl font-bold text-yellow-500" id="goodCount">0</div>
+                  <div class="text-xs text-gray-500">良好</div>
+                </div>
+                <div>
+                  <div class="text-2xl font-bold text-red-500" id="needWorkCount">0</div>
+                  <div class="text-xs text-gray-500">待加強</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 科目進度 -->
+        <div class="card">
+          <div class="card-header">
+            <h2 class="card-title">📈 各科掌握度</h2>
+          </div>
+          <div class="chart-container" style="height: 250px;">
+            <canvas id="subjectChart"></canvas>
+          </div>
+        </div>
+
+        <!-- 本週趨勢 -->
+        <div class="card">
+          <div class="card-header">
+            <h2 class="card-title">📅 本週學習趨勢</h2>
+          </div>
+          <div class="chart-container">
+            <canvas id="weeklyTrend"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <!-- 右側：快捷操作 + 弱點 -->
+      <div class="space-y-6">
+        <!-- 快捷操作 -->
+        <div class="card">
+          <h2 class="card-title mb-4">⚡ 快捷操作</h2>
+          <div class="space-y-3">
+            <!-- 新增：多元題型練習 -->
+            <a href="quiz_ui_v2.html" class="quick-action flex items-center gap-3 p-3 bg-gradient-to-r from-cyan-50 to-blue-50 rounded-lg hover:from-cyan-100 hover:to-blue-100 border border-cyan-200">
+              <span class="text-2xl">🧩</span>
+              <div class="flex-1">
+                <div class="font-semibold text-cyan-700">多元題型練習</div>
+                <div class="text-sm text-gray-500">單選/多選/配對/排序/填空</div>
+              </div>
+              <span class="bg-cyan-500 text-white text-xs px-2 py-0.5 rounded-full">NEW</span>
+            </a>
+            <a href="quiz_ui.html" class="quick-action flex items-center gap-3 p-3 bg-indigo-50 rounded-lg hover:bg-indigo-100">
+              <span class="text-2xl">📝</span>
+              <div>
+                <div class="font-semibold text-indigo-700">傳統單選練習</div>
+                <div class="text-sm text-gray-500">隨機練習題目</div>
+              </div>
+            </a>
+            <a href="wrong_book.html" class="quick-action flex items-center gap-3 p-3 bg-red-50 rounded-lg hover:bg-red-100">
+              <span class="text-2xl">📕</span>
+              <div>
+                <div class="font-semibold text-red-700">錯題複習</div>
+                <div class="text-sm text-gray-500"><span id="wrongCount">0</span> 題待複習</div>
+              </div>
+            </a>
+            <a href="xtf_starmap.html" class="quick-action flex items-center gap-3 p-3 bg-purple-50 rounded-lg hover:bg-purple-100">
+              <span class="text-2xl">🌌</span>
+              <div>
+                <div class="font-semibold text-purple-700">知識星圖</div>
+                <div class="text-sm text-gray-500">探索知識網絡</div>
+              </div>
+            </a>
+            <!-- 新增：AI 認證課程 -->
+            <a href="courses.html" class="quick-action flex items-center gap-3 p-3 bg-gradient-to-r from-amber-50 to-orange-50 rounded-lg hover:from-amber-100 hover:to-orange-100 border border-amber-200">
+              <span class="text-2xl">🎓</span>
+              <div class="flex-1">
+                <div class="font-semibold text-amber-700">AI 認證課程</div>
+                <div class="text-sm text-gray-500">Google/AWS/Azure/iPAS</div>
+              </div>
+              <span class="bg-amber-500 text-white text-xs px-2 py-0.5 rounded-full">HOT</span>
+            </a>
+            <a href="cert_exam.html" class="quick-action flex items-center gap-3 p-3 bg-green-50 rounded-lg hover:bg-green-100">
+              <span class="text-2xl">📋</span>
+              <div>
+                <div class="font-semibold text-green-700">模擬測驗</div>
+                <div class="text-sm text-gray-500">認證模擬考</div>
+              </div>
+            </a>
+          </div>
+        </div>
+
+        <!-- 弱點分析 -->
+        <div class="card">
+          <div class="card-header">
+            <h2 class="card-title">⚠️ 待加強</h2>
+            <a href="report.html" class="text-sm text-indigo-600">查看詳情 →</a>
+          </div>
+          <div id="weaknessList" class="space-y-3">
+            <div class="skeleton skeleton-text"></div>
+            <div class="skeleton skeleton-text"></div>
+            <div class="skeleton skeleton-text"></div>
+          </div>
+        </div>
+
+        <!-- 最近活動 -->
+        <div class="card">
+          <h2 class="card-title mb-4">🕐 最近活動</h2>
+          <div id="recentActivity" class="space-y-2 text-sm">
+            <div class="skeleton skeleton-text"></div>
+            <div class="skeleton skeleton-text"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Toast 容器 -->
+  <div id="toastContainer" class="toast-container"></div>
+
+  <script src="js/api.js"></script>
+  <script src="js/charts.js"></script>
+  <script>
+    // 全域狀態
+    let charts = {};
+    let dashboardData = null;
+
+    // 初始化
+    document.addEventListener('DOMContentLoaded', init);
+
+    async function init() {
+      // 檢查登入
+      const token = BeidouAPI.getToken();
+      if (!token) {
+        window.location.href = 'auth.html';
+        return;
+      }
+
+      // 設定問候語
+      setGreeting();
+
+      // 載入資料
+      await loadDashboard();
+    }
+
+    function setGreeting() {
+      const hour = new Date().getHours();
+      let greeting = '早安';
+      if (hour >= 12 && hour < 18) greeting = '午安';
+      else if (hour >= 18) greeting = '晚安';
+      document.getElementById('greeting').textContent = greeting;
+
+      const user = JSON.parse(localStorage.getItem('beidou_user') || '{}');
+      document.getElementById('displayName').textContent = user.displayName || user.username || '同學';
+      document.getElementById('userName').textContent = user.email || '';
+    }
+
+    async function loadDashboard() {
+      try {
+        // 並行載入資料
+        const [dashRes, weakRes] = await Promise.all([
+          BeidouAPI.analytics.dashboard(),
+          BeidouAPI.analytics.weakness()
+        ]);
+
+        if (dashRes.success) {
+          dashboardData = dashRes.data;
+          renderDashboard(dashboardData);
+        }
+
+        if (weakRes.success) {
+          renderWeakness(weakRes.data);
+        }
+
+      } catch (error) {
+        console.error('Dashboard load error:', error);
+        showToast('載入失敗，請重新整理', 'error');
+      }
+    }
+
+    function renderDashboard(data) {
+      const { overview, today, week, rank, recentActivity } = data;
+
+      // 今日統計
+      document.getElementById('todayQuestions').textContent = today?.questions || 0;
+      document.getElementById('todayAccuracy').textContent = 
+        today?.questions > 0 ? Math.round(today.correct / today.questions * 100) + '%' : '-';
+      document.getElementById('streakDays').textContent = overview?.streak_days || 0;
+      document.getElementById('currentRank').textContent = rank?.current ? `#${rank.current}` : '-';
+
+      // 總體進度
+      const mastery = Math.round(overview?.avg_mastery || 0);
+      document.getElementById('overallMastery').textContent = mastery + '%';
+      document.getElementById('masteryBar').style.width = mastery + '%';
+      document.getElementById('totalNodes').textContent = (overview?.nodes_studied || 0) + ' 節點';
+
+      // 分佈統計 (模擬)
+      document.getElementById('excellentCount').textContent = Math.floor((overview?.nodes_studied || 0) * 0.3);
+      document.getElementById('goodCount').textContent = Math.floor((overview?.nodes_studied || 0) * 0.5);
+      document.getElementById('needWorkCount').textContent = overview?.wrong_count || 0;
+      document.getElementById('wrongCount').textContent = overview?.wrong_count || 0;
+
+      // 繪製環形圖
+      if (charts.masteryRing) charts.masteryRing.destroy();
+      charts.masteryRing = BeidouCharts.progressRing('masteryRing', mastery);
+
+      // 繪製趨勢圖
+      if (recentActivity && recentActivity.length > 0) {
+        if (charts.weeklyTrend) charts.weeklyTrend.destroy();
+        charts.weeklyTrend = BeidouCharts.trendLine('weeklyTrend', 
+          recentActivity.map(a => ({ date: a.date.slice(5), value: a.count }))
+        );
+        
+        // 最近活動
+        document.getElementById('recentActivity').innerHTML = recentActivity.slice(0, 5).map(a => `
+          <div class="flex justify-between py-1 border-b border-gray-100">
+            <span class="text-gray-600">${a.date.slice(5)}</span>
+            <span class="font-medium">${a.count} 題</span>
+          </div>
+        `).join('');
+      }
+
+      // 載入科目進度
+      loadSubjectProgress();
+    }
+
+    async function loadSubjectProgress() {
+      try {
+        const res = await BeidouAPI.progress.get();
+        if (res.success && res.data.progress) {
+          // 按科目彙整
+          const bySubject = {};
+          res.data.progress.forEach(p => {
+            const subj = p.subject_id || 'other';
+            if (!bySubject[subj]) {
+              bySubject[subj] = { total: 0, correct: 0, count: 0 };
+            }
+            bySubject[subj].total += p.total_questions || 0;
+            bySubject[subj].correct += p.correct_count || 0;
+            bySubject[subj].count++;
+          });
+
+          const chartData = Object.entries(bySubject).map(([subj, data]) => ({
+            subject: subj,
+            mastery: data.total > 0 ? Math.round(data.correct / data.total * 100) : 0
+          })).filter(d => d.mastery > 0);
+
+          if (chartData.length > 0) {
+            if (charts.subjectChart) charts.subjectChart.destroy();
+            charts.subjectChart = BeidouCharts.subjectBars('subjectChart', chartData);
+          }
+        }
+      } catch (e) {
+        console.error('Subject progress error:', e);
+      }
+    }
+
+    function renderWeakness(data) {
+      const { weakNodes, recommendations } = data;
+      const list = document.getElementById('weaknessList');
+
+      if (weakNodes && weakNodes.length > 0) {
+        list.innerHTML = weakNodes.slice(0, 5).map(node => `
+          <div class="flex items-center justify-between p-2 bg-red-50 rounded">
+            <div>
+              <div class="font-medium text-sm">${node.node_name || node.node_id}</div>
+              <div class="text-xs text-gray-500">${node.subject_id || ''}</div>
+            </div>
+            <div class="text-red-600 font-bold">${node.mastery_level}%</div>
+          </div>
+        `).join('');
+      } else {
+        list.innerHTML = '<div class="text-center text-gray-400 py-4">👍 目前沒有待加強項目</div>';
+      }
+    }
+
+    function showToast(message, type = 'info') {
+      const container = document.getElementById('toastContainer');
+      const toast = document.createElement('div');
+      toast.className = `toast ${type}`;
+      toast.innerHTML = `<span>${message}</span>`;
+      container.appendChild(toast);
+      
+      setTimeout(() => {
+        toast.style.animation = 'slideOut 0.3s ease forwards';
+        setTimeout(() => toast.remove(), 300);
+      }, 3000);
+    }
+
+    function logout() {
+      localStorage.removeItem('beidou_token');
+      localStorage.removeItem('beidou_user');
+      window.location.href = 'auth.html';
+    }
+  </script>
+</body>
+</html>

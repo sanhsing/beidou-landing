@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>金流測試 - 北斗教育</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .card { background: linear-gradient(135deg, #1e1b4b 0%, #312e81 100%); }
+    </style>
+</head>
+<body class="bg-gray-900 text-white min-h-screen p-8">
+    <div class="max-w-2xl mx-auto">
+        <h1 class="text-3xl font-bold mb-8 text-center">💳 金流測試面板</h1>
+        
+        <!-- 環境資訊 -->
+        <div class="card rounded-2xl p-6 mb-6">
+            <h2 class="text-xl font-bold mb-4">🔧 環境資訊</h2>
+            <div id="envInfo" class="text-gray-400">載入中...</div>
+        </div>
+        
+        <!-- 測試訂閱付款 -->
+        <div class="card rounded-2xl p-6 mb-6">
+            <h2 class="text-xl font-bold mb-4">📦 測試訂閱付款</h2>
+            
+            <div class="grid grid-cols-2 gap-4 mb-4">
+                <div>
+                    <label class="block text-sm text-gray-400 mb-1">方案</label>
+                    <select id="plan" class="w-full bg-gray-800 rounded px-3 py-2">
+                        <option value="standard">標準版 $99/月</option>
+                        <option value="pro">專業版 $199/月</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-sm text-gray-400 mb-1">週期</label>
+                    <select id="cycle" class="w-full bg-gray-800 rounded px-3 py-2">
+                        <option value="monthly">月繳</option>
+                        <option value="yearly">年繳 (省17%)</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div class="mb-4">
+                <label class="block text-sm text-gray-400 mb-1">優惠碼</label>
+                <input type="text" id="promoCode" placeholder="LAUNCH20 / FIRST50" 
+                       class="w-full bg-gray-800 rounded px-3 py-2">
+            </div>
+            
+            <button onclick="testSubscribe()" 
+                    class="w-full bg-purple-600 hover:bg-purple-700 py-3 rounded-lg font-bold transition">
+                🧪 產生測試付款
+            </button>
+        </div>
+        
+        <!-- 測試證照購買 -->
+        <div class="card rounded-2xl p-6 mb-6">
+            <h2 class="text-xl font-bold mb-4">🎓 測試證照購買</h2>
+            
+            <div class="grid grid-cols-2 gap-4 mb-4">
+                <div>
+                    <label class="block text-sm text-gray-400 mb-1">證照</label>
+                    <select id="certId" class="w-full bg-gray-800 rounded px-3 py-2">
+                        <option value="google-ai">Google AI 認證 $199</option>
+                        <option value="aws-ai">AWS AI 認證 $299</option>
+                        <option value="azure-ai">Azure AI 認證 $299</option>
+                        <option value="ipas-security">iPAS 資安認證 $149</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-sm text-gray-400 mb-1">版本</label>
+                    <select id="certPro" class="w-full bg-gray-800 rounded px-3 py-2">
+                        <option value="false">標準版</option>
+                        <option value="true">Pro版 (2倍價格)</option>
+                    </select>
+                </div>
+            </div>
+            
+            <button onclick="testCert()" 
+                    class="w-full bg-green-600 hover:bg-green-700 py-3 rounded-lg font-bold transition">
+                🧪 產生測試付款
+            </button>
+        </div>
+        
+        <!-- 結果顯示 -->
+        <div class="card rounded-2xl p-6">
+            <h2 class="text-xl font-bold mb-4">📋 測試結果</h2>
+            <pre id="result" class="bg-gray-800 p-4 rounded-lg text-sm overflow-auto max-h-96 text-green-400">
+等待測試...
+            </pre>
+            
+            <div id="paymentForm" class="hidden mt-4">
+                <p class="text-yellow-400 mb-2">⚠️ 以下為沙箱測試，不會實際扣款</p>
+                <form id="ecpayForm" method="POST" target="_blank">
+                    <button type="submit" 
+                            class="w-full bg-yellow-600 hover:bg-yellow-700 py-3 rounded-lg font-bold transition">
+                        🔗 前往 ECPay 沙箱付款
+                    </button>
+                </form>
+            </div>
+        </div>
+        
+        <!-- 返回 -->
+        <div class="text-center mt-8">
+            <a href="index.html" class="text-purple-400 hover:text-purple-300">← 返回首頁</a>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = 'https://beidou-edu-server-1.onrender.com';
+        // const API_BASE = 'http://localhost:10000'; // 本地測試用
+        
+        // 載入環境資訊
+        async function loadEnvInfo() {
+            try {
+                const response = await fetch(`${API_BASE}/api/payment/env`);
+                const result = await response.json();
+                
+                if (result.success) {
+                    const data = result.data;
+                    document.getElementById('envInfo').innerHTML = `
+                        <div class="grid grid-cols-2 gap-2 text-sm">
+                            <div>環境：</div>
+                            <div class="${data.isProduction ? 'text-red-400' : 'text-green-400'}">
+                                ${data.isProduction ? '🔴 正式環境' : '🟢 沙箱環境'}
+                            </div>
+                            <div>商店ID：</div>
+                            <div class="text-blue-400">${data.merchantId}</div>
+                            <div>API網址：</div>
+                            <div class="text-gray-300 text-xs break-all">${data.apiUrl}</div>
+                            <div>回調網址：</div>
+                            <div class="text-gray-300 text-xs break-all">${data.notifyUrl}</div>
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                document.getElementById('envInfo').innerHTML = `
+                    <div class="text-red-400">❌ 無法連接後端</div>
+                    <div class="text-xs text-gray-500 mt-1">${error.message}</div>
+                `;
+            }
+        }
+        
+        // 測試訂閱付款
+        async function testSubscribe() {
+            const plan = document.getElementById('plan').value;
+            const billingCycle = document.getElementById('cycle').value;
+            const promoCode = document.getElementById('promoCode').value || null;
+            
+            try {
+                const response = await fetch(`${API_BASE}/api/payment/subscribe`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        userId: 'test_user_' + Date.now(),
+                        plan,
+                        billingCycle,
+                        promoCode
+                    })
+                });
+                
+                const result = await response.json();
+                showResult(result);
+                
+                if (result.success) {
+                    setupPaymentForm(result.paymentUrl, result.params);
+                }
+            } catch (error) {
+                showResult({ error: error.message });
+            }
+        }
+        
+        // 測試證照購買
+        async function testCert() {
+            const certId = document.getElementById('certId').value;
+            const isPro = document.getElementById('certPro').value === 'true';
+            
+            try {
+                const response = await fetch(`${API_BASE}/api/payment/cert`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        userId: 'test_user_' + Date.now(),
+                        certId,
+                        isPro
+                    })
+                });
+                
+                const result = await response.json();
+                showResult(result);
+                
+                if (result.success) {
+                    setupPaymentForm(result.paymentUrl, result.params);
+                }
+            } catch (error) {
+                showResult({ error: error.message });
+            }
+        }
+        
+        // 顯示結果
+        function showResult(data) {
+            document.getElementById('result').textContent = JSON.stringify(data, null, 2);
+        }
+        
+        // 設定付款表單
+        function setupPaymentForm(url, params) {
+            const form = document.getElementById('ecpayForm');
+            form.action = url;
+            
+            // 清除舊的 hidden inputs
+            form.querySelectorAll('input[type="hidden"]').forEach(el => el.remove());
+            
+            // 新增 hidden inputs
+            for (const [key, value] of Object.entries(params)) {
+                const input = document.createElement('input');
+                input.type = 'hidden';
+                input.name = key;
+                input.value = value;
+                form.appendChild(input);
+            }
+            
+            document.getElementById('paymentForm').classList.remove('hidden');
+        }
+        
+        // 頁面載入
+        document.addEventListener('DOMContentLoaded', loadEnvInfo);
+    </script>
+</body>
+</html>

@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>排行榜 - 北斗教育</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="js/components.css">
+  <style>
+    .tab-btn { transition: all 0.2s; }
+    .tab-btn.active { 
+      background: var(--primary); 
+      color: white; 
+    }
+    .rank-item { transition: all 0.3s; }
+    .rank-item:hover { transform: translateX(4px); }
+  </style>
+</head>
+<body class="bg-gray-100 min-h-screen">
+  <nav class="bg-white shadow-sm sticky top-0 z-50">
+    <div class="max-w-2xl mx-auto px-4 py-3 flex items-center justify-between">
+      <a href="dashboard.html" class="flex items-center gap-2 text-gray-600">
+        <span>←</span> 返回
+      </a>
+      <h1 class="font-bold text-lg">🏆 排行榜</h1>
+      <div></div>
+    </div>
+  </nav>
+
+  <main class="max-w-2xl mx-auto px-4 py-6">
+    <!-- 排行類型切換 -->
+    <div class="flex gap-2 mb-6 bg-white p-1 rounded-lg shadow-sm">
+      <button class="tab-btn flex-1 py-2 px-4 rounded-md font-medium active" data-type="mastery" onclick="switchTab('mastery')">
+        掌握度
+      </button>
+      <button class="tab-btn flex-1 py-2 px-4 rounded-md font-medium" data-type="questions" onclick="switchTab('questions')">
+        答題數
+      </button>
+      <button class="tab-btn flex-1 py-2 px-4 rounded-md font-medium" data-type="accuracy" onclick="switchTab('accuracy')">
+        正確率
+      </button>
+    </div>
+
+    <!-- 我的排名 -->
+    <div id="myRank" class="card mb-6 hidden">
+      <div class="flex items-center gap-4">
+        <div class="text-3xl font-bold text-indigo-600" id="myPosition">#-</div>
+        <div class="flex-1">
+          <div class="font-medium">我的排名</div>
+          <div class="text-sm text-gray-500" id="myStats">-</div>
+        </div>
+        <div class="text-2xl font-bold" id="myValue">-</div>
+      </div>
+    </div>
+
+    <!-- 排行列表 -->
+    <div class="card">
+      <div id="leaderboardList" class="space-y-3">
+        <div class="skeleton skeleton-text h-16"></div>
+        <div class="skeleton skeleton-text h-16"></div>
+        <div class="skeleton skeleton-text h-16"></div>
+        <div class="skeleton skeleton-text h-16"></div>
+        <div class="skeleton skeleton-text h-16"></div>
+      </div>
+    </div>
+  </main>
+
+  <script src="js/api.js"></script>
+  <script>
+    let currentType = 'mastery';
+    let currentUserId = BeidouAPI.getUserId();
+
+    document.addEventListener('DOMContentLoaded', () => {
+      // 登入檢查
+      const token = localStorage.getItem('beidou_token');
+      if (!token) { window.location.href = 'auth.html'; return; }
+      loadLeaderboard('mastery');
+    });
+
+    function switchTab(type) {
+      currentType = type;
+      document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.type === type);
+      });
+      loadLeaderboard(type);
+    }
+
+    async function loadLeaderboard(type) {
+      const list = document.getElementById('leaderboardList');
+      list.innerHTML = `
+        <div class="skeleton skeleton-text h-16"></div>
+        <div class="skeleton skeleton-text h-16"></div>
+        <div class="skeleton skeleton-text h-16"></div>
+      `;
+
+      try {
+        const res = await BeidouAPI.analytics.leaderboard(type, 50);
+        
+        if (res.success && res.data.leaderboard) {
+          renderLeaderboard(res.data.leaderboard, type);
+        }
+      } catch (error) {
+        console.error('Load leaderboard error:', error);
+        list.innerHTML = '<div class="text-center text-gray-400 py-8">載入失敗</div>';
+      }
+    }
+
+    function renderLeaderboard(data, type) {
+      const list = document.getElementById('leaderboardList');
+      const myRankEl = document.getElementById('myRank');
+
+      // 找到我的排名
+      const myIdx = data.findIndex(u => u.user_id === currentUserId);
+      if (myIdx >= 0) {
+        const me = data[myIdx];
+        myRankEl.classList.remove('hidden');
+        document.getElementById('myPosition').textContent = `#${me.rank}`;
+        document.getElementById('myStats').textContent = `${me.total_questions || 0} 題 | ${me.nodes_count || 0} 節點`;
+        document.getElementById('myValue').textContent = getValue(me, type);
+      }
+
+      // 渲染列表
+      list.innerHTML = data.map((user, idx) => {
+        const isMe = user.user_id === currentUserId;
+        const positionClass = idx === 0 ? 'gold' : idx === 1 ? 'silver' : idx === 2 ? 'bronze' : '';
+        
+        return `
+          <div class="rank-item ${isMe ? 'highlight' : ''}">
+            <div class="rank-position ${positionClass}">${user.rank}</div>
+            <div class="rank-info">
+              <div class="rank-name">${maskUserId(user.user_id)}${isMe ? ' (我)' : ''}</div>
+              <div class="rank-stats">${user.total_questions || 0} 題 · ${user.nodes_count || 0} 節點</div>
+            </div>
+            <div class="rank-value">${getValue(user, type)}</div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function getValue(user, type) {
+      switch (type) {
+        case 'mastery': return (user.avg_mastery || 0) + '%';
+        case 'questions': return user.total_questions || 0;
+        case 'accuracy': return (user.accuracy || 0) + '%';
+        default: return '-';
+      }
+    }
+
+    function maskUserId(id) {
+      if (!id) return '匿名';
+      if (id.includes('@')) {
+        const [name, domain] = id.split('@');
+        return name.slice(0, 2) + '***@' + domain;
+      }
+      return id.slice(0, 4) + '****';
+    }
+  </script>
+</body>
+</html>
