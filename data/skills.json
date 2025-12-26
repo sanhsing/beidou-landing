@@ -1,0 +1,402 @@
+[
+  {
+    "skill_id": 1,
+    "element": "文",
+    "skill_name": "筆誅"
+  },
+  {
+    "skill_id": 2,
+    "element": "文",
+    "skill_name": "墨攻"
+  },
+  {
+    "skill_id": 3,
+    "element": "文",
+    "skill_name": "文氣護盾"
+  },
+  {
+    "skill_id": 4,
+    "element": "文",
+    "skill_name": "引經據典"
+  },
+  {
+    "skill_id": 5,
+    "element": "語",
+    "skill_name": "Grammar Strike"
+  },
+  {
+    "skill_id": 6,
+    "element": "語",
+    "skill_name": "Vocab Burst"
+  },
+  {
+    "skill_id": 7,
+    "element": "語",
+    "skill_name": "Fluency Shield"
+  },
+  {
+    "skill_id": 8,
+    "element": "語",
+    "skill_name": "Native Speaker"
+  },
+  {
+    "skill_id": 9,
+    "element": "數",
+    "skill_name": "公式轟炸"
+  },
+  {
+    "skill_id": 10,
+    "element": "數",
+    "skill_name": "方程式封鎖"
+  },
+  {
+    "skill_id": 11,
+    "element": "數",
+    "skill_name": "運算加速"
+  },
+  {
+    "skill_id": 12,
+    "element": "數",
+    "skill_name": "數學直覺"
+  },
+  {
+    "skill_id": 13,
+    "element": "力",
+    "skill_name": "力學衝擊"
+  },
+  {
+    "skill_id": 14,
+    "element": "力",
+    "skill_name": "能量守恆"
+  },
+  {
+    "skill_id": 15,
+    "element": "力",
+    "skill_name": "動量轉移"
+  },
+  {
+    "skill_id": 16,
+    "element": "力",
+    "skill_name": "物理結界"
+  },
+  {
+    "skill_id": 17,
+    "element": "化",
+    "skill_name": "化學反應"
+  },
+  {
+    "skill_id": 18,
+    "element": "化",
+    "skill_name": "元素轉換"
+  },
+  {
+    "skill_id": 19,
+    "element": "化",
+    "skill_name": "濃度調節"
+  },
+  {
+    "skill_id": 20,
+    "element": "化",
+    "skill_name": "化合防護"
+  },
+  {
+    "skill_id": 21,
+    "element": "生",
+    "skill_name": "生命恢復"
+  },
+  {
+    "skill_id": 22,
+    "element": "生",
+    "skill_name": "演化適應"
+  },
+  {
+    "skill_id": 23,
+    "element": "生",
+    "skill_name": "基因強化"
+  },
+  {
+    "skill_id": 24,
+    "element": "生",
+    "skill_name": "生態平衡"
+  },
+  {
+    "skill_id": 25,
+    "element": "地",
+    "skill_name": "地動山搖"
+  },
+  {
+    "skill_id": 26,
+    "element": "地",
+    "skill_name": "岩石護盾"
+  },
+  {
+    "skill_id": 27,
+    "element": "地",
+    "skill_name": "氣象操控"
+  },
+  {
+    "skill_id": 28,
+    "element": "地",
+    "skill_name": "星際能量"
+  },
+  {
+    "skill_id": 29,
+    "element": "史",
+    "skill_name": "歷史洪流"
+  },
+  {
+    "skill_id": 30,
+    "element": "史",
+    "skill_name": "時空扭曲"
+  },
+  {
+    "skill_id": 31,
+    "element": "史",
+    "skill_name": "文明之力"
+  },
+  {
+    "skill_id": 32,
+    "element": "史",
+    "skill_name": "經驗傳承"
+  },
+  {
+    "skill_id": 33,
+    "element": "域",
+    "skill_name": "地形優勢"
+  },
+  {
+    "skill_id": 34,
+    "element": "域",
+    "skill_name": "區位分析"
+  },
+  {
+    "skill_id": 35,
+    "element": "域",
+    "skill_name": "全球視野"
+  },
+  {
+    "skill_id": 36,
+    "element": "域",
+    "skill_name": "空間掌控"
+  },
+  {
+    "skill_id": 37,
+    "element": "民",
+    "skill_name": "法律制裁"
+  },
+  {
+    "skill_id": 38,
+    "element": "民",
+    "skill_name": "經濟制裁"
+  },
+  {
+    "skill_id": 39,
+    "element": "民",
+    "skill_name": "民主之力"
+  },
+  {
+    "skill_id": 40,
+    "element": "民",
+    "skill_name": "社會正義"
+  },
+  {
+    "skill_id": 41,
+    "element": "數",
+    "skill_name": "公式轟炸"
+  },
+  {
+    "skill_id": 42,
+    "element": "數",
+    "skill_name": "方程式封鎖"
+  },
+  {
+    "skill_id": 43,
+    "element": "數",
+    "skill_name": "運算加速"
+  },
+  {
+    "skill_id": 44,
+    "element": "數",
+    "skill_name": "數學直覺"
+  },
+  {
+    "skill_id": 45,
+    "element": "力",
+    "skill_name": "力學衝擊"
+  },
+  {
+    "skill_id": 46,
+    "element": "力",
+    "skill_name": "能量守恆"
+  },
+  {
+    "skill_id": 47,
+    "element": "力",
+    "skill_name": "動量轉移"
+  },
+  {
+    "skill_id": 48,
+    "element": "力",
+    "skill_name": "物理結界"
+  },
+  {
+    "skill_id": 49,
+    "element": "化",
+    "skill_name": "化學反應"
+  },
+  {
+    "skill_id": 50,
+    "element": "化",
+    "skill_name": "元素轉換"
+  },
+  {
+    "skill_id": 51,
+    "element": "化",
+    "skill_name": "濃度調節"
+  },
+  {
+    "skill_id": 52,
+    "element": "化",
+    "skill_name": "化合防護"
+  },
+  {
+    "skill_id": 53,
+    "element": "生",
+    "skill_name": "生命恢復"
+  },
+  {
+    "skill_id": 54,
+    "element": "生",
+    "skill_name": "演化適應"
+  },
+  {
+    "skill_id": 55,
+    "element": "生",
+    "skill_name": "基因強化"
+  },
+  {
+    "skill_id": 56,
+    "element": "生",
+    "skill_name": "生態平衡"
+  },
+  {
+    "skill_id": 57,
+    "element": "地",
+    "skill_name": "地動山搖"
+  },
+  {
+    "skill_id": 58,
+    "element": "地",
+    "skill_name": "岩石護盾"
+  },
+  {
+    "skill_id": 59,
+    "element": "地",
+    "skill_name": "氣象操控"
+  },
+  {
+    "skill_id": 60,
+    "element": "地",
+    "skill_name": "星際能量"
+  },
+  {
+    "skill_id": 61,
+    "element": "文",
+    "skill_name": "筆誅"
+  },
+  {
+    "skill_id": 62,
+    "element": "文",
+    "skill_name": "墨攻"
+  },
+  {
+    "skill_id": 63,
+    "element": "文",
+    "skill_name": "文氣護盾"
+  },
+  {
+    "skill_id": 64,
+    "element": "文",
+    "skill_name": "引經據典"
+  },
+  {
+    "skill_id": 65,
+    "element": "語",
+    "skill_name": "Grammar Strike"
+  },
+  {
+    "skill_id": 66,
+    "element": "語",
+    "skill_name": "Vocab Burst"
+  },
+  {
+    "skill_id": 67,
+    "element": "語",
+    "skill_name": "Fluency Shield"
+  },
+  {
+    "skill_id": 68,
+    "element": "語",
+    "skill_name": "Native Speaker"
+  },
+  {
+    "skill_id": 69,
+    "element": "史",
+    "skill_name": "歷史洪流"
+  },
+  {
+    "skill_id": 70,
+    "element": "史",
+    "skill_name": "時空扭曲"
+  },
+  {
+    "skill_id": 71,
+    "element": "史",
+    "skill_name": "文明之力"
+  },
+  {
+    "skill_id": 72,
+    "element": "史",
+    "skill_name": "經驗傳承"
+  },
+  {
+    "skill_id": 73,
+    "element": "域",
+    "skill_name": "地形優勢"
+  },
+  {
+    "skill_id": 74,
+    "element": "域",
+    "skill_name": "區位分析"
+  },
+  {
+    "skill_id": 75,
+    "element": "域",
+    "skill_name": "全球視野"
+  },
+  {
+    "skill_id": 76,
+    "element": "域",
+    "skill_name": "空間掌控"
+  },
+  {
+    "skill_id": 77,
+    "element": "民",
+    "skill_name": "法律制裁"
+  },
+  {
+    "skill_id": 78,
+    "element": "民",
+    "skill_name": "經濟制裁"
+  },
+  {
+    "skill_id": 79,
+    "element": "民",
+    "skill_name": "民主之力"
+  },
+  {
+    "skill_id": 80,
+    "element": "民",
+    "skill_name": "社會正義"
+  }
+]

@@ -1,0 +1,1 @@
+[{"id": 1944, "subject": "組合數C", "question": "關於「組合數C」，下列何者正確？", "options": ["C(n,r)公式", "常見但不完全正確的理解", "與C(n,r)公式相似但條件不同的情況", "僅在特定條件下成立的說法"], "answer": 0, "explanation": "【組合數C】C(n,r)公式\n💡口訣：C(n,r) = n!/r!(n-r)! 無順序", "difficulty": 2}]

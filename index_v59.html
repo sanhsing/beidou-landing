@@ -1,0 +1,615 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>北斗教育 | 108課綱學測備考平台</title>
+    <meta name="description" content="結構化學習系統，1,536個XTF知識節點，7,981道精選題目。讓學測備考從題海變通關。">
+    <link rel="manifest" href="manifest.json">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌟</text></svg>">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&display=swap');
+        body { font-family: 'Noto Sans TC', sans-serif; }
+        .gradient-bg { background: linear-gradient(135deg, #0f172a 0%, #1e3a5f 50%, #0f172a 100%); }
+        .glow { box-shadow: 0 0 30px rgba(59, 130, 246, 0.5); }
+        .card-hover { transition: all 0.3s; }
+        .card-hover:hover { transform: translateY(-8px); box-shadow: 0 20px 40px rgba(0,0,0,0.3); }
+        .subject-card { transition: all 0.2s; }
+        .subject-card:hover { transform: scale(1.05); }
+        .stat-number { font-variant-numeric: tabular-nums; }
+        .float { animation: float 3s ease-in-out infinite; }
+        @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+        .fade-in { animation: fadeIn 0.6s ease-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
+</head>
+<body class="bg-slate-900 text-white">
+
+    <!-- ==================== 導航列 ==================== -->
+    <nav class="fixed top-0 left-0 right-0 z-50 bg-slate-900/95 backdrop-blur-md border-b border-white/10">
+        <div class="container mx-auto px-4">
+            <div class="flex items-center justify-between h-16">
+                <!-- Logo -->
+                <a href="index.html" class="flex items-center gap-2">
+                    <span class="text-2xl">🌟</span>
+                    <span class="font-bold text-xl">北斗教育</span>
+                </a>
+                
+                <!-- 主導航 (桌面) -->
+                <div class="hidden md:flex items-center gap-1">
+                    <!-- 科目下拉 -->
+                    <div class="relative group">
+                        <button class="px-4 py-2 text-gray-300 hover:text-white flex items-center gap-1">
+                            科目題庫
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                            </svg>
+                        </button>
+                        <div class="absolute top-full left-0 bg-slate-800 rounded-lg shadow-xl py-2 w-48 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all">
+                            <a href="quiz_ui_v2.html?subject=數學" class="block px-4 py-2 hover:bg-slate-700">📐 數學</a>
+                            <a href="quiz_ui_v2.html?subject=物理" class="block px-4 py-2 hover:bg-slate-700">⚡ 物理</a>
+                            <a href="quiz_ui_v2.html?subject=化學" class="block px-4 py-2 hover:bg-slate-700">🧪 化學</a>
+                            <a href="quiz_ui_v2.html?subject=英文" class="block px-4 py-2 hover:bg-slate-700">🔤 英文</a>
+                            <a href="quiz_ui_v2.html?subject=國文" class="block px-4 py-2 hover:bg-slate-700">📚 國文</a>
+                            <div class="border-t border-slate-600 my-1"></div>
+                            <a href="quiz_ui_v2.html" class="block px-4 py-2 hover:bg-slate-700 text-cyan-400">🧩 多元題型 →</a>
+                        </div>
+                    </div>
+                    
+                    <!-- 新增：AI課程 -->
+                    <a href="courses.html" class="px-4 py-2 text-gray-300 hover:text-white flex items-center gap-1">
+                        AI課程
+                        <span class="bg-amber-500 text-white text-xs px-1.5 py-0.5 rounded-full">HOT</span>
+                    </a>
+                    
+                    <a href="#features" class="px-4 py-2 text-gray-300 hover:text-white">功能特色</a>
+                    <a href="#pricing" class="px-4 py-2 text-gray-300 hover:text-white">訂閱方案</a>
+                    <a href="xtf_starmap.html" class="px-4 py-2 text-gray-300 hover:text-white">知識星圖</a>
+                </div>
+                
+                <!-- 登入/註冊 -->
+                <div class="flex items-center gap-3">
+                    <a href="auth.html" class="hidden sm:block text-gray-300 hover:text-white px-3 py-2">
+                        登入
+                    </a>
+                    <a href="auth.html?mode=register" class="bg-blue-600 hover:bg-blue-500 text-white font-medium px-4 py-2 rounded-full transition-all">
+                        免費註冊
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- ==================== Hero Section ==================== -->
+    <header class="gradient-bg relative overflow-hidden min-h-screen flex items-center pt-16">
+        <!-- 星星背景 -->
+        <div class="absolute inset-0 opacity-30" id="stars"></div>
+        
+        <div class="container mx-auto px-4 py-16 relative z-10">
+            <div class="max-w-5xl mx-auto">
+                <div class="grid md:grid-cols-2 gap-12 items-center">
+                    
+                    <!-- 左側文字 -->
+                    <div class="text-center md:text-left fade-in">
+                        <!-- 標籤 -->
+                        <div class="inline-flex items-center gap-2 bg-blue-500/20 text-blue-300 px-4 py-1 rounded-full text-sm mb-6">
+                            <span class="w-2 h-2 bg-blue-400 rounded-full animate-pulse"></span>
+                            108課綱 · 素養導向
+                        </div>
+                        
+                        <!-- 主標題 -->
+                        <h1 class="text-4xl md:text-5xl lg:text-6xl font-black mb-6 leading-tight">
+                            學測不是題海<br>
+                            <span class="text-blue-400">是系統化通關</span>
+                        </h1>
+                        
+                        <!-- 副標題 -->
+                        <p class="text-xl text-gray-300 mb-4">
+                            從「刷題量」到「通題理」
+                        </p>
+                        <p class="text-gray-400 mb-8">
+                            XTF 結構化學習法，讓每道題都有意義
+                        </p>
+                        
+                        <!-- CTA 按鈕 -->
+                        <div class="flex flex-col sm:flex-row gap-4 justify-center md:justify-start mb-6">
+                            <a href="quiz_ui.html?mode=trial" class="bg-blue-600 hover:bg-blue-500 text-white font-bold py-4 px-8 rounded-full text-lg transition-all glow inline-flex items-center justify-center gap-2">
+                                <span>免費開始體驗</span>
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/>
+                                </svg>
+                            </a>
+                            <a href="#how-it-works" class="border-2 border-white/30 hover:border-white/60 text-white font-medium py-4 px-8 rounded-full text-lg transition-all inline-flex items-center justify-center">
+                                了解更多
+                            </a>
+                        </div>
+                        
+                        <!-- 信任標記 -->
+                        <p class="text-gray-500 text-sm">
+                            ✓ 免費100題體驗 &nbsp; ✓ 不需綁卡 &nbsp; ✓ 隨時取消
+                        </p>
+                    </div>
+                    
+                    <!-- 右側數據卡片 -->
+                    <div class="grid grid-cols-2 gap-4 fade-in" style="animation-delay: 0.2s">
+                        <div class="bg-slate-800/50 backdrop-blur p-6 rounded-2xl border border-white/10 card-hover">
+                            <div class="text-4xl font-black text-blue-400 stat-number">7,981</div>
+                            <div class="text-gray-400 mt-1">精選題目</div>
+                            <div class="text-xs text-gray-500 mt-2">涵蓋10科學測範圍</div>
+                        </div>
+                        <div class="bg-slate-800/50 backdrop-blur p-6 rounded-2xl border border-white/10 card-hover">
+                            <div class="text-4xl font-black text-green-400 stat-number">1,536</div>
+                            <div class="text-gray-400 mt-1">知識節點</div>
+                            <div class="text-xs text-gray-500 mt-2">XTF結構化架構</div>
+                        </div>
+                        <div class="bg-slate-800/50 backdrop-blur p-6 rounded-2xl border border-white/10 card-hover">
+                            <div class="text-4xl font-black text-purple-400 stat-number">10</div>
+                            <div class="text-gray-400 mt-1">學科完整覆蓋</div>
+                            <div class="text-xs text-gray-500 mt-2">國英數自社全科</div>
+                        </div>
+                        <div class="bg-slate-800/50 backdrop-blur p-6 rounded-2xl border border-white/10 card-hover">
+                            <div class="text-4xl font-black text-yellow-400 stat-number">85%</div>
+                            <div class="text-gray-400 mt-1">平均正確率提升</div>
+                            <div class="text-xs text-gray-500 mt-2">30天使用後*</div>
+                        </div>
+                    </div>
+                    
+                </div>
+            </div>
+        </div>
+        
+        <!-- 向下箭頭 -->
+        <div class="absolute bottom-8 left-1/2 transform -translate-x-1/2 float">
+            <a href="#subjects" class="text-white/50 hover:text-white/80">
+                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"/>
+                </svg>
+            </a>
+        </div>
+    </header>
+
+    <!-- ==================== 科目選擇 ==================== -->
+    <section id="subjects" class="py-20 bg-slate-800">
+        <div class="container mx-auto px-4">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl md:text-4xl font-bold mb-4">選擇你要精進的科目</h2>
+                <p class="text-gray-400">10 科完整覆蓋，對應 108 課綱</p>
+            </div>
+            
+            <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4 max-w-4xl mx-auto">
+                <a href="quiz_ui.html?mode=trial&subject=數學" class="subject-card bg-slate-700 hover:bg-blue-600 p-6 rounded-xl text-center">
+                    <div class="text-4xl mb-2">📐</div>
+                    <div class="font-medium">數學</div>
+                    <div class="text-xs text-gray-400 mt-1">892 題</div>
+                </a>
+                <a href="quiz_ui.html?mode=trial&subject=物理" class="subject-card bg-slate-700 hover:bg-blue-600 p-6 rounded-xl text-center">
+                    <div class="text-4xl mb-2">⚡</div>
+                    <div class="font-medium">物理</div>
+                    <div class="text-xs text-gray-400 mt-1">756 題</div>
+                </a>
+                <a href="quiz_ui.html?mode=trial&subject=化學" class="subject-card bg-slate-700 hover:bg-blue-600 p-6 rounded-xl text-center">
+                    <div class="text-4xl mb-2">🧪</div>
+                    <div class="font-medium">化學</div>
+                    <div class="text-xs text-gray-400 mt-1">701 題</div>
+                </a>
+                <a href="quiz_ui.html?mode=trial&subject=生物" class="subject-card bg-slate-700 hover:bg-blue-600 p-6 rounded-xl text-center">
+                    <div class="text-4xl mb-2">🧬</div>
+                    <div class="font-medium">生物</div>
+                    <div class="text-xs text-gray-400 mt-1">645 題</div>
+                </a>
+                <a href="quiz_ui.html?mode=trial&subject=地科" class="subject-card bg-slate-700 hover:bg-blue-600 p-6 rounded-xl text-center">
+                    <div class="text-4xl mb-2">🌍</div>
+                    <div class="font-medium">地球科學</div>
+                    <div class="text-xs text-gray-400 mt-1">423 題</div>
+                </a>
+                <a href="quiz_ui.html?mode=trial&subject=國文" class="subject-card bg-slate-700 hover:bg-purple-600 p-6 rounded-xl text-center">
+                    <div class="text-4xl mb-2">📚</div>
+                    <div class="font-medium">國文</div>
+                    <div class="text-xs text-gray-400 mt-1">1,124 題</div>
+                </a>
+                <a href="quiz_ui.html?mode=trial&subject=英文" class="subject-card bg-slate-700 hover:bg-purple-600 p-6 rounded-xl text-center">
+                    <div class="text-4xl mb-2">🔤</div>
+                    <div class="font-medium">英文</div>
+                    <div class="text-xs text-gray-400 mt-1">1,089 題</div>
+                </a>
+                <a href="quiz_ui.html?mode=trial&subject=歷史" class="subject-card bg-slate-700 hover:bg-orange-600 p-6 rounded-xl text-center">
+                    <div class="text-4xl mb-2">📜</div>
+                    <div class="font-medium">歷史</div>
+                    <div class="text-xs text-gray-400 mt-1">687 題</div>
+                </a>
+                <a href="quiz_ui.html?mode=trial&subject=地理" class="subject-card bg-slate-700 hover:bg-orange-600 p-6 rounded-xl text-center">
+                    <div class="text-4xl mb-2">🗺️</div>
+                    <div class="font-medium">地理</div>
+                    <div class="text-xs text-gray-400 mt-1">598 題</div>
+                </a>
+                <a href="quiz_ui.html?mode=trial&subject=公民" class="subject-card bg-slate-700 hover:bg-orange-600 p-6 rounded-xl text-center">
+                    <div class="text-4xl mb-2">⚖️</div>
+                    <div class="font-medium">公民</div>
+                    <div class="text-xs text-gray-400 mt-1">466 題</div>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- ==================== 功能特色 ==================== -->
+    <section id="features" class="py-20 bg-slate-900">
+        <div class="container mx-auto px-4">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl md:text-4xl font-bold mb-4">為什麼選擇北斗教育？</h2>
+                <p class="text-gray-400 max-w-2xl mx-auto">
+                    不只是題庫，是完整的學習系統
+                </p>
+            </div>
+            
+            <div class="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+                <!-- 特色1 -->
+                <div class="bg-slate-800 p-8 rounded-2xl card-hover">
+                    <div class="w-14 h-14 bg-blue-500/20 rounded-xl flex items-center justify-center text-3xl mb-6">
+                        🎯
+                    </div>
+                    <h3 class="text-xl font-bold mb-3">XTF 結構化學習</h3>
+                    <p class="text-gray-400">
+                        消(理解) → 拓(記憶) → 融(應用)<br>
+                        每個知識點都有完整的學習路徑
+                    </p>
+                </div>
+                
+                <!-- 特色2 -->
+                <div class="bg-slate-800 p-8 rounded-2xl card-hover">
+                    <div class="w-14 h-14 bg-green-500/20 rounded-xl flex items-center justify-center text-3xl mb-6">
+                        📊
+                    </div>
+                    <h3 class="text-xl font-bold mb-3">智慧弱點分析</h3>
+                    <p class="text-gray-400">
+                        自動追蹤你的錯題與盲點<br>
+                        個人化推薦最需要加強的章節
+                    </p>
+                </div>
+                
+                <!-- 特色3 -->
+                <div class="bg-slate-800 p-8 rounded-2xl card-hover">
+                    <div class="w-14 h-14 bg-purple-500/20 rounded-xl flex items-center justify-center text-3xl mb-6">
+                        🎮
+                    </div>
+                    <h3 class="text-xl font-bold mb-3">遊戲化激勵</h3>
+                    <p class="text-gray-400">
+                        經驗值、等級、成就徽章<br>
+                        讓學習像打遊戲一樣有成就感
+                    </p>
+                </div>
+            </div>
+
+            <!-- 新增：多元題型 + AI課程 -->
+            <div class="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto mt-12">
+                <!-- 多元題型練習 -->
+                <a href="quiz_ui_v2.html" class="bg-gradient-to-br from-cyan-900 to-slate-800 p-8 rounded-2xl card-hover block group">
+                    <div class="flex items-center gap-4 mb-4">
+                        <div class="w-14 h-14 bg-cyan-500/20 rounded-xl flex items-center justify-center text-3xl">
+                            🧩
+                        </div>
+                        <div>
+                            <span class="bg-cyan-500 text-white text-xs px-2 py-1 rounded-full">NEW</span>
+                            <h3 class="text-xl font-bold">多元題型練習</h3>
+                        </div>
+                    </div>
+                    <p class="text-gray-300 mb-4">
+                        單選、多選、配對、排序、填空<br>
+                        <span class="text-cyan-400">15,000+ 題目</span> 全面訓練
+                    </p>
+                    <div class="text-cyan-400 group-hover:translate-x-2 transition-transform">
+                        立即體驗 →
+                    </div>
+                </a>
+
+                <!-- AI 認證課程 -->
+                <a href="courses.html" class="bg-gradient-to-br from-amber-900 to-slate-800 p-8 rounded-2xl card-hover block group">
+                    <div class="flex items-center gap-4 mb-4">
+                        <div class="w-14 h-14 bg-amber-500/20 rounded-xl flex items-center justify-center text-3xl">
+                            🎓
+                        </div>
+                        <div>
+                            <span class="bg-amber-500 text-white text-xs px-2 py-1 rounded-full">HOT</span>
+                            <h3 class="text-xl font-bold">AI 認證課程</h3>
+                        </div>
+                    </div>
+                    <p class="text-gray-300 mb-4">
+                        Google AI / AWS / Azure / iPAS<br>
+                        <span class="text-amber-400">完整備考</span> + 模擬測驗
+                    </p>
+                    <div class="text-amber-400 group-hover:translate-x-2 transition-transform">
+                        瀏覽課程 →
+                    </div>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- ==================== 用戶分流 ==================== -->
+    <section id="how-it-works" class="py-20 bg-slate-800">
+        <div class="container mx-auto px-4">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl md:text-4xl font-bold mb-4">你是誰？</h2>
+                <p class="text-gray-400">選擇最符合你的身份，開始專屬學習旅程</p>
+            </div>
+            
+            <div class="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+                <!-- 學生 -->
+                <div class="bg-gradient-to-br from-blue-900 to-slate-800 p-8 rounded-2xl text-center card-hover">
+                    <div class="text-6xl mb-4">👨‍🎓</div>
+                    <h3 class="text-2xl font-bold mb-3">我是學生</h3>
+                    <p class="text-gray-300 mb-6">
+                        備戰學測，想要系統化複習、找出弱點、提升成績
+                    </p>
+                    <a href="auth.html?mode=register&role=student" class="inline-block bg-blue-600 hover:bg-blue-500 text-white font-medium py-3 px-6 rounded-full transition-all">
+                        學生註冊
+                    </a>
+                </div>
+                
+                <!-- 家長 -->
+                <div class="bg-gradient-to-br from-purple-900 to-slate-800 p-8 rounded-2xl text-center card-hover">
+                    <div class="text-6xl mb-4">👨‍👩‍👧</div>
+                    <h3 class="text-2xl font-bold mb-3">我是家長</h3>
+                    <p class="text-gray-300 mb-6">
+                        想了解孩子學習進度，幫助孩子選擇適合的學習資源
+                    </p>
+                    <a href="auth.html?mode=register&role=parent" class="inline-block bg-purple-600 hover:bg-purple-500 text-white font-medium py-3 px-6 rounded-full transition-all">
+                        家長註冊
+                    </a>
+                </div>
+                
+                <!-- 老師 -->
+                <div class="bg-gradient-to-br from-orange-900 to-slate-800 p-8 rounded-2xl text-center card-hover">
+                    <div class="text-6xl mb-4">👨‍🏫</div>
+                    <h3 class="text-2xl font-bold mb-3">我是老師</h3>
+                    <p class="text-gray-300 mb-6">
+                        想要班級管理工具，追蹤學生進度、指派作業
+                    </p>
+                    <a href="auth.html?mode=register&role=teacher" class="inline-block bg-orange-600 hover:bg-orange-500 text-white font-medium py-3 px-6 rounded-full transition-all">
+                        教師註冊
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ==================== 定價方案 ==================== -->
+    <section id="pricing" class="py-20 bg-slate-900">
+        <div class="container mx-auto px-4">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl md:text-4xl font-bold mb-4">選擇你的方案</h2>
+                <p class="text-gray-400">低於市場價格，功能更完整</p>
+            </div>
+            
+            <div class="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+                <!-- 免費版 -->
+                <div class="bg-slate-800 p-8 rounded-2xl">
+                    <h3 class="text-xl font-bold mb-2">免費版</h3>
+                    <div class="text-4xl font-black mb-6">
+                        $0 <span class="text-lg text-gray-400 font-normal">/永久</span>
+                    </div>
+                    <ul class="space-y-3 mb-8 text-gray-300">
+                        <li class="flex items-center gap-2">
+                            <span class="text-green-400">✓</span> 100 題體驗
+                        </li>
+                        <li class="flex items-center gap-2">
+                            <span class="text-green-400">✓</span> 3 個 XTF 節點
+                        </li>
+                        <li class="flex items-center gap-2">
+                            <span class="text-green-400">✓</span> 基礎進度追蹤
+                        </li>
+                    </ul>
+                    <a href="quiz_ui.html?mode=trial" class="block text-center py-3 px-6 border-2 border-gray-600 hover:border-white rounded-full transition-all">
+                        免費開始
+                    </a>
+                </div>
+                
+                <!-- 標準版 -->
+                <div class="bg-gradient-to-br from-blue-900 to-slate-800 p-8 rounded-2xl relative">
+                    <div class="absolute -top-4 left-1/2 transform -translate-x-1/2 bg-blue-600 text-white text-sm font-bold py-1 px-4 rounded-full">
+                        🚀 最受歡迎
+                    </div>
+                    <h3 class="text-xl font-bold mb-2">標準版</h3>
+                    <div class="text-4xl font-black mb-2">
+                        $99 <span class="text-lg text-gray-400 font-normal">/月</span>
+                    </div>
+                    <p class="text-sm text-blue-300 mb-6">年繳 $990（省2個月）</p>
+                    <ul class="space-y-3 mb-8">
+                        <li class="flex items-center gap-2">
+                            <span class="text-green-400">✓</span> <strong>7,981 題完整解鎖</strong>
+                        </li>
+                        <li class="flex items-center gap-2">
+                            <span class="text-green-400">✓</span> <strong>1,536 XTF 節點</strong>
+                        </li>
+                        <li class="flex items-center gap-2">
+                            <span class="text-green-400">✓</span> 個人化錯題本
+                        </li>
+                        <li class="flex items-center gap-2">
+                            <span class="text-green-400">✓</span> 詳細進度報告
+                        </li>
+                    </ul>
+                    <a href="auth.html?plan=standard" class="block text-center py-3 px-6 bg-blue-600 hover:bg-blue-500 rounded-full font-bold transition-all">
+                        立即訂閱
+                    </a>
+                </div>
+                
+                <!-- 進階版 -->
+                <div class="bg-slate-800 p-8 rounded-2xl">
+                    <h3 class="text-xl font-bold mb-2">進階版</h3>
+                    <div class="text-4xl font-black mb-2">
+                        $199 <span class="text-lg text-gray-400 font-normal">/月</span>
+                    </div>
+                    <p class="text-sm text-gray-400 mb-6">年繳 $1,990（省2個月）</p>
+                    <ul class="space-y-3 mb-8 text-gray-300">
+                        <li class="flex items-center gap-2">
+                            <span class="text-green-400">✓</span> 標準版全部功能
+                        </li>
+                        <li class="flex items-center gap-2">
+                            <span class="text-green-400">✓</span> AI 學習助教
+                        </li>
+                        <li class="flex items-center gap-2">
+                            <span class="text-green-400">✓</span> 模擬考排名
+                        </li>
+                        <li class="flex items-center gap-2">
+                            <span class="text-green-400">✓</span> 家長報告
+                        </li>
+                    </ul>
+                    <a href="auth.html?plan=pro" class="block text-center py-3 px-6 border-2 border-gray-600 hover:border-white rounded-full transition-all">
+                        升級進階
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ==================== 社會證明 ==================== -->
+    <section class="py-20 bg-slate-800">
+        <div class="container mx-auto px-4">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl md:text-4xl font-bold mb-4">學生怎麼說</h2>
+            </div>
+            
+            <div class="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+                <div class="bg-slate-700 p-6 rounded-2xl">
+                    <div class="flex items-center gap-1 text-yellow-400 mb-4">★★★★★</div>
+                    <p class="text-gray-300 mb-4">
+                        「XTF方法讓我終於搞懂數學的邏輯，不再是死背公式！」
+                    </p>
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 bg-blue-500 rounded-full flex items-center justify-center">陳</div>
+                        <div>
+                            <div class="font-medium">陳同學</div>
+                            <div class="text-sm text-gray-400">建中高三</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="bg-slate-700 p-6 rounded-2xl">
+                    <div class="flex items-center gap-1 text-yellow-400 mb-4">★★★★★</div>
+                    <p class="text-gray-300 mb-4">
+                        「錯題本功能超實用，複習效率提升好多！」
+                    </p>
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 bg-purple-500 rounded-full flex items-center justify-center">林</div>
+                        <div>
+                            <div class="font-medium">林同學</div>
+                            <div class="text-sm text-gray-400">北一女高二</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="bg-slate-700 p-6 rounded-2xl">
+                    <div class="flex items-center gap-1 text-yellow-400 mb-4">★★★★★</div>
+                    <p class="text-gray-300 mb-4">
+                        「介面很直覺，每天通勤時都會刷幾題。」
+                    </p>
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 bg-green-500 rounded-full flex items-center justify-center">王</div>
+                        <div>
+                            <div class="font-medium">王同學</div>
+                            <div class="text-sm text-gray-400">師大附中高三</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ==================== 最終 CTA ==================== -->
+    <section class="py-20 gradient-bg">
+        <div class="container mx-auto px-4 text-center">
+            <h2 class="text-3xl md:text-4xl font-bold mb-6">
+                準備好開始了嗎？
+            </h2>
+            <p class="text-gray-300 mb-8 max-w-2xl mx-auto">
+                加入北斗教育，讓學測備考變得更有系統、更有效率
+            </p>
+            <a href="quiz_ui.html?mode=trial" class="inline-block bg-white text-slate-900 font-bold py-4 px-12 rounded-full text-xl hover:bg-gray-100 transition-all">
+                免費開始體驗
+            </a>
+            <p class="text-gray-500 text-sm mt-6">
+                ✓ 免費100題 &nbsp; ✓ 不需信用卡 &nbsp; ✓ 30秒完成註冊
+            </p>
+        </div>
+    </section>
+
+    <!-- ==================== Footer ==================== -->
+    <footer class="bg-slate-900 border-t border-white/10 py-12">
+        <div class="container mx-auto px-4">
+            <div class="grid md:grid-cols-4 gap-8 mb-8">
+                <!-- 品牌 -->
+                <div>
+                    <div class="flex items-center gap-2 mb-4">
+                        <span class="text-2xl">🌟</span>
+                        <span class="font-bold text-xl">北斗教育</span>
+                    </div>
+                    <p class="text-gray-400 text-sm">
+                        結構化學習，讓學測備考更有系統
+                    </p>
+                </div>
+                
+                <!-- 產品 -->
+                <div>
+                    <h4 class="font-bold mb-4">產品</h4>
+                    <ul class="space-y-2 text-gray-400 text-sm">
+                        <li><a href="quiz_ui.html" class="hover:text-white">題庫練習</a></li>
+                        <li><a href="xtf_starmap.html" class="hover:text-white">知識星圖</a></li>
+                        <li><a href="xtf_flashcard.html" class="hover:text-white">XTF 閃卡</a></li>
+                        <li><a href="leaderboard.html" class="hover:text-white">排行榜</a></li>
+                    </ul>
+                </div>
+                
+                <!-- 支援 -->
+                <div>
+                    <h4 class="font-bold mb-4">支援</h4>
+                    <ul class="space-y-2 text-gray-400 text-sm">
+                        <li><a href="contact.html" class="hover:text-white">聯絡我們</a></li>
+                        <li><a href="terms.html" class="hover:text-white">使用條款</a></li>
+                        <li><a href="privacy.html" class="hover:text-white">隱私政策</a></li>
+                        <li><a href="refund.html" class="hover:text-white">退款政策</a></li>
+                    </ul>
+                </div>
+                
+                <!-- 社群 -->
+                <div>
+                    <h4 class="font-bold mb-4">關注我們</h4>
+                    <div class="flex gap-4">
+                        <a href="https://www.facebook.com/" target="_blank" class="w-10 h-10 bg-slate-800 hover:bg-blue-600 rounded-full flex items-center justify-center transition-all">
+                            <span>📘</span>
+                        </a>
+                        <a href="https://www.instagram.com/" target="_blank" class="w-10 h-10 bg-slate-800 hover:bg-pink-600 rounded-full flex items-center justify-center transition-all">
+                            <span>📷</span>
+                        </a>
+                        <a href="https://line.me/" target="_blank" class="w-10 h-10 bg-slate-800 hover:bg-green-600 rounded-full flex items-center justify-center transition-all">
+                            <span>💬</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="border-t border-white/10 pt-8 text-center text-gray-500 text-sm">
+                © 2025 北斗七星文創數位有限公司. All rights reserved.
+            </div>
+        </div>
+    </footer>
+
+    <!-- 星星動畫腳本 -->
+    <script>
+        // 生成星星背景
+        const starsContainer = document.getElementById('stars');
+        if (starsContainer) {
+            for (let i = 0; i < 100; i++) {
+                const star = document.createElement('div');
+                star.className = 'absolute rounded-full bg-white';
+                star.style.width = Math.random() * 3 + 'px';
+                star.style.height = star.style.width;
+                star.style.left = Math.random() * 100 + '%';
+                star.style.top = Math.random() * 100 + '%';
+                star.style.opacity = Math.random() * 0.8;
+                starsContainer.appendChild(star);
+            }
+        }
+    </script>
+
+</body>
+</html>

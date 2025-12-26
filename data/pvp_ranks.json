@@ -1,0 +1,58 @@
+[
+  {
+    "rank_tier": "bronze",
+    "display_name": "青銅",
+    "icon": "🥉",
+    "min_rating": 0,
+    "max_rating": 1199,
+    "color": "#CD7F32"
+  },
+  {
+    "rank_tier": "silver",
+    "display_name": "白銀",
+    "icon": "🥈",
+    "min_rating": 1200,
+    "max_rating": 1399,
+    "color": "#C0C0C0"
+  },
+  {
+    "rank_tier": "gold",
+    "display_name": "黃金",
+    "icon": "🥇",
+    "min_rating": 1400,
+    "max_rating": 1599,
+    "color": "#FFD700"
+  },
+  {
+    "rank_tier": "platinum",
+    "display_name": "鉑金",
+    "icon": "💎",
+    "min_rating": 1600,
+    "max_rating": 1799,
+    "color": "#E5E4E2"
+  },
+  {
+    "rank_tier": "diamond",
+    "display_name": "鑽石",
+    "icon": "💠",
+    "min_rating": 1800,
+    "max_rating": 1999,
+    "color": "#B9F2FF"
+  },
+  {
+    "rank_tier": "master",
+    "display_name": "宗師",
+    "icon": "🏆",
+    "min_rating": 2000,
+    "max_rating": 2199,
+    "color": "#9B59B6"
+  },
+  {
+    "rank_tier": "grandmaster",
+    "display_name": "王者",
+    "icon": "👑",
+    "min_rating": 2200,
+    "max_rating": 9999,
+    "color": "#FF6B6B"
+  }
+]

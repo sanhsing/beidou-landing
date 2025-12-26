@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>每日任務 - 北斗教育</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <style>
+    body { background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); min-height: 100vh; }
+    .card { background: rgba(255,255,255,0.1); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.2); }
+    .day-box { transition: all 0.3s; }
+    .day-box.active { border-color: #F59E0B; box-shadow: 0 0 20px rgba(245,158,11,0.3); }
+    .day-box.claimed { background: rgba(16,185,129,0.2); border-color: #10B981; }
+    .mission-card { transition: all 0.2s; }
+    .mission-card:hover { transform: translateX(5px); }
+    .checkin-btn { transition: all 0.3s; }
+    .checkin-btn:not(:disabled):hover { transform: scale(1.05); }
+    .checkin-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+    .confetti { position: fixed; pointer-events: none; }
+  </style>
+</head>
+<body class="text-white p-4">
+  <div class="container mx-auto max-w-2xl">
+    <!-- 頭部 -->
+    <div class="flex items-center justify-between mb-6">
+      <a href="index.html" class="text-gray-400 hover:text-white">← 返回</a>
+      <h1 class="text-2xl font-bold">📅 每日任務</h1>
+      <a href="profile.html" class="text-gray-400 hover:text-white">👤</a>
+    </div>
+
+    <!-- 連續簽到 -->
+    <div class="card rounded-2xl p-6 mb-6">
+      <div class="flex justify-between items-center mb-4">
+        <h2 class="text-lg font-bold">🔥 連續簽到</h2>
+        <span class="text-orange-400 font-bold">第 <span id="streakDay">0</span> 天</span>
+      </div>
+      
+      <!-- 7天簽到格 -->
+      <div class="grid grid-cols-7 gap-2 mb-6" id="dayGrid">
+        <!-- 動態生成 -->
+      </div>
+
+      <!-- 簽到按鈕 -->
+      <button id="checkinBtn" onclick="doCheckin()" 
+              class="checkin-btn w-full bg-gradient-to-r from-orange-500 to-amber-500 py-4 rounded-xl font-bold text-lg">
+        ✨ 立即簽到
+      </button>
+    </div>
+
+    <!-- 今日挑戰 -->
+    <div class="card rounded-2xl p-6 mb-6">
+      <div class="flex justify-between items-center mb-4">
+        <h2 class="text-lg font-bold">⚡ 今日挑戰</h2>
+        <span class="text-sm text-gray-400" id="challengeDate">2025-12-26</span>
+      </div>
+      <p class="text-gray-400 mb-4">完成今日 5 題挑戰，獲得額外獎勵！</p>
+      <button onclick="startChallenge()" class="w-full bg-gradient-to-r from-purple-600 to-indigo-600 py-3 rounded-xl font-bold">
+        開始挑戰 →
+      </button>
+    </div>
+
+    <!-- 每日任務列表 -->
+    <div class="card rounded-2xl p-6">
+      <h2 class="text-lg font-bold mb-4">📋 每日任務</h2>
+      <div id="missionList" class="space-y-3">
+        <!-- 動態生成 -->
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const API_BASE = 'https://beidou-edu-server-1.onrender.com';
+    const PLAYER_ID = localStorage.getItem('player_id') || 1;
+
+    const defaultRewards = [
+      { day: 1, coins: 50, icon: '💰' },
+      { day: 2, coins: 80, icon: '💰' },
+      { day: 3, coins: 100, diamonds: 5, icon: '💎' },
+      { day: 4, coins: 120, icon: '💰' },
+      { day: 5, coins: 150, icon: '💰' },
+      { day: 6, coins: 200, diamonds: 10, icon: '💎' },
+      { day: 7, coins: 300, diamonds: 20, icon: '🎁' }
+    ];
+
+    let canCheckIn = true;
+    let currentStreak = 0;
+
+    async function loadDailyStatus() {
+      try {
+        const res = await fetch(`${API_BASE}/api/daily/status?player_id=${PLAYER_ID}`);
+        const data = await res.json();
+        
+        if (data.success) {
+          canCheckIn = data.data.can_check_in;
+          currentStreak = data.data.streak || 0;
+          document.getElementById('streakDay').textContent = currentStreak;
+          
+          renderDayGrid(currentStreak, !canCheckIn);
+          updateCheckinButton();
+        }
+      } catch (err) {
+        console.error('載入狀態失敗:', err);
+        renderDayGrid(0, false);
+      }
+
+      // 載入任務
+      loadMissions();
+    }
+
+    function renderDayGrid(streak, todayClaimed) {
+      const container = document.getElementById('dayGrid');
+      const currentDay = ((streak - 1) % 7) + 1;
+      
+      container.innerHTML = defaultRewards.map((r, i) => {
+        const dayNum = i + 1;
+        const isClaimed = dayNum < currentDay || (dayNum === currentDay && todayClaimed);
+        const isActive = dayNum === currentDay && !todayClaimed;
+        
+        return `
+          <div class="day-box border-2 ${isClaimed ? 'claimed border-green-500' : isActive ? 'active border-yellow-500' : 'border-gray-600'} rounded-xl p-2 text-center">
+            <div class="text-xs text-gray-400">Day ${dayNum}</div>
+            <div class="text-xl my-1">${isClaimed ? '✅' : r.icon}</div>
+            <div class="text-xs">${r.coins}💰</div>
+            ${r.diamonds ? `<div class="text-xs">${r.diamonds}💎</div>` : ''}
+          </div>
+        `;
+      }).join('');
+    }
+
+    function updateCheckinButton() {
+      const btn = document.getElementById('checkinBtn');
+      if (canCheckIn) {
+        btn.disabled = false;
+        btn.textContent = '✨ 立即簽到';
+        btn.className = 'checkin-btn w-full bg-gradient-to-r from-orange-500 to-amber-500 py-4 rounded-xl font-bold text-lg';
+      } else {
+        btn.disabled = true;
+        btn.textContent = '✅ 今日已簽到';
+        btn.className = 'checkin-btn w-full bg-gray-600 py-4 rounded-xl font-bold text-lg';
+      }
+    }
+
+    async function doCheckin() {
+      if (!canCheckIn) return;
+      
+      const btn = document.getElementById('checkinBtn');
+      btn.disabled = true;
+      btn.textContent = '簽到中...';
+      
+      try {
+        const res = await fetch(`${API_BASE}/api/daily/checkin`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ player_id: PLAYER_ID })
+        });
+        const data = await res.json();
+        
+        if (data.success) {
+          canCheckIn = false;
+          currentStreak = data.data.streak;
+          document.getElementById('streakDay').textContent = currentStreak;
+          
+          // 動畫效果
+          showRewardPopup(data.data.reward);
+          renderDayGrid(currentStreak, true);
+          updateCheckinButton();
+        } else {
+          alert(data.error || '簽到失敗');
+          btn.disabled = false;
+          btn.textContent = '✨ 立即簽到';
+        }
+      } catch (err) {
+        console.error('簽到失敗:', err);
+        alert('網路錯誤，請稍後再試');
+        btn.disabled = false;
+        btn.textContent = '✨ 立即簽到';
+      }
+    }
+
+    function showRewardPopup(reward) {
+      const popup = document.createElement('div');
+      popup.className = 'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50';
+      popup.innerHTML = `
+        <div class="card rounded-2xl p-8 text-center max-w-sm mx-4 transform scale-0 transition-transform" id="rewardCard">
+          <div class="text-6xl mb-4">🎉</div>
+          <h3 class="text-2xl font-bold mb-4">簽到成功！</h3>
+          <div class="text-lg mb-2">獲得獎勵：</div>
+          <div class="text-3xl font-bold text-yellow-400 mb-4">
+            ${reward?.coins || 50} 💰
+            ${reward?.diamonds ? `+ ${reward.diamonds} 💎` : ''}
+          </div>
+          <button onclick="this.parentElement.parentElement.remove()" 
+                  class="bg-indigo-600 px-8 py-2 rounded-lg font-bold">確定</button>
+        </div>
+      `;
+      document.body.appendChild(popup);
+      setTimeout(() => {
+        document.getElementById('rewardCard').style.transform = 'scale(1)';
+      }, 100);
+    }
+
+    async function loadMissions() {
+      const defaultMissions = [
+        { name: '答題達人', desc: '完成 10 題練習', progress: 0, target: 10, reward: '50💰' },
+        { name: '戰鬥訓練', desc: '進行 3 場戰鬥', progress: 0, target: 3, reward: '30💰' },
+        { name: '全對挑戰', desc: '連續答對 5 題', progress: 0, target: 5, reward: '20💰' },
+        { name: '學習時光', desc: '累計學習 30 分鐘', progress: 0, target: 30, reward: '40💰' }
+      ];
+
+      try {
+        const res = await fetch(`${API_BASE}/api/daily/missions?player_id=${PLAYER_ID}`);
+        const data = await res.json();
+        renderMissions(data.success ? data.data : defaultMissions);
+      } catch (err) {
+        renderMissions(defaultMissions);
+      }
+    }
+
+    function renderMissions(missions) {
+      const container = document.getElementById('missionList');
+      container.innerHTML = missions.map(m => {
+        const pct = Math.min(100, ((m.progress || 0) / (m.target || 1)) * 100);
+        const completed = pct >= 100;
+        
+        return `
+          <div class="mission-card bg-black bg-opacity-30 rounded-xl p-4 flex items-center gap-4">
+            <div class="text-3xl">${completed ? '✅' : '📌'}</div>
+            <div class="flex-1">
+              <div class="font-bold">${m.name}</div>
+              <div class="text-sm text-gray-400">${m.desc || m.description}</div>
+              <div class="mt-2 bg-gray-700 rounded-full h-2 overflow-hidden">
+                <div class="bg-gradient-to-r from-indigo-500 to-purple-500 h-full" style="width: ${pct}%"></div>
+              </div>
+              <div class="text-xs text-gray-400 mt-1">${m.progress || 0} / ${m.target}</div>
+            </div>
+            <div class="text-right">
+              <div class="text-sm text-yellow-400">${m.reward || m.reward_coins + '💰'}</div>
+              ${completed ? '<button class="mt-1 bg-green-600 px-3 py-1 rounded text-xs">領取</button>' : ''}
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function startChallenge() {
+      window.location.href = 'battle.html?mode=daily';
+    }
+
+    // 初始化
+    document.getElementById('challengeDate').textContent = new Date().toISOString().split('T')[0];
+    loadDailyStatus();
+  </script>
+</body>
+</html>

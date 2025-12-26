@@ -1,0 +1,122 @@
+[
+  {
+    "bot_id": 9001,
+    "name": "小明",
+    "avatar": "🤖",
+    "rating": 1000,
+    "difficulty": "easy",
+    "accuracy": 0.5,
+    "speed_min": 3000,
+    "speed_max": 8000,
+    "personality": "新手練習夥伴",
+    "active": 1
+  },
+  {
+    "bot_id": 9002,
+    "name": "學霸阿華",
+    "avatar": "🎓",
+    "rating": 1300,
+    "difficulty": "normal",
+    "accuracy": 0.65,
+    "speed_min": 2500,
+    "speed_max": 6000,
+    "personality": "穩健型選手",
+    "active": 1
+  },
+  {
+    "bot_id": 9003,
+    "name": "數學小天才",
+    "avatar": "🔢",
+    "rating": 1500,
+    "difficulty": "normal",
+    "accuracy": 0.7,
+    "speed_min": 2000,
+    "speed_max": 5000,
+    "personality": "數學特化",
+    "active": 1
+  },
+  {
+    "bot_id": 9004,
+    "name": "物理達人",
+    "avatar": "⚡",
+    "rating": 1500,
+    "difficulty": "normal",
+    "accuracy": 0.7,
+    "speed_min": 2000,
+    "speed_max": 5000,
+    "personality": "物理特化",
+    "active": 1
+  },
+  {
+    "bot_id": 9005,
+    "name": "化學博士",
+    "avatar": "🧪",
+    "rating": 1500,
+    "difficulty": "normal",
+    "accuracy": 0.7,
+    "speed_min": 2000,
+    "speed_max": 5000,
+    "personality": "化學特化",
+    "active": 1
+  },
+  {
+    "bot_id": 9006,
+    "name": "全科王",
+    "avatar": "👑",
+    "rating": 1700,
+    "difficulty": "hard",
+    "accuracy": 0.8,
+    "speed_min": 1500,
+    "speed_max": 4000,
+    "personality": "均衡型高手",
+    "active": 1
+  },
+  {
+    "bot_id": 9007,
+    "name": "閃電手",
+    "avatar": "⚡",
+    "rating": 1600,
+    "difficulty": "hard",
+    "accuracy": 0.75,
+    "speed_min": 1000,
+    "speed_max": 2500,
+    "personality": "速度型選手",
+    "active": 1
+  },
+  {
+    "bot_id": 9008,
+    "name": "穩如泰山",
+    "avatar": "🏔️",
+    "rating": 1650,
+    "difficulty": "hard",
+    "accuracy": 0.85,
+    "speed_min": 3000,
+    "speed_max": 6000,
+    "personality": "高正確率",
+    "active": 1
+  },
+  {
+    "bot_id": 9009,
+    "name": "學測模擬器",
+    "avatar": "📚",
+    "rating": 1900,
+    "difficulty": "expert",
+    "accuracy": 0.88,
+    "speed_min": 1500,
+    "speed_max": 3500,
+    "personality": "接近真人水平",
+    "active": 1
+  },
+  {
+    "bot_id": 9010,
+    "name": "北斗AI",
+    "avatar": "⭐",
+    "rating": 2100,
+    "difficulty": "expert",
+    "accuracy": 0.92,
+    "speed_min": 1000,
+    "speed_max": 2500,
+    "personality": "終極挑戰",
+    "active": 1
+  }
+]

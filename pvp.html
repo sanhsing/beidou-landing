@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>北斗教育 - PvP 對戰</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <style>
+        .gradient-bg { background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%); }
+        .pulse { animation: pulse 2s infinite; }
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+        .score-pop { animation: pop 0.5s ease; }
+        @keyframes pop { 0% { transform: scale(1); } 50% { transform: scale(1.2); } 100% { transform: scale(1); } }
+    </style>
+</head>
+<body class="gradient-bg min-h-screen text-white">
+    <header class="py-4 px-6 flex justify-between items-center border-b border-gray-700">
+        <a href="index.html" class="flex items-center space-x-2">
+            <span class="text-2xl">⭐</span>
+            <span class="font-bold">北斗教育</span>
+        </a>
+        <div id="timer" class="text-2xl font-bold text-yellow-400">03:00</div>
+    </header>
+
+    <main class="max-w-4xl mx-auto px-6 py-8">
+        <!-- Score Board -->
+        <div class="grid grid-cols-3 gap-4 mb-8">
+            <div class="bg-blue-900 bg-opacity-50 rounded-xl p-4 text-center">
+                <div class="text-sm text-gray-400">你</div>
+                <div id="my-score" class="text-4xl font-bold text-blue-400">0</div>
+            </div>
+            <div class="flex items-center justify-center">
+                <span class="text-3xl">⚔️</span>
+            </div>
+            <div class="bg-red-900 bg-opacity-50 rounded-xl p-4 text-center">
+                <div class="text-sm text-gray-400">對手</div>
+                <div id="opponent-score" class="text-4xl font-bold text-red-400">0</div>
+            </div>
+        </div>
+
+        <!-- Question -->
+        <div class="bg-gray-800 bg-opacity-50 rounded-2xl p-6 mb-6">
+            <div class="flex justify-between items-center mb-4">
+                <span id="q-number" class="text-gray-400">題目 1/10</span>
+                <span id="q-subject" class="text-blue-400"></span>
+            </div>
+            <div id="question-text" class="text-xl leading-relaxed mb-6">等待對戰開始...</div>
+            <div id="options-container" class="grid grid-cols-2 gap-4">
+                <!-- 動態選項 -->
+            </div>
+        </div>
+
+        <!-- Status -->
+        <div id="status" class="text-center text-gray-400">
+            <span class="pulse">🔍 搜尋對手中...</span>
+        </div>
+    </main>
+
+    <!-- Result Modal -->
+    <div id="result-modal" class="fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center hidden z-50">
+        <div class="bg-gray-800 rounded-2xl p-8 text-center max-w-md">
+            <div id="result-icon" class="text-6xl mb-4">🏆</div>
+            <h2 id="result-title" class="text-3xl font-bold mb-2">勝利！</h2>
+            <p id="result-message" class="text-gray-400 mb-4"></p>
+            <div id="rating-change" class="text-2xl font-bold mb-6"></div>
+            <div class="flex justify-center space-x-4">
+                <button onclick="startMatch()" class="bg-blue-600 hover:bg-blue-700 px-6 py-3 rounded-full font-bold">
+                    再來一場
+                </button>
+                <a href="index.html" class="bg-gray-600 hover:bg-gray-500 px-6 py-3 rounded-full font-bold">
+                    返回
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let questions = [];
+        let currentIndex = 0;
+        let myScore = 0;
+        let opponentScore = 0;
+        let timeLeft = 180;
+        let timer = null;
+        let answered = false;
+
+        // 模擬對手名稱
+        const botNames = ['學霸小明', '數學女神', '物理達人', '化學博士', '生物狂人'];
+
+        async function init() {
+            // 載入題目
+            const subjects = ['數學', '物理', '化學'];
+            for (const subj of subjects) {
+                try {
+                    const res = await fetch(`data/qbank_${subj}.json`);
+                    const data = await res.json();
+                    questions = questions.concat(data.slice(0, 20));
+                } catch {}
+            }
+            questions = questions.sort(() => Math.random() - 0.5).slice(0, 10);
+            
+            // 模擬配對
+            document.getElementById('status').innerHTML = '<span class="pulse">🔍 搜尋對手中...</span>';
+            setTimeout(() => {
+                const opponent = botNames[Math.floor(Math.random() * botNames.length)];
+                document.getElementById('status').innerHTML = `⚔️ 對戰對手: ${opponent}`;
+                setTimeout(startMatch, 1000);
+            }, 2000);
+        }
+
+        function startMatch() {
+            document.getElementById('result-modal').classList.add('hidden');
+            myScore = 0;
+            opponentScore = 0;
+            currentIndex = 0;
+            timeLeft = 180;
+            
+            document.getElementById('my-score').textContent = '0';
+            document.getElementById('opponent-score').textContent = '0';
+            
+            // 重新載入題目
+            questions = questions.sort(() => Math.random() - 0.5);
+            
+            startTimer();
+            showQuestion();
+        }
+
+        function startTimer() {
+            if (timer) clearInterval(timer);
+            timer = setInterval(() => {
+                timeLeft--;
+                const mins = Math.floor(timeLeft / 60);
+                const secs = timeLeft % 60;
+                document.getElementById('timer').textContent = 
+                    `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+                
+                if (timeLeft <= 0) {
+                    endMatch();
+                }
+            }, 1000);
+        }
+
+        function showQuestion() {
+            if (currentIndex >= questions.length) {
+                endMatch();
+                return;
+            }
+
+            const q = questions[currentIndex];
+            answered = false;
+            
+            document.getElementById('q-number').textContent = `題目 ${currentIndex + 1}/${questions.length}`;
+            document.getElementById('q-subject').textContent = q.subject || '';
+            document.getElementById('question-text').textContent = q.question;
+
+            const container = document.getElementById('options-container');
+            container.innerHTML = '';
+            
+            let options = q.options;
+            if (typeof options === 'string') {
+                try { options = JSON.parse(options); } catch { options = []; }
+            }
+
+            const labels = ['A', 'B', 'C', 'D'];
+            options.slice(0, 4).forEach((opt, i) => {
+                const btn = document.createElement('button');
+                btn.className = 'p-4 bg-gray-700 hover:bg-gray-600 rounded-xl text-left transition';
+                btn.innerHTML = `<span class="font-bold">${labels[i]}.</span> ${opt}`;
+                btn.onclick = () => selectAnswer(i, q.answer);
+                container.appendChild(btn);
+            });
+
+            // 模擬對手答題
+            simulateOpponent(q);
+        }
+
+        function selectAnswer(selected, correctAnswer) {
+            if (answered) return;
+            answered = true;
+
+            const labels = ['A', 'B', 'C', 'D'];
+            let correctIndex = labels.indexOf(correctAnswer);
+            if (correctIndex === -1) correctIndex = parseInt(correctAnswer) || 0;
+
+            const isCorrect = selected === correctIndex;
+            const buttons = document.querySelectorAll('#options-container button');
+            
+            buttons.forEach((btn, i) => {
+                btn.disabled = true;
+                if (i === correctIndex) {
+                    btn.classList.add('bg-green-600');
+                } else if (i === selected && !isCorrect) {
+                    btn.classList.add('bg-red-600');
+                }
+            });
+
+            if (isCorrect) {
+                myScore += 10;
+                document.getElementById('my-score').textContent = myScore;
+                document.getElementById('my-score').classList.add('score-pop');
+                setTimeout(() => document.getElementById('my-score').classList.remove('score-pop'), 500);
+            }
+
+            setTimeout(() => {
+                currentIndex++;
+                showQuestion();
+            }, 1500);
+        }
+
+        function simulateOpponent(q) {
+            // 對手隨機時間答題 (1-4秒)
+            const delay = 1000 + Math.random() * 3000;
+            setTimeout(() => {
+                if (!answered) return; // 玩家已經答了
+                // 對手 60% 正確率
+                if (Math.random() < 0.6) {
+                    opponentScore += 10;
+                    document.getElementById('opponent-score').textContent = opponentScore;
+                }
+            }, delay);
+        }
+
+        function endMatch() {
+            if (timer) clearInterval(timer);
+            
+            const won = myScore > opponentScore;
+            const draw = myScore === opponentScore;
+            
+            document.getElementById('result-icon').textContent = won ? '🏆' : (draw ? '🤝' : '😢');
+            document.getElementById('result-title').textContent = won ? '勝利！' : (draw ? '平手' : '敗北');
+            document.getElementById('result-message').textContent = `最終比分: ${myScore} : ${opponentScore}`;
+            
+            const ratingChange = won ? '+25' : (draw ? '+5' : '-15');
+            document.getElementById('rating-change').textContent = `積分 ${ratingChange}`;
+            document.getElementById('rating-change').className = 
+                `text-2xl font-bold mb-6 ${won ? 'text-green-400' : (draw ? 'text-gray-400' : 'text-red-400')}`;
+            
+            document.getElementById('result-modal').classList.remove('hidden');
+        }
+
+        init();
+    </script>
+</body>
+</html>

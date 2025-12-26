@@ -1,427 +1,178 @@
 /**
- * api.js - 北斗教育統一 API 模組
- * v2.0 - 整合 P1 新 API
+ * BeidouAPI v60 - 北斗教育 API 模組
+ * 完整版：GSAT + RPG + PvP + 學習路徑 + 通知
  */
 
-const BeidouAPI = (function() {
-  // API 基礎設定
-  const CONFIG = {
-    BASE_URL: 'https://beidou-edu-server-1.onrender.com/api',
-    TIMEOUT: 10000,
-    RETRY: 2
-  };
+const API_BASE = 'https://beidou-edu-server-1.onrender.com';
 
-  // Token 管理
-  function getToken() {
-    return localStorage.getItem('beidou_token');
-  }
-
-  function getUserId() {
-    const user = JSON.parse(localStorage.getItem('beidou_user') || '{}');
-    return user.id || user._id || 'guest';
-  }
-
-  // 通用請求
-  async function request(endpoint, options = {}) {
-    const url = `${CONFIG.BASE_URL}${endpoint}`;
-    const token = getToken();
-    
+const BeidouAPI = {
+  request: async (endpoint, options = {}) => {
+    const url = `${API_BASE}/api${endpoint}`;
     const config = {
-      headers: {
-        'Content-Type': 'application/json',
-        ...(token && { 'Authorization': `Bearer ${token}` }),
-        ...options.headers
-      },
+      headers: { 'Content-Type': 'application/json', ...options.headers },
       ...options
     };
-
     try {
       const response = await fetch(url, config);
-      const data = await response.json();
-      
-      if (!response.ok) {
-        throw new Error(data.error || `HTTP ${response.status}`);
-      }
-      
-      return data;
+      return await response.json();
     } catch (error) {
-      console.error(`API Error [${endpoint}]:`, error);
-      throw error;
+      console.error('API Error:', error);
+      return { success: false, error: error.message };
     }
-  }
+  },
 
   // ============================================================
-  // 用戶 API
+  // GSAT 題庫
   // ============================================================
-  const user = {
-    login: (email, password) => request('/user/login', {
-      method: 'POST',
-      body: JSON.stringify({ email, password })
-    }),
-    
-    register: (data) => request('/user/register', {
-      method: 'POST',
-      body: JSON.stringify(data)
-    }),
-    
-    profile: () => request('/user/profile'),
-    
-    stats: (days = 7) => request(`/user/stats?days=${days}`)
-  };
-
-  // ============================================================
-  // 進度 API (P1 新增)
-  // ============================================================
-  const progress = {
-    get: (userId) => request(`/progress/${userId || getUserId()}`),
-    
-    summary: (userId) => request(`/progress/summary/${userId || getUserId()}`),
-    
-    bySubject: (subjectId, userId) => 
-      request(`/progress/subject/${userId || getUserId()}/${subjectId}`),
-    
-    update: (nodeId, data) => request('/progress/update', {
-      method: 'POST',
-      body: JSON.stringify({
-        userId: getUserId(),
-        nodeId,
-        ...data
-      })
-    })
-  };
-
-  // ============================================================
-  // 答題 API (P1 新增)
-  // ============================================================
-  const answers = {
-    submit: (data) => request('/answers/submit', {
-      method: 'POST',
-      body: JSON.stringify({
-        userId: getUserId(),
-        ...data
-      })
-    }),
-    
-    history: (params = {}) => {
+  gsat: {
+    questions: (params = {}) => {
       const query = new URLSearchParams(params).toString();
-      return request(`/answers/history/${getUserId()}?${query}`);
+      return BeidouAPI.request(`/gsat/questions?${query}`);
     },
-    
-    stats: (userId) => request(`/answers/stats/${userId || getUserId()}`),
-    
-    wrong: (params = {}) => {
-      const query = new URLSearchParams(params).toString();
-      return request(`/answers/wrong/${getUserId()}?${query}`);
-    }
-  };
+    subjects: () => BeidouAPI.request('/gsat/subjects'),
+    stats: () => BeidouAPI.request('/gsat/stats')
+  },
 
   // ============================================================
-  // 統計 API (P1 新增)
+  // PvE 戰鬥
   // ============================================================
-  const analytics = {
-    dashboard: (userId) => request(`/analytics/dashboard/${userId || getUserId()}`),
-    
-    trends: (userId, days = 30) => 
-      request(`/analytics/trends/${userId || getUserId()}?days=${days}`),
-    
-    weakness: (userId) => request(`/analytics/weakness/${userId || getUserId()}`),
-    
-    leaderboard: (type = 'mastery', limit = 20) => 
-      request(`/analytics/leaderboard?type=${type}&limit=${limit}`)
-  };
+  battle: {
+    start: (params) => BeidouAPI.request('/battle/start', {
+      method: 'POST', body: JSON.stringify(params)
+    }),
+    answer: (battleId, answer) => BeidouAPI.request('/battle/answer', {
+      method: 'POST', body: JSON.stringify({ battle_id: battleId, answer })
+    }),
+    status: (battleId) => BeidouAPI.request(`/battle/status/${battleId}`)
+  },
 
   // ============================================================
-  // 題庫 API (v58 修正路徑)
+  // 怪獸
   // ============================================================
-  const quiz = {
-    // 學測題目 - 使用 gsat_generated_questions 表
-    getQuestions: (params) => {
-      const query = new URLSearchParams(params).toString();
-      return request(`/gsat/questions?${query}`);
-    },
-    
-    // 取得科目列表
-    getSubjects: () => request('/gsat/subjects'),
-    
-    // 題庫統計
-    getStats: () => request('/gsat/stats'),
-    
-    // 舊版兼容
-    getQuestionsLegacy: (params) => {
-      const query = new URLSearchParams(params).toString();
-      return request(`/quiz/questions?${query}`);
-    },
-    
-    getByNode: (nodeId, count = 10) => 
-      request(`/quiz/node/${nodeId}?count=${count}`),
-    
-    getChapters: (subject) => request(`/quiz/chapters/${subject}`)
-  };
-
-  // ============================================================
-  // XTF 知識節點 API
-  // ============================================================
-  const xtf = {
-    // 節點列表 (星圖用)
+  monsters: {
     list: (params = {}) => {
       const query = new URLSearchParams(params).toString();
-      return request(`/xtf/list?${query}`);
+      return BeidouAPI.request(`/monsters?${query}`);
     },
-    
-    // 節點詳情 (字卡用)
-    node: (nodeId) => request(`/xtf/v2/node/${nodeId}`),
-    
-    // 隨機節點 (字卡用)
-    random: (params = {}) => {
-      const query = new URLSearchParams(params).toString();
-      return request(`/xtf/v2/random?${query}`);
-    }
-  };
+    detail: (monsterId) => BeidouAPI.request(`/monsters/${monsterId}`),
+    subjects: () => BeidouAPI.request('/monsters/subjects')
+  },
 
   // ============================================================
-  // 認證 API
+  // PvP 對戰 (前端暫不開放)
   // ============================================================
-  const cert = {
-    list: () => request('/cert/exams'),
-    
-    questions: (certId, limit = 20) => 
-      request(`/cert/${certId}/questions?limit=${limit}`),
-    
-    submit: (certId, answers) => request(`/cert/${certId}/submit`, {
-      method: 'POST',
-      body: JSON.stringify({ answers })
-    })
-  };
-
-  // ============================================================
-  // 成就 API
-  // ============================================================
-  const achievements = {
-    mine: () => request('/achievements/mine'),
-    all: () => request('/achievements/all')
-  };
-
-  // ============================================================
-  // 金流 API
-  // ============================================================
-  const payment = {
-    create: (plan, email) => request('/payment/create', {
-      method: 'POST',
-      body: JSON.stringify({ plan, email })
+  pvp: {
+    join: (playerId) => BeidouAPI.request('/pvp/join', {
+      method: 'POST', body: JSON.stringify({ player_id: playerId })
     }),
-    
-    status: (orderId) => request(`/payment/status/${orderId}`)
-  };
-
-  // 公開介面
-  return {
-    CONFIG,
-    request,
-    user,
-    progress,
-    answers,
-    analytics,
-    quiz,
-    xtf,
-    cert,
-    achievements,
-    payment,
-    getToken,
-    getUserId
-  };
-})();
-
-// 全域匯出
-window.BeidouAPI = BeidouAPI;
-
-// ============================================================
-// XTF v2 統一知識節點 API (2025-12-24 新增)
-// ============================================================
-
-BeidouAPI.xtfV2 = {
-  /**
-   * 取得節點列表 (星圖用)
-   * @param {Object} params - {type: 'gsat'|'ai'|'all', subject: '數學', limit: 100}
-   */
-  list: (params = {}) => {
-    const query = new URLSearchParams(params).toString();
-    return BeidouAPI.request(`/xtf/v2/list?${query}`);
+    match: (playerId) => BeidouAPI.request(`/pvp/match?player_id=${playerId}`),
+    leave: (playerId) => BeidouAPI.request('/pvp/leave', {
+      method: 'POST', body: JSON.stringify({ player_id: playerId })
+    }),
+    battleStart: (battleId, playerId) => BeidouAPI.request('/pvp/battle/start', {
+      method: 'POST', body: JSON.stringify({ battle_id: battleId, player_id: playerId })
+    }),
+    battleAnswer: (battleId, playerId, answer, time) => BeidouAPI.request('/pvp/battle/answer', {
+      method: 'POST', body: JSON.stringify({ battle_id: battleId, player_id: playerId, answer, response_time: time })
+    }),
+    leaderboard: (limit = 20) => BeidouAPI.request(`/pvp/leaderboard?limit=${limit}`),
+    ranks: () => BeidouAPI.request('/pvp/ranks'),
+    bots: () => BeidouAPI.request('/pvp/bots')
   },
 
-  /**
-   * 取得單一節點詳情 (字卡用)
-   * @param {string} nodeId - 節點ID
-   */
-  node: (nodeId) => BeidouAPI.request(`/xtf/v2/node/${nodeId}`),
-
-  /**
-   * 隨機取得節點 (字卡複習用)
-   * @param {Object} params - {type, subject, cert, count}
-   */
-  random: (params = {}) => {
-    const query = new URLSearchParams(params).toString();
-    return BeidouAPI.request(`/xtf/v2/random?${query}`);
+  // ============================================================
+  // 玩家
+  // ============================================================
+  player: {
+    get: (playerId) => BeidouAPI.request(`/player/${playerId}`),
+    stats: (playerId) => BeidouAPI.request(`/player/${playerId}/stats`),
+    inventory: (playerId) => BeidouAPI.request(`/player/${playerId}/inventory`),
+    achievements: (playerId) => BeidouAPI.request(`/player/${playerId}/achievements`),
+    titles: (playerId) => BeidouAPI.request(`/player/${playerId}/titles`)
   },
 
-  /**
-   * 搜尋節點
-   * @param {string} q - 搜尋關鍵字
-   */
-  search: (q, limit = 20) => 
-    BeidouAPI.request(`/xtf/v2/search?q=${encodeURIComponent(q)}&limit=${limit}`),
+  // ============================================================
+  // 每日系統
+  // ============================================================
+  daily: {
+    status: (playerId) => BeidouAPI.request(`/daily/status?player_id=${playerId || 1}`),
+    checkin: (playerId) => BeidouAPI.request('/daily/checkin', {
+      method: 'POST', body: JSON.stringify({ player_id: playerId || 1 })
+    }),
+    missions: (playerId) => BeidouAPI.request(`/daily/missions?player_id=${playerId || 1}`),
+    challenge: () => BeidouAPI.request('/daily/challenge')
+  },
 
-  /**
-   * 取得科目/認證列表
-   */
-  subjects: () => BeidouAPI.request('/xtf/v2/subjects'),
+  // ============================================================
+  // 學習路徑
+  // ============================================================
+  learning: {
+    paths: () => BeidouAPI.request('/learning/paths'),
+    pathDetail: (pathId) => BeidouAPI.request(`/learning/paths/${pathId}`),
+    progress: (playerId) => BeidouAPI.request(`/learning/progress/${playerId}`),
+    recommend: (playerId) => BeidouAPI.request(`/learning/recommend/${playerId}`)
+  },
 
-  /**
-   * 取得統計資訊
-   */
-  stats: () => BeidouAPI.request('/xtf/v2/stats')
+  // ============================================================
+  // 排行榜
+  // ============================================================
+  leaderboard: {
+    get: (type, limit = 20) => BeidouAPI.request(`/leaderboard/${type}?limit=${limit}`),
+    rank: (type, playerId) => BeidouAPI.request(`/leaderboard/${type}/rank/${playerId}`)
+  },
+
+  // ============================================================
+  // 通知
+  // ============================================================
+  notifications: {
+    list: (playerId, limit = 20, unreadOnly = false) => 
+      BeidouAPI.request(`/notifications/${playerId}?limit=${limit}&unread=${unreadOnly}`),
+    read: (playerId, ids = []) => BeidouAPI.request(`/notifications/${playerId}/read`, {
+      method: 'POST', body: JSON.stringify({ ids })
+    }),
+    count: (playerId) => BeidouAPI.request(`/notifications/${playerId}/count`)
+  },
+
+  // ============================================================
+  // 成就/稱號
+  // ============================================================
+  achievements: {
+    list: (category) => BeidouAPI.request(`/achievements${category ? '?category=' + category : ''}`),
+    player: (playerId) => BeidouAPI.request(`/player/${playerId}/achievements`)
+  },
+
+  titles: {
+    list: (rarity) => BeidouAPI.request(`/titles${rarity ? '?rarity=' + rarity : ''}`),
+    player: (playerId) => BeidouAPI.request(`/player/${playerId}/titles`)
+  },
+
+  // ============================================================
+  // 健康檢查
+  // ============================================================
+  health: () => BeidouAPI.request('/health')
 };
 
-console.log('🌟 BeidouAPI.xtfV2 已載入');
+console.log('🚀 BeidouAPI v60 已載入 (40+ API)');
 
 // ============================================================
-// 智能學習引擎 API (2025-12-24 新增)
+// v5.5 整合 API
 // ============================================================
-
-BeidouAPI.learn = {
-  /**
-   * 提交答題記錄
-   * @param {Object} data - {user_id, question_id, node_id, subject, is_correct, time_spent}
-   */
-  submitAnswer: (data) => BeidouAPI.request('/learn/answer', {
-    method: 'POST',
-    body: JSON.stringify(data)
+BeidouAPI.generator = {
+  batch: (params) => BeidouAPI.request('/gsat/batch', {
+    method: 'POST', body: JSON.stringify(params)
   }),
-
-  /**
-   * 取得弱點診斷報告
-   * @param {string} userId
-   * @param {Object} params - {days, subject}
-   */
-  diagnosis: (userId, params = {}) => {
-    const query = new URLSearchParams(params).toString();
-    return BeidouAPI.request(`/learn/diagnosis/${userId}?${query}`);
-  },
-
-  /**
-   * 取得推薦學習路徑
-   * @param {string} userId
-   * @param {Object} params - {subject, limit}
-   */
-  path: (userId, params = {}) => {
-    const query = new URLSearchParams(params).toString();
-    return BeidouAPI.request(`/learn/path/${userId}?${query}`);
-  },
-
-  /**
-   * 取得待複習項目 (艾賓浩斯)
-   * @param {string} userId
-   * @param {Object} params - {subject, limit}
-   */
-  review: (userId, params = {}) => {
-    const query = new URLSearchParams(params).toString();
-    return BeidouAPI.request(`/learn/review/${userId}?${query}`);
-  },
-
-  /**
-   * 完成複習
-   * @param {Object} data - {user_id, node_id, quality: 1-5}
-   */
-  completeReview: (data) => BeidouAPI.request('/learn/review/complete', {
-    method: 'POST',
-    body: JSON.stringify(data)
+  createExam: (params) => BeidouAPI.request('/exam/create', {
+    method: 'POST', body: JSON.stringify(params)
   }),
-
-  /**
-   * 取得學習統計
-   * @param {string} userId
-   * @param {number} days - 統計天數
-   */
-  stats: (userId, days = 7) => 
-    BeidouAPI.request(`/learn/stats/${userId}?days=${days}`),
-
-  /**
-   * 取得遺忘預測
-   * @param {string} userId
-   * @param {number} days - 預測天數
-   */
-  predict: (userId, days = 7) => 
-    BeidouAPI.request(`/learn/predict/${userId}?days=${days}`)
+  learningPath: (start, depth = 3) => 
+    BeidouAPI.request(`/learning/path/generate?start=${start}&depth=${depth}`),
+  statsReport: () => BeidouAPI.request('/stats/report'),
+  listSeeds: (subject) => 
+    BeidouAPI.request(`/seeds/list${subject ? '?subject=' + subject : ''}`)
 };
 
-console.log('🧠 BeidouAPI.learn 智能學習引擎已載入');
-
-// v2.0 新增：批量答題
-BeidouAPI.learn.submitBatch = (data) => BeidouAPI.request('/learn/answer/batch', {
-  method: 'POST',
-  body: JSON.stringify(data)
-});
-
-// v2.0 新增：視覺化數據
-BeidouAPI.learn.visual = (userId, days = 30) => 
-  BeidouAPI.request(`/learn/diagnosis/${userId}/visual?days=${days}`);
-
-console.log('🧠 BeidouAPI.learn v2.0 已更新');
-
-// ============================================================
-// RPG 戰鬥 API (v59 新增)
-// ============================================================
-
-BeidouAPI.battle = {
-  // 開始 PvE 戰鬥
-  start: (params) => BeidouAPI.request('/battle/start', {
-    method: 'POST',
-    body: JSON.stringify(params)
-  }),
-  
-  // 提交答案
-  answer: (battleId, answer) => BeidouAPI.request('/battle/answer', {
-    method: 'POST',
-    body: JSON.stringify({ battle_id: battleId, answer })
-  }),
-  
-  // 取得戰鬥狀態
-  status: (battleId) => BeidouAPI.request(`/battle/status/${battleId}`)
+BeidouAPI.texts = {
+  get: (category) => BeidouAPI.request(`/texts/${category}`)
 };
 
-// 怪獸 API
-BeidouAPI.monsters = {
-  list: (params = {}) => {
-    const query = new URLSearchParams(params).toString();
-    return BeidouAPI.request(`/monsters?${query}`);
-  },
-  detail: (monsterId) => BeidouAPI.request(`/monsters/${monsterId}`),
-  subjects: () => BeidouAPI.request('/monsters/subjects')
-};
-
-// PvP API
-BeidouAPI.pvp = {
-  leaderboard: (limit = 20) => BeidouAPI.request(`/pvp/leaderboard?limit=${limit}`),
-  ranks: () => BeidouAPI.request('/pvp/ranks'),
-  bots: () => BeidouAPI.request('/pvp/bots')
-};
-
-// 每日 API
-BeidouAPI.daily = {
-  status: (playerId) => BeidouAPI.request(`/daily/status?player_id=${playerId || 1}`),
-  checkin: (playerId) => BeidouAPI.request('/daily/checkin', {
-    method: 'POST',
-    body: JSON.stringify({ player_id: playerId || 1 })
-  })
-};
-
-// 成就/稱號 API
-BeidouAPI.achievements = {
-  list: () => BeidouAPI.request('/achievements'),
-  player: (playerId) => BeidouAPI.request(`/achievements/${playerId}`)
-};
-
-BeidouAPI.titles = {
-  list: (rarity) => BeidouAPI.request(`/titles${rarity ? '?rarity=' + rarity : ''}`)
-};
-
-console.log('⚔️ BeidouAPI.battle v59 已載入');
+console.log('🚀 BeidouAPI v61 已載入 (44 API)');

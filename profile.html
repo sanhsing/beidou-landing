@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>個人中心 - 北斗教育</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <style>
+    body { background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); min-height: 100vh; }
+    .card { background: rgba(255,255,255,0.1); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.2); }
+    .stat-card { transition: transform 0.2s; }
+    .stat-card:hover { transform: translateY(-5px); }
+    .achievement { opacity: 0.4; }
+    .achievement.unlocked { opacity: 1; }
+    .progress-ring { transform: rotate(-90deg); }
+  </style>
+</head>
+<body class="text-white p-4">
+  <div class="container mx-auto max-w-4xl">
+    <!-- 頭部 -->
+    <div class="flex items-center justify-between mb-6">
+      <a href="index.html" class="text-gray-400 hover:text-white">← 返回首頁</a>
+      <h1 class="text-2xl font-bold">👤 個人中心</h1>
+      <div></div>
+    </div>
+
+    <!-- 玩家資訊卡 -->
+    <div class="card rounded-2xl p-6 mb-6">
+      <div class="flex items-center gap-4 mb-4">
+        <div class="w-20 h-20 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-full flex items-center justify-center text-4xl">
+          🧑‍🎓
+        </div>
+        <div class="flex-1">
+          <div class="flex items-center gap-2">
+            <h2 id="playerName" class="text-2xl font-bold">學習者</h2>
+            <span id="playerTitle" class="bg-yellow-500 text-black px-2 py-0.5 rounded text-xs">新手</span>
+          </div>
+          <div class="text-gray-400">Lv.<span id="playerLevel">1</span></div>
+          <div class="mt-2 bg-gray-700 rounded-full h-2 overflow-hidden">
+            <div id="expBar" class="bg-gradient-to-r from-green-400 to-emerald-500 h-full" style="width: 30%"></div>
+          </div>
+          <div class="text-xs text-gray-400 mt-1"><span id="currentExp">0</span> / <span id="nextLevelExp">100</span> EXP</div>
+        </div>
+      </div>
+      
+      <!-- 資源 -->
+      <div class="grid grid-cols-3 gap-4 text-center">
+        <div class="bg-black bg-opacity-30 rounded-xl p-3">
+          <div class="text-2xl">💰</div>
+          <div id="coins" class="text-xl font-bold text-yellow-400">0</div>
+          <div class="text-xs text-gray-400">金幣</div>
+        </div>
+        <div class="bg-black bg-opacity-30 rounded-xl p-3">
+          <div class="text-2xl">💎</div>
+          <div id="diamonds" class="text-xl font-bold text-cyan-400">0</div>
+          <div class="text-xs text-gray-400">鑽石</div>
+        </div>
+        <div class="bg-black bg-opacity-30 rounded-xl p-3">
+          <div class="text-2xl">⚡</div>
+          <div id="energy" class="text-xl font-bold text-green-400">100</div>
+          <div class="text-xs text-gray-400">體力</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 統計數據 -->
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+      <div class="card stat-card rounded-xl p-4 text-center">
+        <div class="text-3xl font-bold text-blue-400" id="totalQuestions">0</div>
+        <div class="text-sm text-gray-400">答題數</div>
+      </div>
+      <div class="card stat-card rounded-xl p-4 text-center">
+        <div class="text-3xl font-bold text-green-400" id="accuracy">0%</div>
+        <div class="text-sm text-gray-400">正確率</div>
+      </div>
+      <div class="card stat-card rounded-xl p-4 text-center">
+        <div class="text-3xl font-bold text-purple-400" id="battlesWon">0</div>
+        <div class="text-sm text-gray-400">戰鬥勝利</div>
+      </div>
+      <div class="card stat-card rounded-xl p-4 text-center">
+        <div class="text-3xl font-bold text-orange-400" id="streak">0</div>
+        <div class="text-sm text-gray-400">連續簽到</div>
+      </div>
+    </div>
+
+    <!-- 成就預覽 -->
+    <div class="card rounded-2xl p-6 mb-6">
+      <div class="flex justify-between items-center mb-4">
+        <h3 class="text-lg font-bold">🏆 成就</h3>
+        <a href="achievements.html" class="text-indigo-400 text-sm">查看全部 →</a>
+      </div>
+      <div id="achievementList" class="grid grid-cols-5 gap-3">
+        <!-- 動態生成 -->
+      </div>
+    </div>
+
+    <!-- 稱號預覽 -->
+    <div class="card rounded-2xl p-6 mb-6">
+      <div class="flex justify-between items-center mb-4">
+        <h3 class="text-lg font-bold">🎖️ 稱號</h3>
+        <button onclick="showTitles()" class="text-indigo-400 text-sm">管理稱號 →</button>
+      </div>
+      <div id="titleList" class="flex flex-wrap gap-2">
+        <!-- 動態生成 -->
+      </div>
+    </div>
+
+    <!-- 快捷操作 -->
+    <div class="grid grid-cols-2 gap-4">
+      <a href="battle.html" class="card rounded-xl p-4 text-center hover:bg-white hover:bg-opacity-10">
+        <div class="text-3xl mb-2">⚔️</div>
+        <div class="font-bold">怪獸戰鬥</div>
+      </a>
+      <a href="daily.html" class="card rounded-xl p-4 text-center hover:bg-white hover:bg-opacity-10">
+        <div class="text-3xl mb-2">📅</div>
+        <div class="font-bold">每日任務</div>
+      </a>
+      <a href="leaderboard.html" class="card rounded-xl p-4 text-center hover:bg-white hover:bg-opacity-10">
+        <div class="text-3xl mb-2">🏅</div>
+        <div class="font-bold">排行榜</div>
+      </a>
+      <a href="wrong_book.html" class="card rounded-xl p-4 text-center hover:bg-white hover:bg-opacity-10">
+        <div class="text-3xl mb-2">📕</div>
+        <div class="font-bold">錯題本</div>
+      </a>
+    </div>
+  </div>
+
+  <script>
+    const API_BASE = 'https://beidou-edu-server-1.onrender.com';
+    const PLAYER_ID = localStorage.getItem('player_id') || 1;
+
+    async function loadProfile() {
+      try {
+        // 載入玩家資料
+        const playerRes = await fetch(`${API_BASE}/api/player/${PLAYER_ID}`);
+        const playerData = await playerRes.json();
+        if (playerData.success) {
+          const p = playerData.data;
+          document.getElementById('playerName').textContent = p.display_name || '學習者';
+          document.getElementById('playerLevel').textContent = p.level || 1;
+          document.getElementById('coins').textContent = p.coins || 0;
+          document.getElementById('diamonds').textContent = p.diamonds || 0;
+          document.getElementById('currentExp').textContent = p.exp || 0;
+          const expPct = ((p.exp || 0) / (p.next_level_exp || 100)) * 100;
+          document.getElementById('expBar').style.width = expPct + '%';
+        }
+
+        // 載入統計
+        const statsRes = await fetch(`${API_BASE}/api/player/${PLAYER_ID}/stats`);
+        const statsData = await statsRes.json();
+        if (statsData.success) {
+          const s = statsData.data;
+          document.getElementById('totalQuestions').textContent = s.questions_answered || 0;
+          document.getElementById('accuracy').textContent = (s.accuracy || 0) + '%';
+          document.getElementById('battlesWon').textContent = s.battles_won || 0;
+        }
+
+        // 載入每日狀態
+        const dailyRes = await fetch(`${API_BASE}/api/daily/status?player_id=${PLAYER_ID}`);
+        const dailyData = await dailyRes.json();
+        if (dailyData.success) {
+          document.getElementById('streak').textContent = dailyData.data.streak || 0;
+        }
+
+        // 載入成就
+        const achieveRes = await fetch(`${API_BASE}/api/player/${PLAYER_ID}/achievements`);
+        const achieveData = await achieveRes.json();
+        if (achieveData.success) {
+          renderAchievements(achieveData.data.slice(0, 10));
+        }
+
+        // 載入稱號
+        const titlesRes = await fetch(`${API_BASE}/api/player/${PLAYER_ID}/titles`);
+        const titlesData = await titlesRes.json();
+        if (titlesData.success) {
+          renderTitles(titlesData.data.filter(t => t.unlocked_at));
+        }
+
+      } catch (err) {
+        console.error('載入失敗:', err);
+      }
+    }
+
+    function renderAchievements(achievements) {
+      const container = document.getElementById('achievementList');
+      container.innerHTML = achievements.map(a => `
+        <div class="achievement ${a.unlocked_at ? 'unlocked' : ''} bg-black bg-opacity-30 rounded-xl p-3 text-center" title="${a.name}">
+          <div class="text-2xl">${a.icon || '🏆'}</div>
+        </div>
+      `).join('');
+    }
+
+    function renderTitles(titles) {
+      const container = document.getElementById('titleList');
+      if (titles.length === 0) {
+        container.innerHTML = '<span class="text-gray-500">尚無稱號</span>';
+        return;
+      }
+      const rarityColors = {
+        'common': 'bg-gray-600',
+        'rare': 'bg-blue-600',
+        'epic': 'bg-purple-600',
+        'legendary': 'bg-yellow-600'
+      };
+      container.innerHTML = titles.map(t => `
+        <span class="${rarityColors[t.rarity] || 'bg-gray-600'} px-3 py-1 rounded-full text-sm">
+          ${t.name}
+        </span>
+      `).join('');
+    }
+
+    loadProfile();
+  </script>
+</body>
+</html>

@@ -1,461 +1,397 @@
 <!DOCTYPE html>
 <html lang="zh-TW">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>怪獸戰鬥 - 北斗教育</title>
-  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-  <style>
-    :root {
-      --primary: #4F46E5;
-      --success: #10B981;
-      --danger: #EF4444;
-      --warning: #F59E0B;
-    }
-    body {
-      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
-      min-height: 100vh;
-    }
-    .hp-bar {
-      height: 20px;
-      border-radius: 10px;
-      background: #333;
-      overflow: hidden;
-      position: relative;
-    }
-    .hp-fill {
-      height: 100%;
-      transition: width 0.5s ease;
-      border-radius: 10px;
-    }
-    .hp-fill.player { background: linear-gradient(90deg, #10B981, #34D399); }
-    .hp-fill.monster { background: linear-gradient(90deg, #EF4444, #F87171); }
-    .monster-card {
-      background: rgba(255,255,255,0.1);
-      backdrop-filter: blur(10px);
-      border: 1px solid rgba(255,255,255,0.2);
-      transition: all 0.3s;
-    }
-    .monster-card:hover { transform: scale(1.02); border-color: var(--primary); }
-    .option-btn {
-      background: rgba(255,255,255,0.1);
-      border: 2px solid rgba(255,255,255,0.3);
-      transition: all 0.2s;
-    }
-    .option-btn:hover { background: rgba(79, 70, 229, 0.3); border-color: var(--primary); }
-    .option-btn.correct { background: rgba(16, 185, 129, 0.5); border-color: var(--success); }
-    .option-btn.wrong { background: rgba(239, 68, 68, 0.5); border-color: var(--danger); }
-    .option-btn.disabled { pointer-events: none; opacity: 0.7; }
-    .shake { animation: shake 0.5s; }
-    @keyframes shake {
-      0%, 100% { transform: translateX(0); }
-      25% { transform: translateX(-10px); }
-      75% { transform: translateX(10px); }
-    }
-    .damage-popup {
-      position: absolute;
-      font-size: 2rem;
-      font-weight: bold;
-      animation: floatUp 1s ease-out forwards;
-      pointer-events: none;
-    }
-    @keyframes floatUp {
-      0% { opacity: 1; transform: translateY(0); }
-      100% { opacity: 0; transform: translateY(-50px); }
-    }
-    .combo-badge {
-      animation: pulse 0.5s;
-    }
-    @keyframes pulse {
-      0%, 100% { transform: scale(1); }
-      50% { transform: scale(1.2); }
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>北斗教育 - RPG 戰鬥</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <style>
+        .gradient-bg { background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%); }
+        .hp-bar { transition: width 0.5s ease; }
+        .shake { animation: shake 0.5s ease-in-out; }
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-10px); }
+            75% { transform: translateX(10px); }
+        }
+        .attack-flash { animation: flash 0.3s ease-in-out; }
+        @keyframes flash {
+            50% { opacity: 0.3; }
+        }
+        .float { animation: float 3s ease-in-out infinite; }
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+        .option-btn { transition: all 0.3s ease; }
+        .option-btn:hover:not(:disabled) { transform: scale(1.02); background: #4b5563; }
+        .option-btn.correct { background: linear-gradient(135deg, #10b981 0%, #059669 100%) !important; }
+        .option-btn.wrong { background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%) !important; }
+    </style>
 </head>
-<body class="text-white">
-  <div id="app" class="container mx-auto px-4 py-6 max-w-4xl">
-    
-    <!-- 階段1: 選擇科目/怪獸 -->
-    <div id="selectScreen">
-      <h1 class="text-3xl font-bold text-center mb-2">⚔️ 怪獸戰鬥</h1>
-      <p class="text-center text-gray-400 mb-6">選擇科目，挑戰知識怪獸！</p>
-      
-      <div class="grid grid-cols-2 md:grid-cols-5 gap-3 mb-6">
-        <button onclick="selectSubject('數學')" class="monster-card rounded-xl p-4 text-center">
-          <div class="text-3xl mb-2">📐</div>
-          <div class="font-bold">數學</div>
-        </button>
-        <button onclick="selectSubject('物理')" class="monster-card rounded-xl p-4 text-center">
-          <div class="text-3xl mb-2">⚡</div>
-          <div class="font-bold">物理</div>
-        </button>
-        <button onclick="selectSubject('化學')" class="monster-card rounded-xl p-4 text-center">
-          <div class="text-3xl mb-2">🧪</div>
-          <div class="font-bold">化學</div>
-        </button>
-        <button onclick="selectSubject('生物')" class="monster-card rounded-xl p-4 text-center">
-          <div class="text-3xl mb-2">🧬</div>
-          <div class="font-bold">生物</div>
-        </button>
-        <button onclick="selectSubject('地科')" class="monster-card rounded-xl p-4 text-center">
-          <div class="text-3xl mb-2">🌍</div>
-          <div class="font-bold">地科</div>
-        </button>
-        <button onclick="selectSubject('國文')" class="monster-card rounded-xl p-4 text-center">
-          <div class="text-3xl mb-2">📜</div>
-          <div class="font-bold">國文</div>
-        </button>
-        <button onclick="selectSubject('英文')" class="monster-card rounded-xl p-4 text-center">
-          <div class="text-3xl mb-2">🔤</div>
-          <div class="font-bold">英文</div>
-        </button>
-        <button onclick="selectSubject('歷史')" class="monster-card rounded-xl p-4 text-center">
-          <div class="text-3xl mb-2">🏛️</div>
-          <div class="font-bold">歷史</div>
-        </button>
-        <button onclick="selectSubject('地理')" class="monster-card rounded-xl p-4 text-center">
-          <div class="text-3xl mb-2">🗺️</div>
-          <div class="font-bold">地理</div>
-        </button>
-        <button onclick="selectSubject('公民')" class="monster-card rounded-xl p-4 text-center">
-          <div class="text-3xl mb-2">⚖️</div>
-          <div class="font-bold">公民</div>
-        </button>
-      </div>
-      
-      <div class="text-center">
-        <button onclick="selectSubject('')" class="bg-gradient-to-r from-purple-600 to-indigo-600 px-8 py-3 rounded-full font-bold hover:opacity-90">
-          🎲 隨機挑戰
-        </button>
-      </div>
-    </div>
-    
-    <!-- 階段2: 戰鬥畫面 -->
-    <div id="battleScreen" class="hidden">
-      <!-- 怪獸區 -->
-      <div class="mb-6">
-        <div class="flex items-center justify-between mb-2">
-          <div class="flex items-center gap-2">
-            <span id="monsterEmoji" class="text-4xl">👾</span>
-            <div>
-              <div id="monsterName" class="font-bold text-xl">未知怪獸</div>
-              <div id="monsterSubject" class="text-sm text-gray-400">數學</div>
-            </div>
-          </div>
-          <div id="monsterHpText" class="font-mono">100/100</div>
+<body class="gradient-bg min-h-screen text-white">
+    <!-- Header -->
+    <header class="py-4 px-6 flex justify-between items-center border-b border-gray-700">
+        <a href="index.html" class="flex items-center space-x-2">
+            <span class="text-2xl">⭐</span>
+            <span class="font-bold">北斗教育</span>
+        </a>
+        <div class="flex items-center space-x-4">
+            <span class="text-yellow-400">💰 <span id="coins">0</span></span>
+            <span class="text-purple-400">⚡ <span id="exp">0</span> XP</span>
         </div>
-        <div class="hp-bar">
-          <div id="monsterHpBar" class="hp-fill monster" style="width: 100%"></div>
-        </div>
-      </div>
-      
-      <!-- VS 分隔 -->
-      <div class="text-center my-4">
-        <span class="text-2xl font-bold text-yellow-400">⚔️ VS ⚔️</span>
-        <span id="comboBadge" class="ml-2 hidden bg-orange-500 px-3 py-1 rounded-full text-sm font-bold combo-badge">
-          🔥 連擊 x<span id="comboCount">0</span>
-        </span>
-      </div>
-      
-      <!-- 玩家區 -->
-      <div class="mb-6">
-        <div class="flex items-center justify-between mb-2">
-          <div class="flex items-center gap-2">
-            <span class="text-4xl">🧑‍🎓</span>
-            <div>
-              <div class="font-bold text-xl">學習者</div>
-              <div class="text-sm text-gray-400">得分: <span id="score">0</span></div>
-            </div>
-          </div>
-          <div id="playerHpText" class="font-mono">100/100</div>
-        </div>
-        <div class="hp-bar">
-          <div id="playerHpBar" class="hp-fill player" style="width: 100%"></div>
-        </div>
-      </div>
-      
-      <!-- 題目區 -->
-      <div class="monster-card rounded-2xl p-6 mb-6">
-        <div class="flex justify-between items-center mb-4">
-          <span id="questionNum" class="text-sm text-gray-400">第 1/5 題</span>
-          <span id="difficultyBadge" class="bg-yellow-500 text-black px-2 py-1 rounded text-xs font-bold">中等</span>
-        </div>
-        <div id="questionText" class="text-lg mb-6 leading-relaxed">
-          載入中...
-        </div>
-        <div id="optionsContainer" class="grid gap-3">
-          <!-- 選項動態生成 -->
-        </div>
-      </div>
-      
-      <!-- 回饋區 -->
-      <div id="feedback" class="hidden monster-card rounded-2xl p-6 mb-6">
-        <div id="feedbackIcon" class="text-5xl text-center mb-3">✅</div>
-        <div id="feedbackText" class="text-center text-xl font-bold mb-3">正確！</div>
-        <div id="explanation" class="text-gray-300 text-sm p-4 bg-black bg-opacity-30 rounded-lg"></div>
-        <button id="nextBtn" onclick="nextQuestion()" class="mt-4 w-full bg-indigo-600 py-3 rounded-lg font-bold hover:bg-indigo-700">
-          下一題 →
-        </button>
-      </div>
-    </div>
-    
-    <!-- 階段3: 結果畫面 -->
-    <div id="resultScreen" class="hidden text-center">
-      <div id="resultEmoji" class="text-8xl mb-4">🎉</div>
-      <h2 id="resultTitle" class="text-3xl font-bold mb-2">戰鬥勝利！</h2>
-      <p id="resultDesc" class="text-gray-400 mb-6">成功擊敗怪獸！</p>
-      
-      <div class="monster-card rounded-2xl p-6 mb-6">
-        <div class="grid grid-cols-3 gap-4 text-center">
-          <div>
-            <div class="text-3xl font-bold text-green-400" id="finalScore">0</div>
-            <div class="text-sm text-gray-400">得分</div>
-          </div>
-          <div>
-            <div class="text-3xl font-bold text-yellow-400" id="finalExp">0</div>
-            <div class="text-sm text-gray-400">經驗值</div>
-          </div>
-          <div>
-            <div class="text-3xl font-bold text-amber-400" id="finalCoins">0</div>
-            <div class="text-sm text-gray-400">金幣</div>
-          </div>
-        </div>
-      </div>
-      
-      <div class="flex gap-4">
-        <button onclick="location.reload()" class="flex-1 bg-gray-700 py-3 rounded-lg font-bold hover:bg-gray-600">
-          再來一局
-        </button>
-        <button onclick="location.href='index.html'" class="flex-1 bg-indigo-600 py-3 rounded-lg font-bold hover:bg-indigo-700">
-          返回首頁
-        </button>
-      </div>
-    </div>
-  </div>
+    </header>
 
-  <script>
-    const API_BASE = 'https://beidou-edu-server-1.onrender.com';
-    
-    let state = {
-      battleId: null,
-      monster: null,
-      playerHp: 100,
-      monsterHp: 100,
-      maxMonsterHp: 100,
-      combo: 0,
-      score: 0,
-      currentQuestion: null
-    };
-    
-    // 選擇科目
-    async function selectSubject(subject) {
-      document.getElementById('selectScreen').classList.add('hidden');
-      document.getElementById('battleScreen').classList.remove('hidden');
-      
-      try {
-        const res = await fetch(`${API_BASE}/api/battle/start`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ subject, player_id: 1 })
-        });
-        const data = await res.json();
-        
-        if (data.success) {
-          state.battleId = data.data.battle_id;
-          state.monster = data.data.monster;
-          state.playerHp = data.data.player_hp;
-          state.monsterHp = data.data.monster_hp;
-          state.maxMonsterHp = data.data.monster_hp;
-          state.currentQuestion = data.data.current_question;
-          
-          updateMonsterUI();
-          renderQuestion(state.currentQuestion, 1, data.data.total_questions);
-        } else {
-          alert('開始戰鬥失敗: ' + data.error);
-          location.reload();
+    <!-- Battle Arena -->
+    <main class="max-w-4xl mx-auto px-6 py-8">
+        <!-- Monster Section -->
+        <div class="bg-gray-800 bg-opacity-50 rounded-2xl p-6 mb-6">
+            <div class="flex justify-between items-center mb-4">
+                <div>
+                    <h2 id="monster-name" class="text-2xl font-bold">載入中...</h2>
+                    <p id="monster-subject" class="text-gray-400"></p>
+                </div>
+                <span id="monster-element" class="px-3 py-1 rounded-full text-sm bg-gray-600"></span>
+            </div>
+            
+            <!-- Monster HP Bar -->
+            <div class="mb-4">
+                <div class="flex justify-between text-sm mb-1">
+                    <span>HP</span>
+                    <span><span id="monster-hp">100</span> / <span id="monster-max-hp">100</span></span>
+                </div>
+                <div class="h-4 bg-gray-700 rounded-full overflow-hidden">
+                    <div id="monster-hp-bar" class="hp-bar h-full bg-gradient-to-r from-red-500 to-red-400" style="width: 100%"></div>
+                </div>
+            </div>
+
+            <!-- Monster Display -->
+            <div id="monster-display" class="text-center py-8 float">
+                <div class="text-8xl">👹</div>
+            </div>
+
+            <!-- Monster Dialogue -->
+            <div id="monster-dialogue" class="bg-gray-900 bg-opacity-50 p-4 rounded-xl text-center italic">
+                "..."
+            </div>
+        </div>
+
+        <!-- Player Stats -->
+        <div class="bg-gray-800 bg-opacity-50 rounded-xl p-4 mb-6">
+            <div class="flex justify-between items-center">
+                <div class="flex items-center space-x-3">
+                    <div class="text-3xl">🧙</div>
+                    <div>
+                        <div class="font-bold">你</div>
+                        <div class="text-sm text-gray-400">Lv.<span id="player-level">1</span></div>
+                    </div>
+                </div>
+                <div class="text-right">
+                    <div class="flex items-center space-x-2">
+                        <span class="text-red-400">❤️</span>
+                        <span id="player-hp">100</span> / <span id="player-max-hp">100</span>
+                    </div>
+                    <div class="h-2 w-32 bg-gray-700 rounded-full overflow-hidden mt-1">
+                        <div id="player-hp-bar" class="hp-bar h-full bg-gradient-to-r from-green-500 to-green-400" style="width: 100%"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Question Card -->
+        <div id="question-card" class="bg-gray-800 bg-opacity-50 rounded-2xl p-6 mb-6">
+            <div class="flex justify-between items-center mb-4">
+                <span id="question-topic" class="text-blue-400 text-sm"></span>
+                <span id="difficulty-badge" class="px-3 py-1 rounded-full text-sm bg-yellow-600">中等</span>
+            </div>
+            <div id="question-text" class="text-lg leading-relaxed mb-6">載入題目中...</div>
+            
+            <div id="options-container" class="space-y-3">
+                <!-- 動態載入 -->
+            </div>
+        </div>
+
+        <!-- Battle Log -->
+        <div id="battle-log" class="bg-gray-900 bg-opacity-50 rounded-xl p-4 max-h-40 overflow-y-auto text-sm">
+            <div class="text-gray-500">戰鬥開始...</div>
+        </div>
+    </main>
+
+    <!-- Victory Modal -->
+    <div id="victory-modal" class="fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center hidden z-50">
+        <div class="bg-gray-800 rounded-2xl p-8 text-center max-w-md">
+            <div class="text-6xl mb-4">🏆</div>
+            <h2 class="text-3xl font-bold mb-2">勝利！</h2>
+            <p id="victory-message" class="text-gray-400 mb-6"></p>
+            <div class="flex justify-center space-x-4">
+                <button onclick="nextBattle()" class="bg-blue-600 hover:bg-blue-700 px-6 py-3 rounded-full font-bold">
+                    下一場戰鬥
+                </button>
+                <a href="index.html" class="bg-gray-600 hover:bg-gray-500 px-6 py-3 rounded-full font-bold">
+                    返回
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Defeat Modal -->
+    <div id="defeat-modal" class="fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center hidden z-50">
+        <div class="bg-gray-800 rounded-2xl p-8 text-center max-w-md">
+            <div class="text-6xl mb-4">💀</div>
+            <h2 class="text-3xl font-bold mb-2">戰敗...</h2>
+            <p class="text-gray-400 mb-6">別灰心，再接再厲！</p>
+            <div class="flex justify-center space-x-4">
+                <button onclick="restartBattle()" class="bg-blue-600 hover:bg-blue-700 px-6 py-3 rounded-full font-bold">
+                    再戰一次
+                </button>
+                <a href="index.html" class="bg-gray-600 hover:bg-gray-500 px-6 py-3 rounded-full font-bold">
+                    返回
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Loading -->
+    <div id="loading" class="fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center z-50">
+        <div class="text-center">
+            <div class="text-6xl mb-4">⚔️</div>
+            <div class="text-xl">載入戰鬥資料...</div>
+        </div>
+    </div>
+
+    <script>
+        // 遊戲狀態
+        let monsters = [];
+        let dialogues = {};
+        let questions = [];
+        let currentMonster = null;
+        let currentQuestion = null;
+        let playerStats = { hp: 100, maxHp: 100, level: 1, exp: 0, coins: 0 };
+        let monsterStats = { hp: 100, maxHp: 100 };
+        let answered = false;
+
+        // 怪物表情符號
+        const monsterEmojis = ['👹', '👺', '👻', '💀', '🧟', '🦇', '🐉', '🦑', '🕷️', '🦂'];
+
+        // 初始化
+        async function init() {
+            try {
+                // 載入怪物
+                const monsterRes = await fetch('data/monsters.json');
+                monsters = await monsterRes.json();
+                
+                // 載入對話
+                const dialogueRes = await fetch('data/dialogues.json');
+                dialogues = await dialogueRes.json();
+                
+                // 載入題目 (混合科目)
+                const subjects = ['數學', '物理', '化學', '生物', '國文'];
+                for (const subj of subjects) {
+                    try {
+                        const res = await fetch(`data/qbank_${subj}.json`);
+                        const data = await res.json();
+                        questions = questions.concat(data.slice(0, 50));
+                    } catch {}
+                }
+                questions = questions.sort(() => Math.random() - 0.5);
+
+                document.getElementById('loading').classList.add('hidden');
+                startBattle();
+            } catch (error) {
+                console.error('載入失敗:', error);
+                document.getElementById('loading').innerHTML = `
+                    <div class="text-center">
+                        <div class="text-6xl mb-4">❌</div>
+                        <div class="text-xl">載入失敗</div>
+                        <a href="index.html" class="text-blue-400 mt-4 inline-block">返回首頁</a>
+                    </div>
+                `;
+            }
         }
-      } catch (err) {
-        console.error(err);
-        alert('連線失敗，請稍後再試');
-        location.reload();
-      }
-    }
-    
-    // 更新怪獸 UI
-    function updateMonsterUI() {
-      const m = state.monster;
-      const emojis = {
-        '數學': '📐', '物理': '⚡', '化學': '🧪', '生物': '🧬',
-        '地科': '🌍', '國文': '📜', '英文': '🔤', '歷史': '🏛️',
-        '地理': '🗺️', '公民': '⚖️'
-      };
-      
-      document.getElementById('monsterEmoji').textContent = emojis[m.subject] || '👾';
-      document.getElementById('monsterName').textContent = m.name || '知識怪獸';
-      document.getElementById('monsterSubject').textContent = m.subject || '綜合';
-    }
-    
-    // 渲染題目
-    function renderQuestion(q, num, total) {
-      document.getElementById('questionNum').textContent = `第 ${num}/${total} 題`;
-      document.getElementById('questionText').innerHTML = q.question;
-      
-      const container = document.getElementById('optionsContainer');
-      let options = q.options;
-      if (typeof options === 'string') {
-        try { options = JSON.parse(options); } catch(e) { options = []; }
-      }
-      
-      container.innerHTML = options.map((opt, i) => `
-        <button onclick="submitAnswer(${i})" class="option-btn rounded-xl p-4 text-left flex items-center gap-3" data-index="${i}">
-          <span class="w-8 h-8 flex items-center justify-center bg-white bg-opacity-20 rounded-full font-bold">
-            ${String.fromCharCode(65 + i)}
-          </span>
-          <span class="flex-1">${typeof opt === 'object' ? opt.text || opt : opt}</span>
-        </button>
-      `).join('');
-      
-      document.getElementById('feedback').classList.add('hidden');
-      updateHpBars();
-    }
-    
-    // 提交答案
-    async function submitAnswer(index) {
-      const buttons = document.querySelectorAll('.option-btn');
-      buttons.forEach(b => b.classList.add('disabled'));
-      
-      try {
-        const res = await fetch(`${API_BASE}/api/battle/answer`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            battle_id: state.battleId,
-            answer: index
-          })
-        });
-        const data = await res.json();
-        
-        if (data.success) {
-          const result = data.data;
-          
-          // 標記正確/錯誤
-          buttons[result.correct_answer].classList.add('correct');
-          if (!result.is_correct) {
-            buttons[index].classList.add('wrong');
-          }
-          
-          // 更新狀態
-          state.playerHp = result.player_hp;
-          state.monsterHp = result.monster_hp;
-          state.combo = result.combo;
-          state.score = result.score;
-          
-          // 傷害動畫
-          if (result.is_correct) {
-            showDamage('monsterEmoji', result.damage, false);
-            document.getElementById('monsterEmoji').parentElement.classList.add('shake');
-            setTimeout(() => document.getElementById('monsterEmoji').parentElement.classList.remove('shake'), 500);
-          } else {
-            showDamage('playerHpBar', result.damage, true);
-          }
-          
-          updateHpBars();
-          updateCombo();
-          document.getElementById('score').textContent = state.score;
-          
-          // 顯示回饋
-          showFeedback(result.is_correct, result.explanation, result.battle_result, result.rewards, result.next_question);
+
+        // 開始戰鬥
+        function startBattle() {
+            // 隨機選擇怪物
+            currentMonster = monsters[Math.floor(Math.random() * monsters.length)];
+            monsterStats = {
+                hp: currentMonster.hp || 100,
+                maxHp: currentMonster.hp || 100
+            };
+
+            // 更新 UI
+            document.getElementById('monster-name').textContent = currentMonster.name || '未知怪物';
+            document.getElementById('monster-subject').textContent = currentMonster.subject || '';
+            document.getElementById('monster-element').textContent = currentMonster.element || '無屬性';
+            document.getElementById('monster-hp').textContent = monsterStats.hp;
+            document.getElementById('monster-max-hp').textContent = monsterStats.maxHp;
+            document.getElementById('monster-hp-bar').style.width = '100%';
+            
+            // 怪物外觀
+            const emoji = monsterEmojis[Math.floor(Math.random() * monsterEmojis.length)];
+            document.getElementById('monster-display').innerHTML = `<div class="text-8xl">${emoji}</div>`;
+
+            // 怪物對話
+            const dialogue = dialogues[currentMonster.id] || {};
+            document.getElementById('monster-dialogue').textContent = 
+                `"${dialogue.appear || currentMonster.desc || '...'}"`;
+
+            addLog(`⚔️ 遭遇 ${currentMonster.name}！`);
+            loadQuestion();
         }
-      } catch (err) {
-        console.error(err);
-        alert('提交失敗');
-      }
-    }
-    
-    // 顯示傷害數字
-    function showDamage(elementId, damage, isPlayer) {
-      const el = document.getElementById(elementId);
-      const popup = document.createElement('div');
-      popup.className = 'damage-popup';
-      popup.style.color = isPlayer ? '#EF4444' : '#10B981';
-      popup.textContent = (isPlayer ? '-' : '-') + damage;
-      popup.style.left = '50%';
-      popup.style.top = '0';
-      el.parentElement.style.position = 'relative';
-      el.parentElement.appendChild(popup);
-      setTimeout(() => popup.remove(), 1000);
-    }
-    
-    // 更新血條
-    function updateHpBars() {
-      const playerPct = (state.playerHp / 100) * 100;
-      const monsterPct = (state.monsterHp / state.maxMonsterHp) * 100;
-      
-      document.getElementById('playerHpBar').style.width = playerPct + '%';
-      document.getElementById('monsterHpBar').style.width = monsterPct + '%';
-      document.getElementById('playerHpText').textContent = `${state.playerHp}/100`;
-      document.getElementById('monsterHpText').textContent = `${state.monsterHp}/${state.maxMonsterHp}`;
-    }
-    
-    // 更新連擊
-    function updateCombo() {
-      const badge = document.getElementById('comboBadge');
-      if (state.combo >= 2) {
-        badge.classList.remove('hidden');
-        document.getElementById('comboCount').textContent = state.combo;
-        badge.classList.remove('combo-badge');
-        void badge.offsetWidth;
-        badge.classList.add('combo-badge');
-      } else {
-        badge.classList.add('hidden');
-      }
-    }
-    
-    // 顯示回饋
-    function showFeedback(isCorrect, explanation, battleResult, rewards, nextQ) {
-      const feedback = document.getElementById('feedback');
-      feedback.classList.remove('hidden');
-      
-      document.getElementById('feedbackIcon').textContent = isCorrect ? (state.combo >= 3 ? '🔥' : '✅') : '❌';
-      document.getElementById('feedbackText').innerHTML = isCorrect 
-        ? (state.combo >= 3 ? `<span class="text-orange-400">連擊 x${state.combo}！</span>` : '<span class="text-green-400">正確！</span>')
-        : '<span class="text-red-400">錯誤！</span>';
-      document.getElementById('explanation').textContent = explanation || '暫無解析';
-      
-      const nextBtn = document.getElementById('nextBtn');
-      if (battleResult) {
-        nextBtn.textContent = '查看結果';
-        nextBtn.onclick = () => showResult(battleResult, rewards);
-      } else {
-        nextBtn.textContent = '下一題 →';
-        nextBtn.onclick = () => {
-          state.currentQuestion = nextQ;
-          const num = parseInt(document.getElementById('questionNum').textContent.split('/')[0].replace('第 ', '')) + 1;
-          const total = parseInt(document.getElementById('questionNum').textContent.split('/')[1].replace(' 題', ''));
-          renderQuestion(nextQ, num, total);
-        };
-      }
-    }
-    
-    // 顯示結果
-    function showResult(result, rewards) {
-      document.getElementById('battleScreen').classList.add('hidden');
-      document.getElementById('resultScreen').classList.remove('hidden');
-      
-      if (result === 'victory') {
-        document.getElementById('resultEmoji').textContent = '🎉';
-        document.getElementById('resultTitle').textContent = '戰鬥勝利！';
-        document.getElementById('resultDesc').textContent = '成功擊敗 ' + (state.monster?.name || '怪獸') + '！';
-      } else {
-        document.getElementById('resultEmoji').textContent = '💔';
-        document.getElementById('resultTitle').textContent = '戰鬥失敗';
-        document.getElementById('resultDesc').textContent = '下次再接再厲！';
-      }
-      
-      document.getElementById('finalScore').textContent = state.score;
-      document.getElementById('finalExp').textContent = rewards?.exp || 0;
-      document.getElementById('finalCoins').textContent = rewards?.coins || 0;
-    }
-  </script>
+
+        // 載入題目
+        function loadQuestion() {
+            if (questions.length === 0) {
+                addLog('❌ 題目已用完');
+                return;
+            }
+
+            currentQuestion = questions.pop();
+            answered = false;
+
+            document.getElementById('question-topic').textContent = currentQuestion.topic || currentQuestion.subject || '';
+            document.getElementById('question-text').textContent = currentQuestion.question;
+
+            // 難度
+            const diffBadge = document.getElementById('difficulty-badge');
+            const diffColors = ['', 'bg-green-600', 'bg-green-500', 'bg-yellow-500', 'bg-orange-500', 'bg-red-500'];
+            const diffNames = ['', '簡單', '基礎', '中等', '困難', '極難'];
+            const diff = currentQuestion.difficulty || 3;
+            diffBadge.className = `px-3 py-1 rounded-full text-sm ${diffColors[diff]}`;
+            diffBadge.textContent = diffNames[diff];
+
+            // 選項
+            const container = document.getElementById('options-container');
+            container.innerHTML = '';
+            
+            let options = currentQuestion.options;
+            if (typeof options === 'string') {
+                try { options = JSON.parse(options); } catch { options = [options]; }
+            }
+
+            const labels = ['A', 'B', 'C', 'D'];
+            options.slice(0, 4).forEach((opt, i) => {
+                const btn = document.createElement('button');
+                btn.className = 'option-btn w-full text-left p-4 bg-gray-700 rounded-xl';
+                btn.innerHTML = `<span class="font-bold mr-3">${labels[i]}.</span>${opt}`;
+                btn.onclick = () => selectAnswer(i);
+                container.appendChild(btn);
+            });
+        }
+
+        // 選擇答案
+        function selectAnswer(selected) {
+            if (answered) return;
+            answered = true;
+
+            const buttons = document.querySelectorAll('.option-btn');
+            const labels = ['A', 'B', 'C', 'D'];
+            
+            let correctIndex = labels.indexOf(currentQuestion.answer);
+            if (correctIndex === -1) correctIndex = parseInt(currentQuestion.answer) || 0;
+
+            const isCorrect = selected === correctIndex;
+
+            buttons.forEach((btn, i) => {
+                btn.disabled = true;
+                if (i === correctIndex) btn.classList.add('correct');
+                else if (i === selected && !isCorrect) btn.classList.add('wrong');
+            });
+
+            if (isCorrect) {
+                // 攻擊怪物
+                const damage = 20 + Math.floor(Math.random() * 10);
+                monsterStats.hp = Math.max(0, monsterStats.hp - damage);
+                
+                document.getElementById('monster-display').classList.add('shake');
+                setTimeout(() => document.getElementById('monster-display').classList.remove('shake'), 500);
+                
+                document.getElementById('monster-hp').textContent = monsterStats.hp;
+                document.getElementById('monster-hp-bar').style.width = 
+                    `${(monsterStats.hp / monsterStats.maxHp) * 100}%`;
+                
+                addLog(`✓ 答對！對 ${currentMonster.name} 造成 ${damage} 點傷害`);
+
+                if (monsterStats.hp <= 0) {
+                    victory();
+                    return;
+                }
+            } else {
+                // 被怪物攻擊
+                const damage = 15 + Math.floor(Math.random() * 10);
+                playerStats.hp = Math.max(0, playerStats.hp - damage);
+                
+                document.getElementById('player-hp').textContent = playerStats.hp;
+                document.getElementById('player-hp-bar').style.width = 
+                    `${(playerStats.hp / playerStats.maxHp) * 100}%`;
+                
+                const dialogue = dialogues[currentMonster.id] || {};
+                document.getElementById('monster-dialogue').textContent = 
+                    `"${dialogue.hurt || '哈哈！'}"`;
+                
+                addLog(`✗ 答錯！${currentMonster.name} 對你造成 ${damage} 點傷害`);
+
+                if (playerStats.hp <= 0) {
+                    defeat();
+                    return;
+                }
+            }
+
+            // 1.5秒後下一題
+            setTimeout(loadQuestion, 1500);
+        }
+
+        // 勝利
+        function victory() {
+            const expGain = 50 + Math.floor(Math.random() * 30);
+            const coinGain = 20 + Math.floor(Math.random() * 20);
+            
+            playerStats.exp += expGain;
+            playerStats.coins += coinGain;
+            
+            document.getElementById('exp').textContent = playerStats.exp;
+            document.getElementById('coins').textContent = playerStats.coins;
+
+            const dialogue = dialogues[currentMonster.id] || {};
+            document.getElementById('victory-message').textContent = 
+                `擊敗了 ${currentMonster.name}！\n獲得 ${expGain} XP 和 ${coinGain} 金幣`;
+            document.getElementById('victory-modal').classList.remove('hidden');
+            
+            addLog(`🏆 勝利！獲得 ${expGain} XP, ${coinGain} 金幣`);
+        }
+
+        // 戰敗
+        function defeat() {
+            document.getElementById('defeat-modal').classList.remove('hidden');
+            addLog('💀 戰敗...');
+        }
+
+        // 下一場戰鬥
+        function nextBattle() {
+            document.getElementById('victory-modal').classList.add('hidden');
+            startBattle();
+        }
+
+        // 重新開始
+        function restartBattle() {
+            playerStats.hp = playerStats.maxHp;
+            document.getElementById('player-hp').textContent = playerStats.hp;
+            document.getElementById('player-hp-bar').style.width = '100%';
+            document.getElementById('defeat-modal').classList.add('hidden');
+            startBattle();
+        }
+
+        // 新增戰鬥記錄
+        function addLog(message) {
+            const log = document.getElementById('battle-log');
+            const entry = document.createElement('div');
+            entry.textContent = message;
+            log.appendChild(entry);
+            log.scrollTop = log.scrollHeight;
+        }
+
+        // 啟動
+        init();
+    </script>
 </body>
 </html>

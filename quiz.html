@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>北斗教育 - 練習模式</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <style>
+        .gradient-bg { background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%); }
+        .option-btn { transition: all 0.3s ease; }
+        .option-btn:hover { transform: scale(1.02); }
+        .option-btn.correct { background: linear-gradient(135deg, #10b981 0%, #059669 100%); }
+        .option-btn.wrong { background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%); }
+        .progress-bar { transition: width 0.5s ease; }
+    </style>
+</head>
+<body class="gradient-bg min-h-screen text-white">
+    <!-- Header -->
+    <header class="py-4 px-6 flex justify-between items-center border-b border-gray-700">
+        <a href="index.html" class="flex items-center space-x-3">
+            <span class="text-2xl">⭐</span>
+            <span class="text-xl font-bold">北斗教育</span>
+        </a>
+        <div class="flex items-center space-x-6">
+            <div id="score-display" class="text-lg">
+                <span class="text-green-400">✓ <span id="correct-count">0</span></span>
+                <span class="text-gray-400 mx-2">/</span>
+                <span class="text-red-400">✗ <span id="wrong-count">0</span></span>
+            </div>
+            <div id="subject-badge" class="bg-blue-600 px-4 py-1 rounded-full"></div>
+        </div>
+    </header>
+
+    <!-- Progress -->
+    <div class="h-2 bg-gray-700">
+        <div id="progress-bar" class="progress-bar h-full bg-gradient-to-r from-green-400 to-blue-500" style="width: 0%"></div>
+    </div>
+
+    <!-- Main Content -->
+    <main class="max-w-4xl mx-auto px-6 py-8">
+        <!-- Question Card -->
+        <div class="bg-gray-800 bg-opacity-50 rounded-2xl p-8 mb-6">
+            <div class="flex justify-between items-center mb-4">
+                <span class="text-gray-400">題目 <span id="q-number">1</span> / <span id="q-total">10</span></span>
+                <span id="difficulty-badge" class="px-3 py-1 rounded-full text-sm"></span>
+            </div>
+            <div id="question-topic" class="text-sm text-blue-400 mb-2"></div>
+            <div id="question-text" class="text-xl leading-relaxed mb-8"></div>
+            
+            <!-- Options -->
+            <div id="options-container" class="space-y-4">
+                <!-- 動態載入 -->
+            </div>
+        </div>
+
+        <!-- Explanation (hidden initially) -->
+        <div id="explanation-card" class="bg-gray-800 bg-opacity-50 rounded-2xl p-6 mb-6 hidden">
+            <h4 class="font-bold text-lg mb-2">📖 解析</h4>
+            <div id="explanation-text" class="text-gray-300"></div>
+        </div>
+
+        <!-- Next Button -->
+        <div class="text-center">
+            <button id="next-btn" class="bg-blue-600 hover:bg-blue-700 px-8 py-3 rounded-full font-bold hidden" onclick="nextQuestion()">
+                下一題 →
+            </button>
+        </div>
+    </main>
+
+    <!-- Loading -->
+    <div id="loading" class="fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center">
+        <div class="text-center">
+            <div class="text-6xl mb-4">📚</div>
+            <div class="text-xl">載入題庫中...</div>
+        </div>
+    </div>
+
+    <script>
+        let questions = [];
+        let currentIndex = 0;
+        let correctCount = 0;
+        let wrongCount = 0;
+        let answered = false;
+
+        // 取得 URL 參數
+        const urlParams = new URLSearchParams(window.location.search);
+        const subject = urlParams.get('subject') || '數學';
+        
+        document.getElementById('subject-badge').textContent = subject;
+
+        // 載入題庫
+        async function loadQuestions() {
+            try {
+                const safeName = subject.replace('/', '_').replace(' ', '_');
+                const response = await fetch(`data/qbank_${safeName}.json`);
+                if (!response.ok) throw new Error('找不到題庫');
+                
+                const data = await response.json();
+                // 隨機抽 20 題
+                questions = data.sort(() => Math.random() - 0.5).slice(0, 20);
+                document.getElementById('q-total').textContent = questions.length;
+                document.getElementById('loading').classList.add('hidden');
+                showQuestion();
+            } catch (error) {
+                document.getElementById('loading').innerHTML = `
+                    <div class="text-center">
+                        <div class="text-6xl mb-4">❌</div>
+                        <div class="text-xl">載入失敗: ${error.message}</div>
+                        <a href="index.html" class="text-blue-400 mt-4 inline-block">返回首頁</a>
+                    </div>
+                `;
+            }
+        }
+
+        // 顯示題目
+        function showQuestion() {
+            if (currentIndex >= questions.length) {
+                showResult();
+                return;
+            }
+
+            const q = questions[currentIndex];
+            answered = false;
+            
+            document.getElementById('q-number').textContent = currentIndex + 1;
+            document.getElementById('question-topic').textContent = q.topic || '';
+            document.getElementById('question-text').textContent = q.question;
+            
+            // 難度標籤
+            const diffBadge = document.getElementById('difficulty-badge');
+            const diffColors = ['', 'bg-green-600', 'bg-green-500', 'bg-yellow-500', 'bg-orange-500', 'bg-red-500'];
+            const diffNames = ['', '簡單', '基礎', '中等', '困難', '極難'];
+            diffBadge.className = `px-3 py-1 rounded-full text-sm ${diffColors[q.difficulty] || 'bg-gray-600'}`;
+            diffBadge.textContent = diffNames[q.difficulty] || '中等';
+
+            // 選項
+            const container = document.getElementById('options-container');
+            container.innerHTML = '';
+            
+            let options = q.options;
+            if (typeof options === 'string') {
+                try { options = JSON.parse(options); } catch { options = [options]; }
+            }
+            
+            const labels = ['A', 'B', 'C', 'D', 'E', 'F'];
+            options.forEach((opt, i) => {
+                const btn = document.createElement('button');
+                btn.className = 'option-btn w-full text-left p-4 bg-gray-700 hover:bg-gray-600 rounded-xl';
+                btn.innerHTML = `<span class="font-bold mr-3">${labels[i]}.</span>${opt}`;
+                btn.onclick = () => selectOption(i, q.answer);
+                container.appendChild(btn);
+            });
+
+            // 隱藏解析和下一題按鈕
+            document.getElementById('explanation-card').classList.add('hidden');
+            document.getElementById('next-btn').classList.add('hidden');
+
+            // 更新進度條
+            const progress = ((currentIndex) / questions.length) * 100;
+            document.getElementById('progress-bar').style.width = `${progress}%`;
+        }
+
+        // 選擇選項
+        function selectOption(selected, correctAnswer) {
+            if (answered) return;
+            answered = true;
+
+            const buttons = document.querySelectorAll('.option-btn');
+            const labels = ['A', 'B', 'C', 'D', 'E', 'F'];
+            
+            // 判斷正確答案的索引
+            let correctIndex = labels.indexOf(correctAnswer);
+            if (correctIndex === -1) {
+                // 如果答案是數字
+                correctIndex = parseInt(correctAnswer);
+            }
+
+            const isCorrect = selected === correctIndex;
+
+            buttons.forEach((btn, i) => {
+                btn.disabled = true;
+                if (i === correctIndex) {
+                    btn.classList.add('correct');
+                } else if (i === selected && !isCorrect) {
+                    btn.classList.add('wrong');
+                }
+            });
+
+            if (isCorrect) {
+                correctCount++;
+            } else {
+                wrongCount++;
+            }
+
+            document.getElementById('correct-count').textContent = correctCount;
+            document.getElementById('wrong-count').textContent = wrongCount;
+
+            // 顯示解析
+            const q = questions[currentIndex];
+            if (q.explanation) {
+                document.getElementById('explanation-text').textContent = q.explanation;
+                document.getElementById('explanation-card').classList.remove('hidden');
+            }
+
+            // 顯示下一題按鈕
+            document.getElementById('next-btn').classList.remove('hidden');
+        }
+
+        // 下一題
+        function nextQuestion() {
+            currentIndex++;
+            showQuestion();
+        }
+
+        // 顯示結果
+        function showResult() {
+            const total = correctCount + wrongCount;
+            const percentage = Math.round((correctCount / total) * 100);
+            
+            document.querySelector('main').innerHTML = `
+                <div class="bg-gray-800 bg-opacity-50 rounded-2xl p-8 text-center">
+                    <div class="text-6xl mb-4">${percentage >= 80 ? '🏆' : percentage >= 60 ? '👍' : '💪'}</div>
+                    <h2 class="text-3xl font-bold mb-4">練習完成！</h2>
+                    <div class="text-5xl font-bold mb-2">
+                        <span class="text-green-400">${correctCount}</span>
+                        <span class="text-gray-400"> / </span>
+                        <span class="text-white">${total}</span>
+                    </div>
+                    <div class="text-xl text-gray-400 mb-8">正確率 ${percentage}%</div>
+                    <div class="flex justify-center space-x-4">
+                        <a href="quiz.html?subject=${encodeURIComponent(subject)}" 
+                           class="bg-blue-600 hover:bg-blue-700 px-6 py-3 rounded-full font-bold">
+                            再練一次
+                        </a>
+                        <a href="index.html" class="bg-gray-600 hover:bg-gray-500 px-6 py-3 rounded-full font-bold">
+                            返回首頁
+                        </a>
+                    </div>
+                </div>
+            `;
+        }
+
+        // 初始化
+        loadQuestions();
+    </script>
+</body>
+</html>

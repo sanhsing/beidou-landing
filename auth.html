@@ -163,6 +163,52 @@
     <script>
         const API_BASE = 'https://beidou-edu-server-1.onrender.com/api';
         
+        // ===== 新手村進度處理 =====
+        document.addEventListener('DOMContentLoaded', () => {
+            // 檢查是否從新手村來
+            const urlParams = new URLSearchParams(window.location.search);
+            const fromTutorial = urlParams.get('from') === 'tutorial';
+            const mode = urlParams.get('mode');
+            
+            if (fromTutorial) {
+                // 顯示新手村進度
+                const tutorialData = localStorage.getItem('beidou_tutorial_data');
+                if (tutorialData) {
+                    const data = JSON.parse(tutorialData);
+                    showTutorialBonus(data);
+                }
+                // 預設切到註冊
+                if (mode === 'register') {
+                    switchTab('register');
+                }
+            }
+        });
+        
+        function showTutorialBonus(data) {
+            // 在表單上方顯示新手村成果
+            const container = document.querySelector('.glass');
+            const bonusDiv = document.createElement('div');
+            bonusDiv.className = 'bg-gradient-to-r from-purple-600/20 to-blue-600/20 rounded-lg p-4 mb-6 border border-purple-500/30';
+            bonusDiv.innerHTML = `
+                <p class="text-sm text-purple-300 mb-2">🎮 新手村成果將自動帶入：</p>
+                <div class="flex justify-around text-center">
+                    <div>
+                        <p class="text-lg font-bold text-purple-400">${data.exp || 0}</p>
+                        <p class="text-xs text-gray-400">經驗值</p>
+                    </div>
+                    <div>
+                        <p class="text-lg font-bold text-yellow-400">${data.coins || 0}</p>
+                        <p class="text-xs text-gray-400">金幣</p>
+                    </div>
+                    <div>
+                        <p class="text-lg font-bold text-green-400">Lv.${data.level || 1}</p>
+                        <p class="text-xs text-gray-400">等級</p>
+                    </div>
+                </div>
+            `;
+            container.insertBefore(bonusDiv, container.firstChild);
+        }
+        
         // 切換標籤
         function switchTab(tab) {
             const loginForm = document.getElementById('loginForm');
