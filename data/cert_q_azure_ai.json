@@ -1,0 +1,1819 @@
+{
+  "cert": "azure_ai",
+  "total": 49,
+  "questions": [
+    {
+      "id": "Q200",
+      "type": "single",
+      "difficulty": 2,
+      "question": "在AI 技術的實際應用中，實現負責任 AI 以符合合規要求是常見的需求。企業通常需要考慮技術可行性、成本效益和長期維護等因素。根據最佳實踐和認證考試的重點，請回答以下問題：\n\n監督式學習需要什麼類型的數據？",
+      "options": [
+        "A. 標記數據",
+        "B. 未標記數據",
+        "C. 半標記數據",
+        "D. 隨機數據"
+      ],
+      "answer": "A",
+      "explanation": "{\"correct\":\"此答案正確，因為它準確描述了該服務或概念的核心功能與最佳應用場景。\",\"incorrect\":\"其他選項不正確，因為它們描述的功能不適用於此情境，或不符合最佳實踐建議。\",\"key_point\":\"請記住此知識點在實際考試中經常出現。\"}",
+      "xtf": {
+        "消": {
+          "concept": "監督式學習",
+          "category": "ML 類型",
+          "definition": "有標籤數據訓練",
+          "why_test": "理解 監督式學習 的核心概念和應用"
+        },
+        "拓": {
+          "related": [],
+          "pitfalls": [],
+          "memory_tip": "監督式學習 = 有標籤數據訓練",
+          "compare": {}
+        },
+        "融": {
+          "use_case": "有標籤數據訓練",
+          "exam_tip": "看到相關關鍵詞 → 監督式學習",
+          "solve_steps": [
+            "識別關鍵詞",
+            "確認是 ML 類型",
+            "選擇答案"
+          ]
+        }
+      }
+    },
+    {
+      "id": "Q201",
+      "type": "single",
+      "difficulty": 3,
+      "question": "在AI 技術的實際應用中，整合多種 AI 服務以建立端到端解決方案是常見的需求。企業通常需要考慮技術可行性、成本效益和長期維護等因素。根據最佳實踐和認證考試的重點，請回答以下問題：\n\n下列何者是非監督式學習的應用？",
+      "options": [
+        "A. 垃圾郵件分類",
+        "B. 客戶分群",
+        "C. 房價預測",
+        "D. 圖像識別"
+      ],
+      "answer": "B",
+      "explanation": "{\"correct\":\"此答案正確，因為它準確描述了該服務或概念的核心功能與最佳應用場景。\",\"incorrect\":\"其他選項不正確，因為它們描述的功能不適用於此情境，或不符合最佳實踐建議。\",\"key_point\":\"請記住此知識點在實際考試中經常出現。\"}",
+      "xtf": {
+        "消": {
+          "concept": "監督式學習",
+          "category": "ML 類型",
+          "definition": "有標籤數據訓練",
+          "why_test": "理解 監督式學習 的核心概念和應用"
+        },
+        "拓": {
+          "related": [],
+          "pitfalls": [],
+          "memory_tip": "監督式學習 = 有標籤數據訓練",
+          "compare": {}
+        },
+        "融": {
+          "use_case": "有標籤數據訓練",
+          "exam_tip": "看到相關關鍵詞 → 監督式學習",
+          "solve_steps": [
+            "識別關鍵詞",
+            "確認是 ML 類型",
+            "選擇答案"
+          ]
+        }
+      }
+    },
+    {
+      "id": "Q202",
+      "type": "single",
+      "difficulty": 3,
+      "question": "在AI 技術的實際應用中，實現負責任 AI 以符合合規要求是常見的需求。企業通常需要考慮技術可行性、成本效益和長期維護等因素。根據最佳實踐和認證考試的重點，請回答以下問題：\n\n迴歸模型的輸出是什麼類型？",
+      "options": [
+        "A. 類別",
+        "B. 連續數值",
+        "C. 二元值",
+        "D. 機率分布"
+      ],
+      "answer": "B",
+      "explanation": "{\"correct\":\"此答案正確，因為它準確描述了該服務或概念的核心功能與最佳應用場景。\",\"incorrect\":\"其他選項不正確，因為它們描述的功能不適用於此情境，或不符合最佳實踐建議。\",\"key_point\":\"請記住此知識點在實際考試中經常出現。\"}",
+      "xtf": {
+        "消": {
+          "concept": "迴歸問題",
+          "category": "ML 任務",
+          "definition": "預測數值",
+          "why_test": "理解 迴歸問題 的核心概念和應用"
+        },
+        "拓": {
+          "related": [],
+          "pitfalls": [],
+          "memory_tip": "迴歸問題 = 預測數值",
+          "compare": {}
+        },
+        "融": {
+          "use_case": "預測數值",
+          "exam_tip": "看到相關關鍵詞 → 迴歸問題",
+          "solve_steps": [
+            "識別關鍵詞",
+            "確認是 ML 任務",
+            "選擇答案"
+          ]
+        }
+      }
+    },
+    {
+      "id": "Q203",
+      "type": "single",
+      "difficulty": 3,
+      "question": "在AI 技術的實際應用中，整合多種 AI 服務以建立端到端解決方案是常見的需求。企業通常需要考慮技術可行性、成本效益和長期維護等因素。根據最佳實踐和認證考試的重點，請回答以下問題：\n\n決策樹屬於哪種學習類型？",
+      "options": [
+        "A. 深度學習",
+        "B. 強化學習",
+        "C. 監督式學習",
+        "D. 生成式學習"
+      ],
+      "answer": "C",
+      "explanation": "{\"correct\":\"此答案正確，因為它準確描述了該服務或概念的核心功能與最佳應用場景。\",\"incorrect\":\"其他選項不正確，因為它們描述的功能不適用於此情境，或不符合最佳實踐建議。\",\"key_point\":\"請記住此知識點在實際考試中經常出現。\"}",
+      "xtf": {
+        "消": {
+          "concept": "監督式學習",
+          "category": "ML 類型",
+          "definition": "有標籤數據訓練",
+          "why_test": "理解 監督式學習 的核心概念和應用"
+        },
+        "拓": {
+          "related": [],
+          "pitfalls": [],
+          "memory_tip": "監督式學習 = 有標籤數據訓練",
+          "compare": {}
+        },
+        "融": {
+          "use_case": "有標籤數據訓練",
+          "exam_tip": "看到相關關鍵詞 → 監督式學習",
+          "solve_steps": [
+            "識別關鍵詞",
+            "確認是 ML 類型",
+            "選擇答案"
+          ]
+        }
+      }
+    },
+    {
+      "id": "Q204",
+      "type": "single",
+      "difficulty": 3,
+      "question": "在AI 技術的實際應用中，分析大量非結構化資料以獲取洞察是常見的需求。企業通常需要考慮技術可行性、成本效益和長期維護等因素。根據最佳實踐和認證考試的重點，請回答以下問題：\n\n過擬合的主要原因是？",
+      "options": [
+        "A. 訓練數據太少",
+        "B. 模型太簡單",
+        "C. 學習率太低",
+        "D. 迭代次數太少"
+      ],
+      "answer": "A",
+      "explanation": "{\"correct\":\"此答案正確，因為它準確描述了該服務或概念的核心功能與最佳應用場景。\",\"incorrect\":\"其他選項不正確，因為它們描述的功能不適用於此情境，或不符合最佳實踐建議。\",\"key_point\":\"請記住此知識點在實際考試中經常出現。\"}",
+      "xtf": {
+        "消": {
+          "concept": "準確率",
+          "category": "模型評估",
+          "definition": "正確預測比例",
+          "why_test": "理解 準確率 的核心概念和應用"
+        },
+        "拓": {
+          "related": [],
+          "pitfalls": [],
+          "memory_tip": "準確率 = 正確預測比例",
+          "compare": {}
+        },
+        "融": {
+          "use_case": "正確預測比例",
+          "exam_tip": "看到相關關鍵詞 → 準確率",
+          "solve_steps": [
+            "識別關鍵詞",
+            "確認是 模型評估",
+            "選擇答案"
+          ]
+        }
+      }
+    },
+    {
+      "id": "Q205",
+      "type": "single",
+      "difficulty": 4,
+      "question": "在AI 技術的實際應用中，自動化業務流程並提升效率是常見的需求。企業通常需要考慮技術可行性、成本效益和長期維護等因素。根據最佳實踐和認證考試的重點，請回答以下問題：\n\nK-Means 演算法屬於？",
+      "options": [
+        "A. 監督式學習",
+        "B. 強化學習",
+        "C. 非監督式學習",
+        "D. 半監督式學習"
+      ],
+      "answer": "C",
+      "explanation": "{\"correct\":\"此答案正確，因為它準確描述了該服務或概念的核心功能與最佳應用場景。\",\"incorrect\":\"其他選項不正確，因為它們描述的功能不適用於此情境，或不符合最佳實踐建議。\",\"key_point\":\"請記住此知識點在實際考試中經常出現。\"}",
+      "xtf": {
+        "消": {
+          "concept": "監督式學習",
+          "category": "ML 類型",
+          "definition": "有標籤數據訓練",
+          "why_test": "理解 監督式學習 的核心概念和應用"
+        },
+        "拓": {
+          "related": [],
+          "pitfalls": [],
+          "memory_tip": "監督式學習 = 有標籤數據訓練",
+          "compare": {}
+        },
+        "融": {
+          "use_case": "有標籤數據訓練",
+          "exam_tip": "看到相關關鍵詞 → 監督式學習",
+          "solve_steps": [
+            "識別關鍵詞",
+            "確認是 ML 類型",
+            "選擇答案"
+          ]
+        }
+      }
+    },
+    {
+      "id": "Q206",
+      "type": "single",
+      "difficulty": 4,
+      "question": "在AI 技術的實際應用中，自動化業務流程並提升效率是常見的需求。企業通常需要考慮技術可行性、成本效益和長期維護等因素。根據最佳實踐和認證考試的重點，請回答以下問題：\n\n神經網路的基本單位是？",
+      "options": [
+        "A. 層",
+        "B. 神經元",
+        "C. 權重",
+        "D. 偏差"
+      ],
+      "answer": "B",
+      "explanation": "{\"correct\":\"此答案正確，因為它準確描述了該服務或概念的核心功能與最佳應用場景。\",\"incorrect\":\"其他選項不正確，因為它們描述的功能不適用於此情境，或不符合最佳實踐建議。\",\"key_point\":\"請記住此知識點在實際考試中經常出現。\"}",
+      "xtf": {
+        "消": {
+          "concept": "準確率",
+          "category": "模型評估",
+          "definition": "正確預測比例",
+          "why_test": "理解 準確率 的核心概念和應用"
+        },
+        "拓": {
+          "related": [],
+          "pitfalls": [],
+          "memory_tip": "準確率 = 正確預測比例",
+          "compare": {}
+        },
+        "融": {
+          "use_case": "正確預測比例",
+          "exam_tip": "看到相關關鍵詞 → 準確率",
+          "solve_steps": [
+            "識別關鍵詞",
+            "確認是 模型評估",
+            "選擇答案"
+          ]
+        }
+      }
+    },
+    {
+      "id": "Q207",
+      "type": "single",
+      "difficulty": 3,
+      "question": "在AI 技術的實際應用中，建立智慧客服系統以改善客戶體驗是常見的需求。企業通常需要考慮技術可行性、成本效益和長期維護等因素。根據最佳實踐和認證考試的重點，請回答以下問題：\n\n梯度下降的目的是？",
+      "options": [
+        "A. 增加損失",
+        "B. 最小化損失函數",
+        "C. 增加學習率",
+        "D. 減少數據量"
+      ],
+      "answer": "B",
+      "explanation": "{\"correct\":\"此答案正確，因為它準確描述了該服務或概念的核心功能與最佳應用場景。\",\"incorrect\":\"其他選項不正確，因為它們描述的功能不適用於此情境，或不符合最佳實踐建議。\",\"key_point\":\"請記住此知識點在實際考試中經常出現。\"}",
+      "xtf": {
+        "消": {
+          "concept": "準確率",
+          "category": "模型評估",
+          "definition": "正確預測比例",
+          "why_test": "理解 準確率 的核心概念和應用"
+        },
+        "拓": {
+          "related": [],
+          "pitfalls": [],
+          "memory_tip": "準確率 = 正確預測比例",
+          "compare": {}
+        },
+        "融": {
+          "use_case": "正確預測比例",
+          "exam_tip": "看到相關關鍵詞 → 準確率",
+          "solve_steps": [
+            "識別關鍵詞",
+            "確認是 模型評估",
+            "選擇答案"
+          ]
+        }
+      }
+    },
+    {
+      "id": "Q208",
+      "type": "single",
+      "difficulty": 3,
+      "question": "在AI 技術的實際應用中，分析大量非結構化資料以獲取洞察是常見的需求。企業通常需要考慮技術可行性、成本效益和長期維護等因素。根據最佳實踐和認證考試的重點，請回答以下問題：\n\n特徵工程的目的是？",
+      "options": [
+        "A. 減少計算量",
+        "B. 提高模型性能",
+        "C. 加快訓練速度",
+        "D. 減少數據量"
+      ],
+      "answer": "B",
+      "explanation": "{\"correct\":\"此答案正確，因為它準確描述了該服務或概念的核心功能與最佳應用場景。\",\"incorrect\":\"其他選項不正確，因為它們描述的功能不適用於此情境，或不符合最佳實踐建議。\",\"key_point\":\"請記住此知識點在實際考試中經常出現。\"}",
+      "xtf": {
+        "消": {
+          "concept": "準確率",
+          "category": "模型評估",
+          "definition": "正確預測比例",
+          "why_test": "理解 準確率 的核心概念和應用"
+        },
+        "拓": {
+          "related": [],
+          "pitfalls": [],
+          "memory_tip": "準確率 = 正確預測比例",
+          "compare": {}
+        },
+        "融": {
+          "use_case": "正確預測比例",
+          "exam_tip": "看到相關關鍵詞 → 準確率",
+          "solve_steps": [
+            "識別關鍵詞",
+            "確認是 模型評估",
+            "選擇答案"
+          ]
+        }
+      }
+    },
+    {
+      "id": "Q209",
+      "type": "single",
+      "difficulty": 2,
+      "question": "在AI 技術的實際應用中，建立智慧客服系統以改善客戶體驗是常見的需求。企業通常需要考慮技術可行性、成本效益和長期維護等因素。根據最佳實踐和認證考試的重點，請回答以下問題：\n\n交叉驗證的主要用途是？",
+      "options": [
+        "A. 數據清理",
+        "B. 評估模型泛化能力",
+        "C. 特徵選擇",
+        "D. 超參數初始化"
+      ],
+      "answer": "B",
+      "explanation": "{\"correct\":\"此答案正確，因為它準確描述了該服務或概念的核心功能與最佳應用場景。\",\"incorrect\":\"其他選項不正確，因為它們描述的功能不適用於此情境，或不符合最佳實踐建議。\",\"key_point\":\"請記住此知識點在實際考試中經常出現。\"}",
+      "xtf": {
+        "消": {
+          "concept": "準確率",
+          "category": "模型評估",
+          "definition": "正確預測比例",
+          "why_test": "理解 準確率 的核心概念和應用"
+        },
+        "拓": {
+          "related": [],
+          "pitfalls": [],
+          "memory_tip": "準確率 = 正確預測比例",
+          "compare": {}
+        },
+        "融": {
+          "use_case": "正確預測比例",
+          "exam_tip": "看到相關關鍵詞 → 準確率",
+          "solve_steps": [
+            "識別關鍵詞",
+            "確認是 模型評估",
+            "選擇答案"
+          ]
+        }
+      }
+    },
+    {
+      "id": "Q210",
+      "type": "single",
+      "difficulty": 3,
+      "question": "在AI 技術的實際應用中，自動化業務流程並提升效率是常見的需求。企業通常需要考慮技術可行性、成本效益和長期維護等因素。根據最佳實踐和認證考試的重點，請回答以下問題：\n\nAzure Cognitive Services 包含哪類服務？",
+      "options": [
+        "A. 僅視覺",
+        "B. 僅語言",
+        "C. 僅語音",
+        "D. 視覺、語言、語音等多類"
+      ],
+      "answer": "D",
+      "explanation": "{\"correct\":\"此答案正確，因為它準確描述了該服務或概念的核心功能與最佳應用場景。\",\"incorrect\":\"其他選項不正確，因為它們描述的功能不適用於此情境，或不符合最佳實踐建議。\",\"key_point\":\"請記住此知識點在實際考試中經常出現。\"}",
+      "xtf": {
+        "消": {
+          "concept": "Azure Cognitive Services",
+          "category": "AI 服務套件",
+          "definition": "預建 AI 服務",
+          "why_test": "理解 Azure Cognitive Services 的核心概念和應用"
+        },
+        "拓": {
+          "related": [],
+          "pitfalls": [],
+          "memory_tip": "Azure Cognitive Services = 預建 AI 服務",
+          "compare": {}
+        },
+        "融": {
+          "use_case": "預建 AI 服務",
+          "exam_tip": "看到相關關鍵詞 → Azure Cognitive Services",
+          "solve_steps": [
+            "識別關鍵詞",
+            "確認是 AI 服務套件",
+            "選擇答案"
+          ]
+        }
+      }
+    },
+    {
+      "id": "Q211",
+      "type": "single",
+      "difficulty": 2,
+      "question": "在AI 技術的實際應用中，部署機器學習模型以支援即時預測是常見的需求。企業通常需要考慮技術可行性、成本效益和長期維護等因素。根據最佳實踐和認證考試的重點，請回答以下問題：\n\nAzure Machine Learning 是什麼類型的服務？",
+      "options": [
+        "A. SaaS",
+        "B. PaaS",
+        "C. IaaS",
+        "D. FaaS"
+      ],
+      "answer": "B",
+      "explanation": "{\"correct\":\"此答案正確，因為它準確描述了該服務或概念的核心功能與最佳應用場景。\",\"incorrect\":\"其他選項不正確，因為它們描述的功能不適用於此情境，或不符合最佳實踐建議。\",\"key_point\":\"請記住此知識點在實際考試中經常出現。\"}",
+      "xtf": {
+        "消": {
+          "concept": "Azure Machine Learning",
+          "category": "ML 平台",
+          "definition": "ML 工作室",
+          "why_test": "理解 Azure Machine Learning 的核心概念和應用"
+        },
+        "拓": {
+          "related": [],
+          "pitfalls": [],
+          "memory_tip": "Azure Machine Learning = ML 工作室",
+          "compare": {}
+        },
+        "融": {
+          "use_case": "ML 工作室",
+          "exam_tip": "看到相關關鍵詞 → Azure Machine Learning",
+          "solve_steps": [
+            "識別關鍵詞",
+            "確認是 ML 平台",
+            "選擇答案"
+          ]
+        }
+      }
+    },
+    {
+      "id": "Q212",
+      "type": "single",
+      "difficulty": 2,
+      "question": "在AI 技術的實際應用中，建立智慧客服系統以改善客戶體驗是常見的需求。企業通常需要考慮技術可行性、成本效益和長期維護等因素。根據最佳實踐和認證考試的重點，請回答以下問題：\n\n哪個服務用於自然語言處理？",
+      "options": [
+        "A. Computer Vision",
+        "B. Text Analytics",
+        "C. Face API",
+        "D. Speech Services"
+      ],
+      "answer": "B",
+      "explanation": "{\"correct\": \"Text Analytics 提供 NLP 功能\\n\\n💡 口訣：Comprehend=AI讀心，理解文字\", \"incorrect\": \"其他選項不正確，因為它們描述的是不同AWS服務的功能，或不適用於此應用場景。\", \"key_point\": \"建議透過實際操作來加深對此概念的理解。\"}",
+      "xtf": {
+        "消": {
+          "concept": "Amazon Comprehend",
+          "category": "NLP",
+          "definition": "文本分析：情緒、實體、主題",
+          "why_test": "理解 Amazon Comprehend 的核心概念和應用"
+        },
+        "拓": {
+          "related": [],
+          "pitfalls": [],
+          "memory_tip": "Amazon Comprehend = 文本分析：情緒、實體、主題",
+          "compare": {}
+        },
+        "融": {
+          "use_case": "文本分析：情緒、實體、主題",
+          "exam_tip": "看到相關關鍵詞 → Amazon Comprehend",
+          "solve_steps": [
+            "識別關鍵詞",
+            "確認是 NLP",
+            "選擇答案"
+          ]
+        }
+      }
+    },
+    {
+      "id": "Q213",
+      "type": "single",
+      "difficulty": 3,
+      "question": "在AI 技術的實際應用中，自動化業務流程並提升效率是常見的需求。企業通常需要考慮技術可行性、成本效益和長期維護等因素。根據最佳實踐和認證考試的重點，請回答以下問題：\n\nAzure Bot Service 的主要用途是？",
+      "options": [
+        "A. 圖像處理",
+        "B. 建立對話機器人",
+        "C. 數據分析",
+        "D. 模型訓練"
+      ],
+      "answer": "B",
+      "explanation": "{\"correct\":\"此答案正確，因為它準確描述了該服務或概念的核心功能與最佳應用場景。\",\"incorrect\":\"其他選項不正確，因為它們描述的功能不適用於此情境，或不符合最佳實踐建議。\",\"key_point\":\"請記住此知識點在實際考試中經常出現。\"}",
+      "xtf": {
+        "消": {
+          "concept": "Azure Bot Service",
+          "category": "對話 AI",
+          "definition": "聊天機器人平台",
+          "why_test": "理解 Azure Bot Service 的核心概念和應用"
+        },
+        "拓": {
+          "related": [],
+          "pitfalls": [],
+          "memory_tip": "Azure Bot Service = 聊天機器人平台",
+          "compare": {}
+        },
+        "融": {
+          "use_case": "聊天機器人平台",
+          "exam_tip": "看到相關關鍵詞 → Azure Bot Service",
+          "solve_steps": [
+            "識別關鍵詞",
+            "確認是 對話 AI",
+            "選擇答案"
+          ]
+        }
+      }
+    },
+    {
+      "id": "Q214",
+      "type": "single",
+      "difficulty": 4,
+      "question": "在AI 技術的實際應用中，自動化業務流程並提升效率是常見的需求。企業通常需要考慮技術可行性、成本效益和長期維護等因素。根據最佳實踐和認證考試的重點，請回答以下問題：\n\nForm Recognizer 用於？",
+      "options": [
+        "A. 語音識別",
+        "B. 文件表單識別",
+        "C. 人臉識別",
+        "D. 物件偵測"
+      ],
+      "answer": "B",
+      "explanation": "{\"correct\": \"Form Recognizer 識別文檔和表單\\n\\n💡 口訣：Document Intelligence=AI讀文件\", \"incorrect\": \"錯誤選項混淆了不同服務的用途，例如將儲存服務誤認為AI服務。\", \"key_point\": \"理解這個概念有助於在實際工作中做出正確決策。\"}",
+      "xtf": {
+        "消": {
+          "concept": "Azure Document Intelligence",
+          "category": "文檔處理",
+          "definition": "文檔提取",
+          "why_test": "理解 Azure Document Intelligence 的核心概念和應用"
+        },
+        "拓": {
+          "related": [],
+          "pitfalls": [],
+          "memory_tip": "Azure Document Intelligence = 文檔提取",
+          "compare": {}
+        },
+        "融": {
+          "use_case": "文檔提取",
+          "exam_tip": "看到相關關鍵詞 → Azure Document Intelligence",
+          "solve_steps": [
+            "識別關鍵詞",
+            "確認是 文檔處理",
+            "選擇答案"
+          ]
+        }
+      }
+    },
+    {
+      "id": "Q215",
+      "type": "single",
+      "difficulty": 2,
+      "question": "在AI 技術的實際應用中，實現負責任 AI 以符合合規要求是常見的需求。企業通常需要考慮技術可行性、成本效益和長期維護等因素。根據最佳實踐和認證考試的重點，請回答以下問題：\n\n哪個服務提供預建的機器學習模型？",
+      "options": [
+        "A. Azure ML Studio",
+        "B. Cognitive Services",
+        "C. Data Factory",
+        "D. Synapse"
+      ],
+      "answer": "B",
+      "explanation": "{\"correct\":\"此答案正確，因為它準確描述了該服務或概念的核心功能與最佳應用場景。\",\"incorrect\":\"其他選項不正確，因為它們描述的功能不適用於此情境，或不符合最佳實踐建議。\",\"key_point\":\"請記住此知識點在實際考試中經常出現。\"}",
+      "xtf": {
+        "消": {
+          "concept": "Azure Cognitive Services",
+          "category": "AI 服務套件",
+          "definition": "預建 AI 服務",
+          "why_test": "理解 Azure Cognitive Services 的核心概念和應用"
+        },
+        "拓": {
+          "related": [],
+          "pitfalls": [],
+          "memory_tip": "Azure Cognitive Services = 預建 AI 服務",
+          "compare": {}
+        },
+        "融": {
+          "use_case": "預建 AI 服務",
+          "exam_tip": "看到相關關鍵詞 → Azure Cognitive Services",
+          "solve_steps": [
+            "識別關鍵詞",
+            "確認是 AI 服務套件",
+            "選擇答案"
+          ]
+        }
+      }
+    },
+    {
+      "id": "Q216",
+      "type": "single",
+      "difficulty": 3,
+      "question": "在AI 技術的實際應用中，建立智慧客服系統以改善客戶體驗是常見的需求。企業通常需要考慮技術可行性、成本效益和長期維護等因素。根據最佳實踐和認證考試的重點，請回答以下問題：\n\nResponsible AI 原則不包含？",
+      "options": [
+        "A. 公平性",
+        "B. 可靠性",
+        "C. 成本最小化",
+        "D. 透明度"
+      ],
+      "answer": "C",
+      "explanation": "{\"correct\":\"此答案正確，因為它準確描述了該服務或概念的核心功能與最佳應用場景。\",\"incorrect\":\"其他選項不正確，因為它們描述的功能不適用於此情境，或不符合最佳實踐建議。\",\"key_point\":\"請記住此知識點在實際考試中經常出現。\"}",
+      "xtf": {
+        "消": {
+          "concept": "Azure Responsible AI",
+          "category": "負責任 AI",
+          "definition": "AI 治理工具",
+          "why_test": "理解 Azure Responsible AI 的核心概念和應用"
+        },
+        "拓": {
+          "related": [],
+          "pitfalls": [],
+          "memory_tip": "Azure Responsible AI = AI 治理工具",
+          "compare": {}
+        },
+        "融": {
+          "use_case": "AI 治理工具",
+          "exam_tip": "看到相關關鍵詞 → Azure Responsible AI",
+          "solve_steps": [
+            "識別關鍵詞",
+            "確認是 負責任 AI",
+            "選擇答案"
+          ]
+        }
+      }
+    },
+    {
+      "id": "Q217",
+      "type": "single",
+      "difficulty": 3,
+      "question": "在AI 技術的實際應用中，實現負責任 AI 以符合合規要求是常見的需求。企業通常需要考慮技術可行性、成本效益和長期維護等因素。根據最佳實踐和認證考試的重點，請回答以下問題：\n\nOCR 代表什麼？",
+      "options": [
+        "A. Optical Character Recognition",
+        "B. Online Content Reader",
+        "C. Object Classification",
+        "D. Optical Computing"
+      ],
+      "answer": "A",
+      "explanation": "{\"correct\":\"此答案正確，因為它準確描述了該服務或概念的核心功能與最佳應用場景。\",\"incorrect\":\"其他選項不正確，因為它們描述的功能不適用於此情境，或不符合最佳實踐建議。\",\"key_point\":\"請記住此知識點在實際考試中經常出現。\"}",
+      "xtf": {
+        "消": {
+          "concept": "分類問題",
+          "category": "ML 任務",
+          "definition": "預測類別",
+          "why_test": "理解 分類問題 的核心概念和應用"
+        },
+        "拓": {
+          "related": [],
+          "pitfalls": [],
+          "memory_tip": "分類問題 = 預測類別",
+          "compare": {}
+        },
+        "融": {
+          "use_case": "預測類別",
+          "exam_tip": "看到相關關鍵詞 → 分類問題",
+          "solve_steps": [
+            "識別關鍵詞",
+            "確認是 ML 任務",
+            "選擇答案"
+          ]
+        }
+      }
+    },
+    {
+      "id": "Q218",
+      "type": "single",
+      "difficulty": 3,
+      "question": "在AI 技術的實際應用中，建立智慧客服系統以改善客戶體驗是常見的需求。企業通常需要考慮技術可行性、成本效益和長期維護等因素。根據最佳實踐和認證考試的重點，請回答以下問題：\n\n物件偵測與圖像分類的差異是？",
+      "options": [
+        "A. 速度",
+        "B. 物件偵測提供位置資訊",
+        "C. 準確度",
+        "D. 模型大小"
+      ],
+      "answer": "B",
+      "explanation": "{\"correct\":\"此答案正確，因為它準確描述了該服務或概念的核心功能與最佳應用場景。\",\"incorrect\":\"其他選項不正確，因為它們描述的功能不適用於此情境，或不符合最佳實踐建議。\",\"key_point\":\"請記住此知識點在實際考試中經常出現。\"}",
+      "xtf": {
+        "消": {
+          "concept": "分類問題",
+          "category": "ML 任務",
+          "definition": "預測類別",
+          "why_test": "理解 分類問題 的核心概念和應用"
+        },
+        "拓": {
+          "related": [],
+          "pitfalls": [],
+          "memory_tip": "分類問題 = 預測類別",
+          "compare": {}
+        },
+        "融": {
+          "use_case": "預測類別",
+          "exam_tip": "看到相關關鍵詞 → 分類問題",
+          "solve_steps": [
+            "識別關鍵詞",
+            "確認是 ML 任務",
+            "選擇答案"
+          ]
+        }
+      }
+    },
+    {
+      "id": "Q219",
+      "type": "single",
+      "difficulty": 4,
+      "question": "在AI 技術的實際應用中，建立智慧客服系統以改善客戶體驗是常見的需求。企業通常需要考慮技術可行性、成本效益和長期維護等因素。根據最佳實踐和認證考試的重點，請回答以下問題：\n\nCustom Vision 可用於？",
+      "options": [
+        "A. 只能分類",
+        "B. 只能偵測",
+        "C. 分類和偵測",
+        "D. 只能分割"
+      ],
+      "answer": "C",
+      "explanation": "{\"correct\": \"Custom Vision 支援分類和物件偵測\\n\\n💡 口訣：Vision=AI看圖，OCR/人臉/物件\", \"incorrect\": \"錯誤選項混淆了不同服務的用途，例如將儲存服務誤認為AI服務。\", \"key_point\": \"這是認證考試的高頻考點，建議熟記相關概念。\"}",
+      "xtf": {
+        "消": {
+          "concept": "Azure Computer Vision",
+          "category": "電腦視覺",
+          "definition": "圖像分析服務",
+          "why_test": "理解 Azure Computer Vision 的核心概念和應用"
+        },
+        "拓": {
+          "related": [],
+          "pitfalls": [],
+          "memory_tip": "Azure Computer Vision = 圖像分析服務",
+          "compare": {}
+        },
+        "融": {
+          "use_case": "圖像分析服務",
+          "exam_tip": "看到相關關鍵詞 → Azure Computer Vision",
+          "solve_steps": [
+            "識別關鍵詞",
+            "確認是 電腦視覺",
+            "選擇答案"
+          ]
+        }
+      }
+    },
+    {
+      "id": "Q220",
+      "type": "single",
+      "difficulty": 3,
+      "question": "在AI 技術的實際應用中，建立智慧客服系統以改善客戶體驗是常見的需求。企業通常需要考慮技術可行性、成本效益和長期維護等因素。根據最佳實踐和認證考試的重點，請回答以下問題：\n\nCNN 常用於哪類任務？",
+      "options": [
+        "A. 自然語言處理",
+        "B. 圖像處理",
+        "C. 時間序列預測",
+        "D. 推薦系統"
+      ],
+      "answer": "B",
+      "explanation": "{\"correct\":\"此答案正確，因為它準確描述了該服務或概念的核心功能與最佳應用場景。\",\"incorrect\":\"其他選項不正確，因為它們描述的功能不適用於此情境，或不符合最佳實踐建議。\",\"key_point\":\"請記住此知識點在實際考試中經常出現。\"}",
+      "xtf": {
+        "消": {
+          "concept": "準確率",
+          "category": "模型評估",
+          "definition": "正確預測比例",
+          "why_test": "理解 準確率 的核心概念和應用"
+        },
+        "拓": {
+          "related": [],
+          "pitfalls": [],
+          "memory_tip": "準確率 = 正確預測比例",
+          "compare": {}
+        },
+        "融": {
+          "use_case": "正確預測比例",
+          "exam_tip": "看到相關關鍵詞 → 準確率",
+          "solve_steps": [
+            "識別關鍵詞",
+            "確認是 模型評估",
+            "選擇答案"
+          ]
+        }
+      }
+    },
+    {
+      "id": "Q221",
+      "type": "single",
+      "difficulty": 4,
+      "question": "在AI 技術的實際應用中，分析大量非結構化資料以獲取洞察是常見的需求。企業通常需要考慮技術可行性、成本效益和長期維護等因素。根據最佳實踐和認證考試的重點，請回答以下問題：\n\nFace API 可以偵測什麼？",
+      "options": [
+        "A. 僅年齡",
+        "B. 僅表情",
+        "C. 年齡、表情、性別等多項",
+        "D. 僅性別"
+      ],
+      "answer": "C",
+      "explanation": "{\"correct\":\"此答案正確，因為它準確描述了該服務或概念的核心功能與最佳應用場景。\",\"incorrect\":\"其他選項不正確，因為它們描述的功能不適用於此情境，或不符合最佳實踐建議。\",\"key_point\":\"請記住此知識點在實際考試中經常出現。\"}",
+      "xtf": {
+        "消": {
+          "concept": "準確率",
+          "category": "模型評估",
+          "definition": "正確預測比例",
+          "why_test": "理解 準確率 的核心概念和應用"
+        },
+        "拓": {
+          "related": [],
+          "pitfalls": [],
+          "memory_tip": "準確率 = 正確預測比例",
+          "compare": {}
+        },
+        "融": {
+          "use_case": "正確預測比例",
+          "exam_tip": "看到相關關鍵詞 → 準確率",
+          "solve_steps": [
+            "識別關鍵詞",
+            "確認是 模型評估",
+            "選擇答案"
+          ]
+        }
+      }
+    },
+    {
+      "id": "Q222",
+      "type": "single",
+      "difficulty": 2,
+      "question": "在AI 技術的實際應用中，整合多種 AI 服務以建立端到端解決方案是常見的需求。企業通常需要考慮技術可行性、成本效益和長期維護等因素。根據最佳實踐和認證考試的重點，請回答以下問題：\n\n圖像分割的目的是？",
+      "options": [
+        "A. 壓縮圖像",
+        "B. 將圖像分成區域",
+        "C. 放大圖像",
+        "D. 旋轉圖像"
+      ],
+      "answer": "B",
+      "explanation": "{\"correct\":\"此答案正確，因為它準確描述了該服務或概念的核心功能與最佳應用場景。\",\"incorrect\":\"其他選項不正確，因為它們描述的功能不適用於此情境，或不符合最佳實踐建議。\",\"key_point\":\"請記住此知識點在實際考試中經常出現。\"}",
+      "xtf": {
+        "消": {
+          "concept": "準確率",
+          "category": "模型評估",
+          "definition": "正確預測比例",
+          "why_test": "理解 準確率 的核心概念和應用"
+        },
+        "拓": {
+          "related": [],
+          "pitfalls": [],
+          "memory_tip": "準確率 = 正確預測比例",
+          "compare": {}
+        },
+        "融": {
+          "use_case": "正確預測比例",
+          "exam_tip": "看到相關關鍵詞 → 準確率",
+          "solve_steps": [
+            "識別關鍵詞",
+            "確認是 模型評估",
+            "選擇答案"
+          ]
+        }
+      }
+    },
+    {
+      "id": "Q223",
+      "type": "single",
+      "difficulty": 3,
+      "question": "在AI 技術的實際應用中，實現負責任 AI 以符合合規要求是常見的需求。企業通常需要考慮技術可行性、成本效益和長期維護等因素。根據最佳實踐和認證考試的重點，請回答以下問題：\n\n情感分析的輸出通常是？",
+      "options": [
+        "A. 實體",
+        "B. 正面/負面/中立",
+        "C. 關鍵詞",
+        "D. 摘要"
+      ],
+      "answer": "B",
+      "explanation": "{\"correct\":\"此答案正確，因為它準確描述了該服務或概念的核心功能與最佳應用場景。\",\"incorrect\":\"其他選項不正確，因為它們描述的功能不適用於此情境，或不符合最佳實踐建議。\",\"key_point\":\"請記住此知識點在實際考試中經常出現。\"}",
+      "xtf": {
+        "消": {
+          "concept": "準確率",
+          "category": "模型評估",
+          "definition": "正確預測比例",
+          "why_test": "理解 準確率 的核心概念和應用"
+        },
+        "拓": {
+          "related": [],
+          "pitfalls": [],
+          "memory_tip": "準確率 = 正確預測比例",
+          "compare": {}
+        },
+        "融": {
+          "use_case": "正確預測比例",
+          "exam_tip": "看到相關關鍵詞 → 準確率",
+          "solve_steps": [
+            "識別關鍵詞",
+            "確認是 模型評估",
+            "選擇答案"
+          ]
+        }
+      }
+    },
+    {
+      "id": "Q224",
+      "type": "single",
+      "difficulty": 2,
+      "question": "在AI 技術的實際應用中，建立智慧客服系統以改善客戶體驗是常見的需求。企業通常需要考慮技術可行性、成本效益和長期維護等因素。根據最佳實踐和認證考試的重點，請回答以下問題：\n\nNER 代表什麼？",
+      "options": [
+        "A. Named Entity Recognition",
+        "B. Natural Expression Retrieval",
+        "C. Neutral Entity Relation",
+        "D. Network Entity"
+      ],
+      "answer": "A",
+      "explanation": "{\"correct\":\"此答案正確，因為它準確描述了該服務或概念的核心功能與最佳應用場景。\",\"incorrect\":\"其他選項不正確，因為它們描述的功能不適用於此情境，或不符合最佳實踐建議。\",\"key_point\":\"請記住此知識點在實際考試中經常出現。\"}",
+      "xtf": {
+        "消": {
+          "concept": "RAG 檢索增強生成",
+          "category": "技術",
+          "definition": "檢索增強",
+          "why_test": "理解 RAG 檢索增強生成 的核心概念和應用"
+        },
+        "拓": {
+          "related": [],
+          "pitfalls": [],
+          "memory_tip": "RAG 檢索增強生成 = 檢索增強",
+          "compare": {}
+        },
+        "融": {
+          "use_case": "檢索增強",
+          "exam_tip": "看到相關關鍵詞 → RAG 檢索增強生成",
+          "solve_steps": [
+            "識別關鍵詞",
+            "確認是 技術",
+            "選擇答案"
+          ]
+        }
+      }
+    },
+    {
+      "id": "Q225",
+      "type": "single",
+      "difficulty": 2,
+      "question": "在AI 技術的實際應用中，整合多種 AI 服務以建立端到端解決方案是常見的需求。企業通常需要考慮技術可行性、成本效益和長期維護等因素。根據最佳實踐和認證考試的重點，請回答以下問題：\n\nLUIS 用於？",
+      "options": [
+        "A. 圖像理解",
+        "B. 語言理解",
+        "C. 語音合成",
+        "D. 翻譯"
+      ],
+      "answer": "B",
+      "explanation": "{\"correct\":\"此答案正確，因為它準確描述了該服務或概念的核心功能與最佳應用場景。\",\"incorrect\":\"其他選項不正確，因為它們描述的功能不適用於此情境，或不符合最佳實踐建議。\",\"key_point\":\"請記住此知識點在實際考試中經常出現。\"}",
+      "xtf": {
+        "消": {
+          "concept": "準確率",
+          "category": "模型評估",
+          "definition": "正確預測比例",
+          "why_test": "理解 準確率 的核心概念和應用"
+        },
+        "拓": {
+          "related": [],
+          "pitfalls": [],
+          "memory_tip": "準確率 = 正確預測比例",
+          "compare": {}
+        },
+        "融": {
+          "use_case": "正確預測比例",
+          "exam_tip": "看到相關關鍵詞 → 準確率",
+          "solve_steps": [
+            "識別關鍵詞",
+            "確認是 模型評估",
+            "選擇答案"
+          ]
+        }
+      }
+    },
+    {
+      "id": "Q226",
+      "type": "single",
+      "difficulty": 3,
+      "question": "在AI 技術的實際應用中，部署機器學習模型以支援即時預測是常見的需求。企業通常需要考慮技術可行性、成本效益和長期維護等因素。根據最佳實踐和認證考試的重點，請回答以下問題：\n\n文字翻譯服務使用哪個 API？",
+      "options": [
+        "A. Text Analytics",
+        "B. Translator",
+        "C. Speech",
+        "D. LUIS"
+      ],
+      "answer": "B",
+      "explanation": "{\"correct\":\"此答案正確，因為它準確描述了該服務或概念的核心功能與最佳應用場景。\",\"incorrect\":\"其他選項不正確，因為它們描述的功能不適用於此情境，或不符合最佳實踐建議。\",\"key_point\":\"請記住此知識點在實際考試中經常出現。\"}",
+      "xtf": {
+        "消": {
+          "concept": "Azure Speech",
+          "category": "語音",
+          "definition": "語音服務",
+          "why_test": "理解 Azure Speech 的核心概念和應用"
+        },
+        "拓": {
+          "related": [],
+          "pitfalls": [],
+          "memory_tip": "Azure Speech = 語音服務",
+          "compare": {}
+        },
+        "融": {
+          "use_case": "語音服務",
+          "exam_tip": "看到相關關鍵詞 → Azure Speech",
+          "solve_steps": [
+            "識別關鍵詞",
+            "確認是 語音",
+            "選擇答案"
+          ]
+        }
+      }
+    },
+    {
+      "id": "Q227",
+      "type": "single",
+      "difficulty": 4,
+      "question": "在AI 技術的實際應用中，分析大量非結構化資料以獲取洞察是常見的需求。企業通常需要考慮技術可行性、成本效益和長期維護等因素。根據最佳實踐和認證考試的重點，請回答以下問題：\n\nTokenization 的目的是？",
+      "options": [
+        "A. 加密文字",
+        "B. 將文字分解為詞元",
+        "C. 翻譯文字",
+        "D. 壓縮文字"
+      ],
+      "answer": "B",
+      "explanation": "{\"correct\": \"Tokenization 是 NLP 的預處理步驟\\n\\n💡 口訣：Comprehend=AI讀心，理解文字\", \"incorrect\": \"其他選項不正確，因為它們描述的是不同AWS服務的功能，或不適用於此應用場景。\", \"key_point\": \"這是認證考試的高頻考點，建議熟記相關概念。\"}",
+      "xtf": {
+        "消": {
+          "concept": "Amazon Comprehend",
+          "category": "NLP",
+          "definition": "文本分析：情緒、實體、主題",
+          "why_test": "理解 Amazon Comprehend 的核心概念和應用"
+        },
+        "拓": {
+          "related": [],
+          "pitfalls": [],
+          "memory_tip": "Amazon Comprehend = 文本分析：情緒、實體、主題",
+          "compare": {}
+        },
+        "融": {
+          "use_case": "文本分析：情緒、實體、主題",
+          "exam_tip": "看到相關關鍵詞 → Amazon Comprehend",
+          "solve_steps": [
+            "識別關鍵詞",
+            "確認是 NLP",
+            "選擇答案"
+          ]
+        }
+      }
+    },
+    {
+      "id": "Q228",
+      "type": "single",
+      "difficulty": 3,
+      "question": "在AI 技術的實際應用中，整合多種 AI 服務以建立端到端解決方案是常見的需求。企業通常需要考慮技術可行性、成本效益和長期維護等因素。根據最佳實踐和認證考試的重點，請回答以下問題：\n\n關鍵詞提取屬於哪類任務？",
+      "options": [
+        "A. 分類",
+        "B. 資訊擷取",
+        "C. 生成",
+        "D. 翻譯"
+      ],
+      "answer": "B",
+      "explanation": "{\"correct\":\"此答案正確，因為它準確描述了該服務或概念的核心功能與最佳應用場景。\",\"incorrect\":\"其他選項不正確，因為它們描述的功能不適用於此情境，或不符合最佳實踐建議。\",\"key_point\":\"請記住此知識點在實際考試中經常出現。\"}",
+      "xtf": {
+        "消": {
+          "concept": "分類問題",
+          "category": "ML 任務",
+          "definition": "預測類別",
+          "why_test": "理解 分類問題 的核心概念和應用"
+        },
+        "拓": {
+          "related": [],
+          "pitfalls": [],
+          "memory_tip": "分類問題 = 預測類別",
+          "compare": {}
+        },
+        "融": {
+          "use_case": "預測類別",
+          "exam_tip": "看到相關關鍵詞 → 分類問題",
+          "solve_steps": [
+            "識別關鍵詞",
+            "確認是 ML 任務",
+            "選擇答案"
+          ]
+        }
+      }
+    },
+    {
+      "id": "Q229",
+      "type": "single",
+      "difficulty": 4,
+      "question": "在AI 技術的實際應用中，建立智慧客服系統以改善客戶體驗是常見的需求。企業通常需要考慮技術可行性、成本效益和長期維護等因素。根據最佳實踐和認證考試的重點，請回答以下問題：\n\nQnA Maker 的主要功能是？",
+      "options": [
+        "A. 語音對話",
+        "B. 建立問答知識庫",
+        "C. 翻譯",
+        "D. 情感分析"
+      ],
+      "answer": "B",
+      "explanation": "{\"correct\":\"此答案正確，因為它準確描述了該服務或概念的核心功能與最佳應用場景。\",\"incorrect\":\"其他選項不正確，因為它們描述的功能不適用於此情境，或不符合最佳實踐建議。\",\"key_point\":\"請記住此知識點在實際考試中經常出現。\"}",
+      "xtf": {
+        "消": {
+          "concept": "準確率",
+          "category": "模型評估",
+          "definition": "正確預測比例",
+          "why_test": "理解 準確率 的核心概念和應用"
+        },
+        "拓": {
+          "related": [],
+          "pitfalls": [],
+          "memory_tip": "準確率 = 正確預測比例",
+          "compare": {}
+        },
+        "融": {
+          "use_case": "正確預測比例",
+          "exam_tip": "看到相關關鍵詞 → 準確率",
+          "solve_steps": [
+            "識別關鍵詞",
+            "確認是 模型評估",
+            "選擇答案"
+          ]
+        }
+      }
+    },
+    {
+      "id": "Q230",
+      "type": "single",
+      "difficulty": 2,
+      "question": "在AI 技術的實際應用中，自動化業務流程並提升效率是常見的需求。企業通常需要考慮技術可行性、成本效益和長期維護等因素。根據最佳實踐和認證考試的重點，請回答以下問題：\n\nBot Framework 支援哪些通道？",
+      "options": [
+        "A. 僅 Teams",
+        "B. 僅 Web",
+        "C. 多種通道包括 Teams、Slack、Web",
+        "D. 僅 Slack"
+      ],
+      "answer": "C",
+      "explanation": "{\"correct\":\"此答案正確，因為它準確描述了該服務或概念的核心功能與最佳應用場景。\",\"incorrect\":\"其他選項不正確，因為它們描述的功能不適用於此情境，或不符合最佳實踐建議。\",\"key_point\":\"請記住此知識點在實際考試中經常出現。\"}",
+      "xtf": {
+        "消": {
+          "concept": "準確率",
+          "category": "模型評估",
+          "definition": "正確預測比例",
+          "why_test": "理解 準確率 的核心概念和應用"
+        },
+        "拓": {
+          "related": [],
+          "pitfalls": [],
+          "memory_tip": "準確率 = 正確預測比例",
+          "compare": {}
+        },
+        "融": {
+          "use_case": "正確預測比例",
+          "exam_tip": "看到相關關鍵詞 → 準確率",
+          "solve_steps": [
+            "識別關鍵詞",
+            "確認是 模型評估",
+            "選擇答案"
+          ]
+        }
+      }
+    },
+    {
+      "id": "Q231",
+      "type": "single",
+      "difficulty": 3,
+      "question": "在AI 技術的實際應用中，自動化業務流程並提升效率是常見的需求。企業通常需要考慮技術可行性、成本效益和長期維護等因素。根據最佳實踐和認證考試的重點，請回答以下問題：\n\n對話機器人的意圖是？",
+      "options": [
+        "A. 用戶的回應",
+        "B. 用戶想要完成的動作",
+        "C. 機器人的回應",
+        "D. 對話歷史"
+      ],
+      "answer": "B",
+      "explanation": "{\"correct\":\"此答案正確，因為它準確描述了該服務或概念的核心功能與最佳應用場景。\",\"incorrect\":\"其他選項不正確，因為它們描述的功能不適用於此情境，或不符合最佳實踐建議。\",\"key_point\":\"請記住此知識點在實際考試中經常出現。\"}",
+      "xtf": {
+        "消": {
+          "concept": "準確率",
+          "category": "模型評估",
+          "definition": "正確預測比例",
+          "why_test": "理解 準確率 的核心概念和應用"
+        },
+        "拓": {
+          "related": [],
+          "pitfalls": [],
+          "memory_tip": "準確率 = 正確預測比例",
+          "compare": {}
+        },
+        "融": {
+          "use_case": "正確預測比例",
+          "exam_tip": "看到相關關鍵詞 → 準確率",
+          "solve_steps": [
+            "識別關鍵詞",
+            "確認是 模型評估",
+            "選擇答案"
+          ]
+        }
+      }
+    },
+    {
+      "id": "Q232",
+      "type": "single",
+      "difficulty": 2,
+      "question": "在AI 技術的實際應用中，自動化業務流程並提升效率是常見的需求。企業通常需要考慮技術可行性、成本效益和長期維護等因素。根據最佳實踐和認證考試的重點，請回答以下問題：\n\n實體在對話中代表什麼？",
+      "options": [
+        "A. 整個句子",
+        "B. 具體的參數或值",
+        "C. 機器人名稱",
+        "D. 對話 ID"
+      ],
+      "answer": "B",
+      "explanation": "{\"correct\":\"此答案正確，因為它準確描述了該服務或概念的核心功能與最佳應用場景。\",\"incorrect\":\"其他選項不正確，因為它們描述的功能不適用於此情境，或不符合最佳實踐建議。\",\"key_point\":\"請記住此知識點在實際考試中經常出現。\"}",
+      "xtf": {
+        "消": {
+          "concept": "準確率",
+          "category": "模型評估",
+          "definition": "正確預測比例",
+          "why_test": "理解 準確率 的核心概念和應用"
+        },
+        "拓": {
+          "related": [],
+          "pitfalls": [],
+          "memory_tip": "準確率 = 正確預測比例",
+          "compare": {}
+        },
+        "融": {
+          "use_case": "正確預測比例",
+          "exam_tip": "看到相關關鍵詞 → 準確率",
+          "solve_steps": [
+            "識別關鍵詞",
+            "確認是 模型評估",
+            "選擇答案"
+          ]
+        }
+      }
+    },
+    {
+      "id": "Q300",
+      "type": "single",
+      "difficulty": 5,
+      "question": "在AI 技術的實際應用中，整合多種 AI 服務以建立端到端解決方案是常見的需求。企業通常需要考慮技術可行性、成本效益和長期維護等因素。根據最佳實踐和認證考試的重點，請回答以下問題：\n\n深度學習是什麼的子集？",
+      "options": [
+        "A. 統計學",
+        "B. 機器學習",
+        "C. 數據科學",
+        "D. 商業智能"
+      ],
+      "answer": "B",
+      "explanation": "{\"correct\":\"此答案正確，因為它準確描述了該服務或概念的核心功能與最佳應用場景。\",\"incorrect\":\"其他選項不正確，因為它們描述的功能不適用於此情境，或不符合最佳實踐建議。\",\"key_point\":\"請記住此知識點在實際考試中經常出現。\"}",
+      "xtf": {
+        "消": {
+          "concept": "準確率",
+          "category": "模型評估",
+          "definition": "正確預測比例",
+          "why_test": "理解 準確率 的核心概念和應用"
+        },
+        "拓": {
+          "related": [],
+          "pitfalls": [],
+          "memory_tip": "準確率 = 正確預測比例",
+          "compare": {}
+        },
+        "融": {
+          "use_case": "正確預測比例",
+          "exam_tip": "看到相關關鍵詞 → 準確率",
+          "solve_steps": [
+            "識別關鍵詞",
+            "確認是 模型評估",
+            "選擇答案"
+          ]
+        }
+      }
+    },
+    {
+      "id": "Q301",
+      "type": "single",
+      "difficulty": 3,
+      "question": "在AI 技術的實際應用中，建立智慧客服系統以改善客戶體驗是常見的需求。企業通常需要考慮技術可行性、成本效益和長期維護等因素。根據最佳實踐和認證考試的重點，請回答以下問題：\n\nRNN 常用於什麼類型的數據？",
+      "options": [
+        "A. 圖像",
+        "B. 序列數據",
+        "C. 表格數據",
+        "D. 圖形數據"
+      ],
+      "answer": "B",
+      "explanation": "{\"correct\":\"此答案正確，因為它準確描述了該服務或概念的核心功能與最佳應用場景。\",\"incorrect\":\"其他選項不正確，因為它們描述的功能不適用於此情境，或不符合最佳實踐建議。\",\"key_point\":\"請記住此知識點在實際考試中經常出現。\"}",
+      "xtf": {
+        "消": {
+          "concept": "準確率",
+          "category": "模型評估",
+          "definition": "正確預測比例",
+          "why_test": "理解 準確率 的核心概念和應用"
+        },
+        "拓": {
+          "related": [],
+          "pitfalls": [],
+          "memory_tip": "準確率 = 正確預測比例",
+          "compare": {}
+        },
+        "融": {
+          "use_case": "正確預測比例",
+          "exam_tip": "看到相關關鍵詞 → 準確率",
+          "solve_steps": [
+            "識別關鍵詞",
+            "確認是 模型評估",
+            "選擇答案"
+          ]
+        }
+      }
+    },
+    {
+      "id": "Q302",
+      "type": "single",
+      "difficulty": 3,
+      "question": "在AI 技術的實際應用中，實現負責任 AI 以符合合規要求是常見的需求。企業通常需要考慮技術可行性、成本效益和長期維護等因素。根據最佳實踐和認證考試的重點，請回答以下問題：\n\n遷移學習的優勢是？",
+      "options": [
+        "A. 需要更多數據",
+        "B. 可利用預訓練模型",
+        "C. 訓練更慢",
+        "D. 準確度更低"
+      ],
+      "answer": "B",
+      "explanation": "{\"correct\":\"此答案正確，因為它準確描述了該服務或概念的核心功能與最佳應用場景。\",\"incorrect\":\"其他選項不正確，因為它們描述的功能不適用於此情境，或不符合最佳實踐建議。\",\"key_point\":\"請記住此知識點在實際考試中經常出現。\"}",
+      "xtf": {
+        "消": {
+          "concept": "準確率",
+          "category": "模型評估",
+          "definition": "正確預測比例",
+          "why_test": "理解 準確率 的核心概念和應用"
+        },
+        "拓": {
+          "related": [],
+          "pitfalls": [],
+          "memory_tip": "準確率 = 正確預測比例",
+          "compare": {}
+        },
+        "融": {
+          "use_case": "正確預測比例",
+          "exam_tip": "看到相關關鍵詞 → 準確率",
+          "solve_steps": [
+            "識別關鍵詞",
+            "確認是 模型評估",
+            "選擇答案"
+          ]
+        }
+      }
+    },
+    {
+      "id": "Q303",
+      "type": "single",
+      "difficulty": 3,
+      "question": "在AI 技術的實際應用中，分析大量非結構化資料以獲取洞察是常見的需求。企業通常需要考慮技術可行性、成本效益和長期維護等因素。根據最佳實踐和認證考試的重點，請回答以下問題：\n\nBatch Normalization 的作用是？",
+      "options": [
+        "A. 增加過擬合",
+        "B. 加速訓練收斂",
+        "C. 減少參數",
+        "D. 增加層數"
+      ],
+      "answer": "B",
+      "explanation": "{\"correct\":\"此答案正確，因為它準確描述了該服務或概念的核心功能與最佳應用場景。\",\"incorrect\":\"其他選項不正確，因為它們描述的功能不適用於此情境，或不符合最佳實踐建議。\",\"key_point\":\"請記住此知識點在實際考試中經常出現。\"}",
+      "xtf": {
+        "消": {
+          "concept": "準確率",
+          "category": "模型評估",
+          "definition": "正確預測比例",
+          "why_test": "理解 準確率 的核心概念和應用"
+        },
+        "拓": {
+          "related": [],
+          "pitfalls": [],
+          "memory_tip": "準確率 = 正確預測比例",
+          "compare": {}
+        },
+        "融": {
+          "use_case": "正確預測比例",
+          "exam_tip": "看到相關關鍵詞 → 準確率",
+          "solve_steps": [
+            "識別關鍵詞",
+            "確認是 模型評估",
+            "選擇答案"
+          ]
+        }
+      }
+    },
+    {
+      "id": "Q304",
+      "type": "single",
+      "difficulty": 3,
+      "question": "在AI 技術的實際應用中，部署機器學習模型以支援即時預測是常見的需求。企業通常需要考慮技術可行性、成本效益和長期維護等因素。根據最佳實踐和認證考試的重點，請回答以下問題：\n\nDropout 技術用於？",
+      "options": [
+        "A. 增加複雜度",
+        "B. 防止過擬合",
+        "C. 加速訓練",
+        "D. 減少計算"
+      ],
+      "answer": "B",
+      "explanation": "{\"correct\":\"此答案正確，因為它準確描述了該服務或概念的核心功能與最佳應用場景。\",\"incorrect\":\"其他選項不正確，因為它們描述的功能不適用於此情境，或不符合最佳實踐建議。\",\"key_point\":\"請記住此知識點在實際考試中經常出現。\"}",
+      "xtf": {
+        "消": {
+          "concept": "準確率",
+          "category": "模型評估",
+          "definition": "正確預測比例",
+          "why_test": "理解 準確率 的核心概念和應用"
+        },
+        "拓": {
+          "related": [],
+          "pitfalls": [],
+          "memory_tip": "準確率 = 正確預測比例",
+          "compare": {}
+        },
+        "融": {
+          "use_case": "正確預測比例",
+          "exam_tip": "看到相關關鍵詞 → 準確率",
+          "solve_steps": [
+            "識別關鍵詞",
+            "確認是 模型評估",
+            "選擇答案"
+          ]
+        }
+      }
+    },
+    {
+      "id": "Q305",
+      "type": "single",
+      "difficulty": 3,
+      "question": "在AI 技術的實際應用中，自動化業務流程並提升效率是常見的需求。企業通常需要考慮技術可行性、成本效益和長期維護等因素。根據最佳實踐和認證考試的重點，請回答以下問題：\n\nGAN 的全稱是？",
+      "options": [
+        "A. General Adversarial Network",
+        "B. Generative Adversarial Network",
+        "C. Global Analysis Network",
+        "D. Graph Attention Network"
+      ],
+      "answer": "B",
+      "explanation": "{\"correct\":\"此答案正確，因為它準確描述了該服務或概念的核心功能與最佳應用場景。\",\"incorrect\":\"其他選項不正確，因為它們描述的功能不適用於此情境，或不符合最佳實踐建議。\",\"key_point\":\"請記住此知識點在實際考試中經常出現。\"}",
+      "xtf": {
+        "消": {
+          "concept": "準確率",
+          "category": "模型評估",
+          "definition": "正確預測比例",
+          "why_test": "理解 準確率 的核心概念和應用"
+        },
+        "拓": {
+          "related": [],
+          "pitfalls": [],
+          "memory_tip": "準確率 = 正確預測比例",
+          "compare": {}
+        },
+        "融": {
+          "use_case": "正確預測比例",
+          "exam_tip": "看到相關關鍵詞 → 準確率",
+          "solve_steps": [
+            "識別關鍵詞",
+            "確認是 模型評估",
+            "選擇答案"
+          ]
+        }
+      }
+    },
+    {
+      "id": "Q306",
+      "type": "single",
+      "difficulty": 3,
+      "question": "在AI 技術的實際應用中，實現負責任 AI 以符合合規要求是常見的需求。企業通常需要考慮技術可行性、成本效益和長期維護等因素。根據最佳實踐和認證考試的重點，請回答以下問題：\n\n注意力機制最初用於？",
+      "options": [
+        "A. 圖像分類",
+        "B. 機器翻譯",
+        "C. 語音識別",
+        "D. 物件偵測"
+      ],
+      "answer": "B",
+      "explanation": "{\"correct\":\"此答案正確，因為它準確描述了該服務或概念的核心功能與最佳應用場景。\",\"incorrect\":\"其他選項不正確，因為它們描述的功能不適用於此情境，或不符合最佳實踐建議。\",\"key_point\":\"請記住此知識點在實際考試中經常出現。\"}",
+      "xtf": {
+        "消": {
+          "concept": "分類問題",
+          "category": "ML 任務",
+          "definition": "預測類別",
+          "why_test": "理解 分類問題 的核心概念和應用"
+        },
+        "拓": {
+          "related": [],
+          "pitfalls": [],
+          "memory_tip": "分類問題 = 預測類別",
+          "compare": {}
+        },
+        "融": {
+          "use_case": "預測類別",
+          "exam_tip": "看到相關關鍵詞 → 分類問題",
+          "solve_steps": [
+            "識別關鍵詞",
+            "確認是 ML 任務",
+            "選擇答案"
+          ]
+        }
+      }
+    },
+    {
+      "id": "Q307",
+      "type": "single",
+      "difficulty": 3,
+      "question": "在AI 技術的實際應用中，整合多種 AI 服務以建立端到端解決方案是常見的需求。企業通常需要考慮技術可行性、成本效益和長期維護等因素。根據最佳實踐和認證考試的重點，請回答以下問題：\n\nTransformer 的核心是？",
+      "options": [
+        "A. CNN",
+        "B. RNN",
+        "C. 自注意力機制",
+        "D. 決策樹"
+      ],
+      "answer": "C",
+      "explanation": "{\"correct\":\"此答案正確，因為它準確描述了該服務或概念的核心功能與最佳應用場景。\",\"incorrect\":\"其他選項不正確，因為它們描述的功能不適用於此情境，或不符合最佳實踐建議。\",\"key_point\":\"請記住此知識點在實際考試中經常出現。\"}",
+      "xtf": {
+        "消": {
+          "concept": "準確率",
+          "category": "模型評估",
+          "definition": "正確預測比例",
+          "why_test": "理解 準確率 的核心概念和應用"
+        },
+        "拓": {
+          "related": [],
+          "pitfalls": [],
+          "memory_tip": "準確率 = 正確預測比例",
+          "compare": {}
+        },
+        "融": {
+          "use_case": "正確預測比例",
+          "exam_tip": "看到相關關鍵詞 → 準確率",
+          "solve_steps": [
+            "識別關鍵詞",
+            "確認是 模型評估",
+            "選擇答案"
+          ]
+        }
+      }
+    },
+    {
+      "id": "Q308",
+      "type": "single",
+      "difficulty": 5,
+      "question": "在AI 技術的實際應用中，實現負責任 AI 以符合合規要求是常見的需求。企業通常需要考慮技術可行性、成本效益和長期維護等因素。根據最佳實踐和認證考試的重點，請回答以下問題：\n\nBERT 是什麼類型的模型？",
+      "options": [
+        "A. 生成式",
+        "B. 判別式預訓練",
+        "C. 強化學習",
+        "D. 非監督式"
+      ],
+      "answer": "B",
+      "explanation": "{\"correct\":\"此答案正確，因為它準確描述了該服務或概念的核心功能與最佳應用場景。\",\"incorrect\":\"其他選項不正確，因為它們描述的功能不適用於此情境，或不符合最佳實踐建議。\",\"key_point\":\"請記住此知識點在實際考試中經常出現。\"}",
+      "xtf": {
+        "消": {
+          "concept": "監督式學習",
+          "category": "ML 類型",
+          "definition": "有標籤數據訓練",
+          "why_test": "理解 監督式學習 的核心概念和應用"
+        },
+        "拓": {
+          "related": [],
+          "pitfalls": [],
+          "memory_tip": "監督式學習 = 有標籤數據訓練",
+          "compare": {}
+        },
+        "融": {
+          "use_case": "有標籤數據訓練",
+          "exam_tip": "看到相關關鍵詞 → 監督式學習",
+          "solve_steps": [
+            "識別關鍵詞",
+            "確認是 ML 類型",
+            "選擇答案"
+          ]
+        }
+      }
+    },
+    {
+      "id": "Q309",
+      "type": "single",
+      "difficulty": 3,
+      "question": "在AI 技術的實際應用中，自動化業務流程並提升效率是常見的需求。企業通常需要考慮技術可行性、成本效益和長期維護等因素。根據最佳實踐和認證考試的重點，請回答以下問題：\n\nGPT 的訓練目標是？",
+      "options": [
+        "A. 分類",
+        "B. 下一詞預測",
+        "C. 圖像生成",
+        "D. 語音識別"
+      ],
+      "answer": "B",
+      "explanation": "{\"correct\":\"此答案正確，因為它準確描述了該服務或概念的核心功能與最佳應用場景。\",\"incorrect\":\"其他選項不正確，因為它們描述的功能不適用於此情境，或不符合最佳實踐建議。\",\"key_point\":\"請記住此知識點在實際考試中經常出現。\"}",
+      "xtf": {
+        "消": {
+          "concept": "分類問題",
+          "category": "ML 任務",
+          "definition": "預測類別",
+          "why_test": "理解 分類問題 的核心概念和應用"
+        },
+        "拓": {
+          "related": [],
+          "pitfalls": [],
+          "memory_tip": "分類問題 = 預測類別",
+          "compare": {}
+        },
+        "融": {
+          "use_case": "預測類別",
+          "exam_tip": "看到相關關鍵詞 → 分類問題",
+          "solve_steps": [
+            "識別關鍵詞",
+            "確認是 ML 任務",
+            "選擇答案"
+          ]
+        }
+      }
+    },
+    {
+      "id": "Q310",
+      "type": "single",
+      "difficulty": 3,
+      "question": "在AI 技術的實際應用中，自動化業務流程並提升效率是常見的需求。企業通常需要考慮技術可行性、成本效益和長期維護等因素。根據最佳實踐和認證考試的重點，請回答以下問題：\n\nPrompt Engineering 是什麼？",
+      "options": [
+        "A. 硬體設計",
+        "B. 設計有效提示",
+        "C. 網路架構",
+        "D. 數據清理"
+      ],
+      "answer": "B",
+      "explanation": "{\"correct\":\"此答案正確，因為它準確描述了該服務或概念的核心功能與最佳應用場景。\",\"incorrect\":\"其他選項不正確，因為它們描述的功能不適用於此情境，或不符合最佳實踐建議。\",\"key_point\":\"請記住此知識點在實際考試中經常出現。\"}",
+      "xtf": {
+        "消": {
+          "concept": "提示工程",
+          "category": "技術",
+          "definition": "優化 AI 輸入指令",
+          "why_test": "理解 提示工程 的核心概念和應用"
+        },
+        "拓": {
+          "related": [],
+          "pitfalls": [],
+          "memory_tip": "提示工程 = 優化 AI 輸入指令",
+          "compare": {}
+        },
+        "融": {
+          "use_case": "優化 AI 輸入指令",
+          "exam_tip": "看到相關關鍵詞 → 提示工程",
+          "solve_steps": [
+            "識別關鍵詞",
+            "確認是 技術",
+            "選擇答案"
+          ]
+        }
+      }
+    },
+    {
+      "id": "Q311",
+      "type": "single",
+      "difficulty": 3,
+      "question": "在AI 技術的實際應用中，實現負責任 AI 以符合合規要求是常見的需求。企業通常需要考慮技術可行性、成本效益和長期維護等因素。根據最佳實踐和認證考試的重點，請回答以下問題：\n\nFew-shot Learning 需要多少標記數據？",
+      "options": [
+        "A. 大量",
+        "B. 少量",
+        "C. 無",
+        "D. 中等"
+      ],
+      "answer": "B",
+      "explanation": "{\"correct\":\"此答案正確，因為它準確描述了該服務或概念的核心功能與最佳應用場景。\",\"incorrect\":\"其他選項不正確，因為它們描述的功能不適用於此情境，或不符合最佳實踐建議。\",\"key_point\":\"請記住此知識點在實際考試中經常出現。\"}",
+      "xtf": {
+        "消": {
+          "concept": "準確率",
+          "category": "模型評估",
+          "definition": "正確預測比例",
+          "why_test": "理解 準確率 的核心概念和應用"
+        },
+        "拓": {
+          "related": [],
+          "pitfalls": [],
+          "memory_tip": "準確率 = 正確預測比例",
+          "compare": {}
+        },
+        "融": {
+          "use_case": "正確預測比例",
+          "exam_tip": "看到相關關鍵詞 → 準確率",
+          "solve_steps": [
+            "識別關鍵詞",
+            "確認是 模型評估",
+            "選擇答案"
+          ]
+        }
+      }
+    },
+    {
+      "id": "Q312",
+      "type": "single",
+      "difficulty": 3,
+      "question": "在AI 技術的實際應用中，分析大量非結構化資料以獲取洞察是常見的需求。企業通常需要考慮技術可行性、成本效益和長期維護等因素。根據最佳實踐和認證考試的重點，請回答以下問題：\n\nZero-shot Learning 的特點是？",
+      "options": [
+        "A. 需要大量訓練",
+        "B. 無需特定任務訓練",
+        "C. 只能分類",
+        "D. 無法泛化"
+      ],
+      "answer": "B",
+      "explanation": "{\"correct\":\"此答案正確，因為它準確描述了該服務或概念的核心功能與最佳應用場景。\",\"incorrect\":\"其他選項不正確，因為它們描述的功能不適用於此情境，或不符合最佳實踐建議。\",\"key_point\":\"請記住此知識點在實際考試中經常出現。\"}",
+      "xtf": {
+        "消": {
+          "concept": "分類問題",
+          "category": "ML 任務",
+          "definition": "預測類別",
+          "why_test": "理解 分類問題 的核心概念和應用"
+        },
+        "拓": {
+          "related": [],
+          "pitfalls": [],
+          "memory_tip": "分類問題 = 預測類別",
+          "compare": {}
+        },
+        "融": {
+          "use_case": "預測類別",
+          "exam_tip": "看到相關關鍵詞 → 分類問題",
+          "solve_steps": [
+            "識別關鍵詞",
+            "確認是 ML 任務",
+            "選擇答案"
+          ]
+        }
+      }
+    },
+    {
+      "id": "Q313",
+      "type": "single",
+      "difficulty": 5,
+      "question": "在AI 技術的實際應用中，自動化業務流程並提升效率是常見的需求。企業通常需要考慮技術可行性、成本效益和長期維護等因素。根據最佳實踐和認證考試的重點，請回答以下問題：\n\nLanguage Model 的主要任務是？",
+      "options": [
+        "A. 圖像識別",
+        "B. 預測下一詞",
+        "C. 語音合成",
+        "D. 數據儲存"
+      ],
+      "answer": "B",
+      "explanation": "{\"correct\":\"此答案正確，因為它準確描述了該服務或概念的核心功能與最佳應用場景。\",\"incorrect\":\"其他選項不正確，因為它們描述的功能不適用於此情境，或不符合最佳實踐建議。\",\"key_point\":\"請記住此知識點在實際考試中經常出現。\"}",
+      "xtf": {
+        "消": {
+          "concept": "Azure AI Language",
+          "category": "NLP",
+          "definition": "文本理解服務",
+          "why_test": "理解 Azure AI Language 的核心概念和應用"
+        },
+        "拓": {
+          "related": [],
+          "pitfalls": [],
+          "memory_tip": "Azure AI Language = 文本理解服務",
+          "compare": {}
+        },
+        "融": {
+          "use_case": "文本理解服務",
+          "exam_tip": "看到相關關鍵詞 → Azure AI Language",
+          "solve_steps": [
+            "識別關鍵詞",
+            "確認是 NLP",
+            "選擇答案"
+          ]
+        }
+      }
+    },
+    {
+      "id": "Q314",
+      "type": "single",
+      "difficulty": 3,
+      "question": "在AI 技術的實際應用中，自動化業務流程並提升效率是常見的需求。企業通常需要考慮技術可行性、成本效益和長期維護等因素。根據最佳實踐和認證考試的重點，請回答以下問題：\n\nEmbedding 的作用是？",
+      "options": [
+        "A. 壓縮文件",
+        "B. 將離散轉為連續向量",
+        "C. 加密數據",
+        "D. 儲存數據"
+      ],
+      "answer": "B",
+      "explanation": "{\"correct\":\"此答案正確，因為它準確描述了該服務或概念的核心功能與最佳應用場景。\",\"incorrect\":\"其他選項不正確，因為它們描述的功能不適用於此情境，或不符合最佳實踐建議。\",\"key_point\":\"請記住此知識點在實際考試中經常出現。\"}",
+      "xtf": {
+        "消": {
+          "concept": "向量嵌入",
+          "category": "技術",
+          "definition": "將內容轉為向量",
+          "why_test": "理解 向量嵌入 的核心概念和應用"
+        },
+        "拓": {
+          "related": [],
+          "pitfalls": [],
+          "memory_tip": "向量嵌入 = 將內容轉為向量",
+          "compare": {}
+        },
+        "融": {
+          "use_case": "將內容轉為向量",
+          "exam_tip": "看到相關關鍵詞 → 向量嵌入",
+          "solve_steps": [
+            "識別關鍵詞",
+            "確認是 技術",
+            "選擇答案"
+          ]
+        }
+      }
+    },
+    {
+      "id": "Q315",
+      "type": "single",
+      "difficulty": 3,
+      "question": "在AI 技術的實際應用中，建立智慧客服系統以改善客戶體驗是常見的需求。企業通常需要考慮技術可行性、成本效益和長期維護等因素。根據最佳實踐和認證考試的重點，請回答以下問題：\n\nCosine Similarity 用於？",
+      "options": [
+        "A. 計算距離",
+        "B. 測量向量相似度",
+        "C. 加密",
+        "D. 排序"
+      ],
+      "answer": "B",
+      "explanation": "{\"correct\":\"此答案正確，因為它準確描述了該服務或概念的核心功能與最佳應用場景。\",\"incorrect\":\"其他選項不正確，因為它們描述的功能不適用於此情境，或不符合最佳實踐建議。\",\"key_point\":\"請記住此知識點在實際考試中經常出現。\"}",
+      "xtf": {
+        "消": {
+          "concept": "向量嵌入",
+          "category": "技術",
+          "definition": "語義向量",
+          "why_test": "理解 向量嵌入 的核心概念和應用"
+        },
+        "拓": {
+          "related": [],
+          "pitfalls": [],
+          "memory_tip": "向量嵌入 = 語義向量",
+          "compare": {}
+        },
+        "融": {
+          "use_case": "語義向量",
+          "exam_tip": "看到相關關鍵詞 → 向量嵌入",
+          "solve_steps": [
+            "識別關鍵詞",
+            "確認是 技術",
+            "選擇答案"
+          ]
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>北斗教育 | AI 認證課程</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&display=swap');
+        body { font-family: 'Noto Sans TC', sans-serif; }
+        .gradient-bg { background: linear-gradient(135deg, #0f172a 0%, #1e3a5f 50%, #0f172a 100%); }
+        .card-hover { transition: all 0.3s; }
+        .card-hover:hover { transform: translateY(-5px); box-shadow: 0 15px 30px rgba(0,0,0,0.3); }
+    </style>
+</head>
+<body class="gradient-bg min-h-screen text-white">
+
+    <!-- 導航列 -->
+    <nav class="py-4 px-6 border-b border-white/10">
+        <div class="container mx-auto flex justify-between items-center">
+            <a href="index.html" class="flex items-center gap-2">
+                <span class="text-2xl">🌟</span>
+                <span class="font-bold text-xl">北斗教育</span>
+            </a>
+            <div class="hidden md:flex items-center gap-6">
+                <a href="courses.html" class="text-gray-300 hover:text-white">學測課程</a>
+                <a href="ai_courses.html" class="text-yellow-400 font-medium">AI認證</a>
+                <a href="starmap.html" class="text-gray-300 hover:text-white">知識星圖</a>
+                <a href="battle.html" class="text-gray-300 hover:text-white">⚔️ 戰鬥</a>
+            </div>
+            <a href="auth.html" class="text-gray-300 hover:text-white" id="authLink">登入</a>
+        </div>
+    </nav>
+
+    <!-- Hero -->
+    <header class="py-16 text-center">
+        <div class="inline-block bg-amber-500/20 text-amber-400 px-4 py-1 rounded-full text-sm mb-4">
+            🔥 職場加分必備
+        </div>
+        <h1 class="text-4xl md:text-5xl font-bold mb-4">AI 認證備考課程</h1>
+        <p class="text-gray-400 text-lg mb-2">用 XTF 方法論，高效通過 AI 證照考試</p>
+        <p class="text-gray-500">Google · AWS · Microsoft · iPAS</p>
+    </header>
+
+    <!-- 課程卡片 -->
+    <section class="container mx-auto px-4 pb-20">
+        <div class="grid md:grid-cols-2 gap-6 max-w-4xl mx-auto">
+            
+            <!-- Google AI Essentials -->
+            <div class="bg-slate-800 rounded-2xl overflow-hidden card-hover">
+                <div class="bg-gradient-to-r from-blue-600 to-cyan-600 p-6">
+                    <div class="flex items-center gap-4">
+                        <div class="text-5xl">🔵</div>
+                        <div>
+                            <h3 class="text-xl font-bold">Google AI Essentials</h3>
+                            <p class="text-blue-200 text-sm">Google 官方認證</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="p-6">
+                    <details class="mb-4">
+                        <summary class="cursor-pointer font-medium text-gray-300 hover:text-white">📋 課程大綱</summary>
+                        <ul class="mt-3 space-y-2 text-sm text-gray-400 pl-4">
+                            <li>• AI 基礎概念與應用</li>
+                            <li>• 生成式 AI 原理</li>
+                            <li>• Prompt Engineering</li>
+                            <li>• Google AI 工具實作</li>
+                            <li>• 職場 AI 應用案例</li>
+                        </ul>
+                    </details>
+                    <div class="flex items-center justify-between mb-4">
+                        <div>
+                            <span class="text-2xl font-bold text-green-400">$1,990</span>
+                            <span class="text-gray-500 line-through ml-2">$3,500</span>
+                        </div>
+                        <span class="bg-green-500/20 text-green-400 px-2 py-1 rounded text-xs">43% OFF</span>
+                    </div>
+                    <div class="flex gap-2">
+                        <a href="cert_learn.html?cert=google_ai" class="flex-1 bg-blue-600 hover:bg-blue-500 py-3 rounded-lg font-bold transition text-center">
+                            📖 XTF 學習</a>
+                        <a href="cert_exam.html?cert=google_ai" class="flex-1 bg-orange-600 hover:bg-orange-500 py-3 rounded-lg font-bold transition text-center">
+                            🎯 模擬考
+                        </a>
+                        <button onclick="enrollCourse('google')" class="flex-1 bg-slate-700 hover:bg-slate-600 py-3 rounded-lg font-medium transition">
+                            報名課程
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- AWS AI Practitioner -->
+            <div class="bg-slate-800 rounded-2xl overflow-hidden card-hover">
+                <div class="bg-gradient-to-r from-orange-600 to-yellow-600 p-6">
+                    <div class="flex items-center gap-4">
+                        <div class="text-5xl">🟠</div>
+                        <div>
+                            <h3 class="text-xl font-bold">AWS AI Practitioner</h3>
+                            <p class="text-orange-200 text-sm">Amazon 雲端認證</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="p-6">
+                    <details class="mb-4">
+                        <summary class="cursor-pointer font-medium text-gray-300 hover:text-white">📋 課程大綱</summary>
+                        <ul class="mt-3 space-y-2 text-sm text-gray-400 pl-4">
+                            <li>• AWS AI/ML 服務總覽</li>
+                            <li>• Amazon SageMaker</li>
+                            <li>• Amazon Bedrock</li>
+                            <li>• AWS 責任式 AI</li>
+                            <li>• 實戰模擬題庫</li>
+                        </ul>
+                    </details>
+                    <div class="flex items-center justify-between mb-4">
+                        <div>
+                            <span class="text-2xl font-bold text-green-400">$2,490</span>
+                            <span class="text-gray-500 line-through ml-2">$4,500</span>
+                        </div>
+                        <span class="bg-green-500/20 text-green-400 px-2 py-1 rounded text-xs">45% OFF</span>
+                    </div>
+                    <button onclick="enrollCourse('aws')" class="w-full bg-orange-600 hover:bg-orange-500 py-3 rounded-lg font-bold transition">
+                        立即報名
+                    </button>
+                </div>
+            </div>
+
+            <!-- Microsoft AI-900 -->
+            <div class="bg-slate-800 rounded-2xl overflow-hidden card-hover">
+                <div class="bg-gradient-to-r from-blue-700 to-indigo-700 p-6">
+                    <div class="flex items-center gap-4">
+                        <div class="text-5xl">🟦</div>
+                        <div>
+                            <h3 class="text-xl font-bold">Microsoft AI-900</h3>
+                            <p class="text-blue-200 text-sm">Azure AI 基礎認證</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="p-6">
+                    <details class="mb-4">
+                        <summary class="cursor-pointer font-medium text-gray-300 hover:text-white">📋 課程大綱</summary>
+                        <ul class="mt-3 space-y-2 text-sm text-gray-400 pl-4">
+                            <li>• AI 工作負載概念</li>
+                            <li>• Azure 機器學習原理</li>
+                            <li>• 電腦視覺服務</li>
+                            <li>• 自然語言處理</li>
+                            <li>• Azure OpenAI 服務</li>
+                        </ul>
+                    </details>
+                    <div class="flex items-center justify-between mb-4">
+                        <div>
+                            <span class="text-2xl font-bold text-green-400">$1,790</span>
+                            <span class="text-gray-500 line-through ml-2">$3,000</span>
+                        </div>
+                        <span class="bg-green-500/20 text-green-400 px-2 py-1 rounded text-xs">40% OFF</span>
+                    </div>
+                    <button onclick="enrollCourse('azure')" class="w-full bg-indigo-600 hover:bg-indigo-500 py-3 rounded-lg font-bold transition">
+                        立即報名
+                    </button>
+                </div>
+            </div>
+
+            <!-- iPAS 資訊安全工程師 -->
+            <div class="bg-slate-800 rounded-2xl overflow-hidden card-hover">
+                <div class="bg-gradient-to-r from-green-700 to-teal-700 p-6">
+                    <div class="flex items-center gap-4">
+                        <div class="text-5xl">🛡️</div>
+                        <div>
+                            <h3 class="text-xl font-bold">iPAS 資訊安全工程師</h3>
+                            <p class="text-green-200 text-sm">經濟部認證</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="p-6">
+                    <details class="mb-4">
+                        <summary class="cursor-pointer font-medium text-gray-300 hover:text-white">📋 課程大綱</summary>
+                        <ul class="mt-3 space-y-2 text-sm text-gray-400 pl-4">
+                            <li>• 資訊安全管理概論</li>
+                            <li>• 網路安全與防護</li>
+                            <li>• 系統安全與存取控制</li>
+                            <li>• 應用程式安全</li>
+                            <li>• 資安法規與倫理</li>
+                        </ul>
+                    </details>
+                    <div class="flex items-center justify-between mb-4">
+                        <div>
+                            <span class="text-2xl font-bold text-green-400">$2,990</span>
+                            <span class="text-gray-500 line-through ml-2">$5,000</span>
+                        </div>
+                        <span class="bg-green-500/20 text-green-400 px-2 py-1 rounded text-xs">40% OFF</span>
+                    </div>
+                    <div class="flex gap-2">
+                        <a href="cert_learn.html?cert=ipas_ise" class="flex-1 bg-teal-600 hover:bg-teal-500 py-3 rounded-lg font-bold transition text-center">
+                            📖 XTF 學習</a>
+                        <a href="cert_exam.html?cert=google_ai" class="flex-1 bg-orange-600 hover:bg-orange-500 py-3 rounded-lg font-bold transition text-center">
+                            🎯 模擬考
+                        </a>
+                        <button onclick="enrollCourse('ipas')" class="flex-1 bg-slate-700 hover:bg-slate-600 py-3 rounded-lg font-medium transition">
+                            報名課程
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 組合優惠 -->
+        <div class="max-w-4xl mx-auto mt-12">
+            <div class="bg-gradient-to-r from-purple-900 to-pink-900 rounded-2xl p-8 text-center">
+                <div class="text-3xl mb-2">🎁</div>
+                <h3 class="text-2xl font-bold mb-2">四證照組合包</h3>
+                <p class="text-gray-300 mb-4">一次購買全部課程，額外再折 $2,000</p>
+                <div class="flex items-center justify-center gap-4 mb-6">
+                    <span class="text-4xl font-black text-yellow-400">$7,260</span>
+                    <span class="text-gray-500 line-through text-xl">$16,000</span>
+                    <span class="bg-yellow-500 text-black px-3 py-1 rounded-full text-sm font-bold">55% OFF</span>
+                </div>
+                <button onclick="enrollCourse('bundle')" class="bg-yellow-500 hover:bg-yellow-400 text-black font-bold py-3 px-8 rounded-full text-lg">
+                    購買組合包
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="py-8 border-t border-white/10">
+        <div class="container mx-auto px-4 text-center text-gray-500">
+            <p>© 2025 北斗七星文創數位有限公司</p>
+        </div>
+    </footer>
+
+    <script>
+        function enrollCourse(course) {
+            const token = localStorage.getItem('beidou_token');
+            if (!token) {
+                alert('請先登入或註冊');
+                window.location.href = 'auth.html?mode=register';
+                return;
+            }
+            
+            const names = {
+                google: 'Google AI Essentials',
+                aws: 'AWS AI Practitioner',
+                azure: 'Microsoft AI-900',
+                ipas: 'iPAS 資訊安全工程師',
+                bundle: '四證照組合包'
+            };
+            
+            if (confirm(`確定報名「${names[course]}」課程？\n\n（測試模式：實際付款功能開發中）`)) {
+                alert('🎉 報名成功！課程內容即將開放。');
+            }
+        }
+
+        // 登入狀態
+        const user = JSON.parse(localStorage.getItem('beidou_user') || 'null');
+        if (user && !user.guest) {
+            document.getElementById('authLink').textContent = user.username || '會員';
+            document.getElementById('authLink').href = 'dashboard.html';
+        }
+    </script>
+</body>
+</html>

@@ -4,8 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>北斗教育 - RPG 戰鬥</title>
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&display=swap');
+        body { font-family: 'Noto Sans TC', sans-serif; }
         .gradient-bg { background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%); }
         .hp-bar { transition: width 0.5s ease; }
         .shake { animation: shake 0.5s ease-in-out; }
@@ -13,10 +15,6 @@
             0%, 100% { transform: translateX(0); }
             25% { transform: translateX(-10px); }
             75% { transform: translateX(10px); }
-        }
-        .attack-flash { animation: flash 0.3s ease-in-out; }
-        @keyframes flash {
-            50% { opacity: 0.3; }
         }
         .float { animation: float 3s ease-in-out infinite; }
         @keyframes float {
@@ -27,25 +25,38 @@
         .option-btn:hover:not(:disabled) { transform: scale(1.02); background: #4b5563; }
         .option-btn.correct { background: linear-gradient(135deg, #10b981 0%, #059669 100%) !important; }
         .option-btn.wrong { background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%) !important; }
+        .damage-pop {
+            position: absolute;
+            animation: damagePop 1s ease-out forwards;
+            font-weight: bold;
+            font-size: 1.5rem;
+        }
+        @keyframes damagePop {
+            0% { opacity: 1; transform: translateY(0) scale(1); }
+            100% { opacity: 0; transform: translateY(-50px) scale(1.5); }
+        }
     </style>
 </head>
 <body class="gradient-bg min-h-screen text-white">
     <!-- Header -->
     <header class="py-4 px-6 flex justify-between items-center border-b border-gray-700">
         <a href="index.html" class="flex items-center space-x-2">
-            <span class="text-2xl">⭐</span>
+            <span class="text-2xl">🌟</span>
             <span class="font-bold">北斗教育</span>
         </a>
         <div class="flex items-center space-x-4">
             <span class="text-yellow-400">💰 <span id="coins">0</span></span>
             <span class="text-purple-400">⚡ <span id="exp">0</span> XP</span>
+            <span class="text-green-400">🏆 <span id="wins">0</span> 勝</span>
+            <a href="pricing.html" class="hidden sm:block text-gray-400 hover:text-white text-sm">升級</a>
+            <a href="auth.html" id="authLink" class="text-gray-400 hover:text-white text-sm">登入</a>
         </div>
     </header>
 
     <!-- Battle Arena -->
     <main class="max-w-4xl mx-auto px-6 py-8">
         <!-- Monster Section -->
-        <div class="bg-gray-800 bg-opacity-50 rounded-2xl p-6 mb-6">
+        <div class="bg-gray-800 bg-opacity-50 rounded-2xl p-6 mb-6 relative">
             <div class="flex justify-between items-center mb-4">
                 <div>
                     <h2 id="monster-name" class="text-2xl font-bold">載入中...</h2>
@@ -66,8 +77,8 @@
             </div>
 
             <!-- Monster Display -->
-            <div id="monster-display" class="text-center py-8 float">
-                <div class="text-8xl">👹</div>
+            <div id="monster-display" class="text-center py-8 float relative">
+                <div class="text-8xl" id="monster-emoji">👹</div>
             </div>
 
             <!-- Monster Dialogue -->
@@ -82,7 +93,7 @@
                 <div class="flex items-center space-x-3">
                     <div class="text-3xl">🧙</div>
                     <div>
-                        <div class="font-bold">你</div>
+                        <div class="font-bold">冒險者</div>
                         <div class="text-sm text-gray-400">Lv.<span id="player-level">1</span></div>
                     </div>
                 </div>
@@ -113,19 +124,29 @@
 
         <!-- Battle Log -->
         <div id="battle-log" class="bg-gray-900 bg-opacity-50 rounded-xl p-4 max-h-40 overflow-y-auto text-sm">
-            <div class="text-gray-500">戰鬥開始...</div>
+            <div class="text-gray-500">準備戰鬥...</div>
         </div>
     </main>
 
     <!-- Victory Modal -->
     <div id="victory-modal" class="fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center hidden z-50">
-        <div class="bg-gray-800 rounded-2xl p-8 text-center max-w-md">
+        <div class="bg-gray-800 rounded-2xl p-8 text-center max-w-md mx-4">
             <div class="text-6xl mb-4">🏆</div>
             <h2 class="text-3xl font-bold mb-2">勝利！</h2>
-            <p id="victory-message" class="text-gray-400 mb-6"></p>
+            <p id="victory-monster" class="text-gray-400 mb-4"></p>
+            <div class="flex justify-center gap-6 mb-6">
+                <div class="text-center">
+                    <div class="text-2xl font-bold text-yellow-400">+<span id="reward-coins">0</span></div>
+                    <div class="text-gray-500 text-sm">金幣</div>
+                </div>
+                <div class="text-center">
+                    <div class="text-2xl font-bold text-purple-400">+<span id="reward-exp">0</span></div>
+                    <div class="text-gray-500 text-sm">經驗值</div>
+                </div>
+            </div>
             <div class="flex justify-center space-x-4">
                 <button onclick="nextBattle()" class="bg-blue-600 hover:bg-blue-700 px-6 py-3 rounded-full font-bold">
-                    下一場戰鬥
+                    繼續戰鬥
                 </button>
                 <a href="index.html" class="bg-gray-600 hover:bg-gray-500 px-6 py-3 rounded-full font-bold">
                     返回
@@ -136,10 +157,10 @@
 
     <!-- Defeat Modal -->
     <div id="defeat-modal" class="fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center hidden z-50">
-        <div class="bg-gray-800 rounded-2xl p-8 text-center max-w-md">
+        <div class="bg-gray-800 rounded-2xl p-8 text-center max-w-md mx-4">
             <div class="text-6xl mb-4">💀</div>
             <h2 class="text-3xl font-bold mb-2">戰敗...</h2>
-            <p class="text-gray-400 mb-6">別灰心，再接再厲！</p>
+            <p class="text-gray-400 mb-6">別灰心，休息一下再來！</p>
             <div class="flex justify-center space-x-4">
                 <button onclick="restartBattle()" class="bg-blue-600 hover:bg-blue-700 px-6 py-3 rounded-full font-bold">
                     再戰一次
@@ -154,26 +175,40 @@
     <!-- Loading -->
     <div id="loading" class="fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center z-50">
         <div class="text-center">
-            <div class="text-6xl mb-4">⚔️</div>
+            <div class="text-6xl mb-4 float">⚔️</div>
             <div class="text-xl">載入戰鬥資料...</div>
         </div>
     </div>
 
     <script>
+        // ============================================================
         // 遊戲狀態
+        // ============================================================
         let monsters = [];
         let dialogues = {};
-        let questions = [];
+        let questionsBySubject = {};
         let currentMonster = null;
-        let currentQuestion = null;
-        let playerStats = { hp: 100, maxHp: 100, level: 1, exp: 0, coins: 0 };
+        let currentQuestions = [];
+        let currentQuestionIndex = 0;
+        let playerStats = { hp: 100, maxHp: 100, level: 1, exp: 0, coins: 0, wins: 0 };
         let monsterStats = { hp: 100, maxHp: 100 };
         let answered = false;
 
-        // 怪物表情符號
-        const monsterEmojis = ['👹', '👺', '👻', '💀', '🧟', '🦇', '🐉', '🦑', '🕷️', '🦂'];
+        // 怪物表情對應
+        const subjectEmojis = {
+            '數學': '🔢', '物理': '⚡', '化學': '🧪', '生物': '🧬',
+            '地球科學': '🌍', '地科': '🌍', '國文': '📚', '英文': '🔤',
+            '歷史': '📜', '地理': '🗺️', '公民': '⚖️', '公民與社會': '⚖️'
+        };
+        const defaultEmojis = ['👹', '👺', '👻', '💀', '🧟', '🦇', '🐉', '🦑', '🕷️', '🦂'];
 
+        // URL 參數
+        const urlParams = new URLSearchParams(window.location.search);
+        const selectedSubject = urlParams.get('subject');
+
+        // ============================================================
         // 初始化
+        // ============================================================
         async function init() {
             try {
                 // 載入怪物
@@ -181,19 +216,25 @@
                 monsters = await monsterRes.json();
                 
                 // 載入對話
-                const dialogueRes = await fetch('data/dialogues.json');
-                dialogues = await dialogueRes.json();
+                try {
+                    const dialogueRes = await fetch('data/dialogues.json');
+                    dialogues = await dialogueRes.json();
+                } catch { dialogues = {}; }
                 
-                // 載入題目 (混合科目)
-                const subjects = ['數學', '物理', '化學', '生物', '國文'];
+                // 載入題庫 (按科目)
+                const subjects = ['數學', '物理', '化學', '生物', '地球科學', '國文', '英文', '歷史', '地理', '公民與社會'];
                 for (const subj of subjects) {
                     try {
                         const res = await fetch(`data/qbank_${subj}.json`);
                         const data = await res.json();
-                        questions = questions.concat(data.slice(0, 50));
-                    } catch {}
+                        questionsBySubject[subj] = data;
+                        // 別名
+                        if (subj === '地球科學') questionsBySubject['地科'] = data;
+                        if (subj === '公民與社會') questionsBySubject['公民'] = data;
+                    } catch (e) {
+                        console.log(`跳過 ${subj}`);
+                    }
                 }
-                questions = questions.sort(() => Math.random() - 0.5);
 
                 document.getElementById('loading').classList.add('hidden');
                 startBattle();
@@ -202,17 +243,30 @@
                 document.getElementById('loading').innerHTML = `
                     <div class="text-center">
                         <div class="text-6xl mb-4">❌</div>
-                        <div class="text-xl">載入失敗</div>
-                        <a href="index.html" class="text-blue-400 mt-4 inline-block">返回首頁</a>
+                        <div class="text-xl mb-4">載入失敗</div>
+                        <a href="index.html" class="text-blue-400">返回首頁</a>
                     </div>
                 `;
             }
         }
 
+        // ============================================================
         // 開始戰鬥
+        // ============================================================
         function startBattle() {
+            // 篩選怪物 (根據選擇的科目)
+            let availableMonsters = monsters;
+            if (selectedSubject) {
+                availableMonsters = monsters.filter(m => 
+                    m.subject && m.subject.includes(selectedSubject)
+                );
+                if (availableMonsters.length === 0) availableMonsters = monsters;
+            }
+            
             // 隨機選擇怪物
-            currentMonster = monsters[Math.floor(Math.random() * monsters.length)];
+            currentMonster = availableMonsters[Math.floor(Math.random() * availableMonsters.length)];
+            
+            // 設定怪物血量
             monsterStats = {
                 hp: currentMonster.hp || 100,
                 maxHp: currentMonster.hp || 100
@@ -226,37 +280,73 @@
             document.getElementById('monster-max-hp').textContent = monsterStats.maxHp;
             document.getElementById('monster-hp-bar').style.width = '100%';
             
-            // 怪物外觀
-            const emoji = monsterEmojis[Math.floor(Math.random() * monsterEmojis.length)];
-            document.getElementById('monster-display').innerHTML = `<div class="text-8xl">${emoji}</div>`;
+            // 怪物外觀 (根據科目)
+            const subj = currentMonster.subject || '';
+            let emoji = defaultEmojis[Math.floor(Math.random() * defaultEmojis.length)];
+            for (const [key, val] of Object.entries(subjectEmojis)) {
+                if (subj.includes(key)) { emoji = val; break; }
+            }
+            document.getElementById('monster-emoji').textContent = emoji;
 
             // 怪物對話
             const dialogue = dialogues[currentMonster.id] || {};
             document.getElementById('monster-dialogue').textContent = 
-                `"${dialogue.appear || currentMonster.desc || '...'}"`;
+                `"${dialogue.appear || currentMonster.desc || '你敢挑戰我？'}"`;
 
-            addLog(`⚔️ 遭遇 ${currentMonster.name}！`);
+            // 載入對應科目的題目
+            loadQuestionsForMonster();
+
+            addLog(`⚔️ 遭遇 ${currentMonster.name}！(${currentMonster.subject})`);
+            currentQuestionIndex = 0;
             loadQuestion();
         }
 
+        // ============================================================
+        // 載入怪物對應科目的題目
+        // ============================================================
+        function loadQuestionsForMonster() {
+            const monsterSubject = currentMonster.subject || '';
+            currentQuestions = [];
+            
+            // 嘗試找到對應科目的題庫
+            for (const [subj, questions] of Object.entries(questionsBySubject)) {
+                if (monsterSubject.includes(subj) || subj.includes(monsterSubject)) {
+                    currentQuestions = questions.slice();
+                    break;
+                }
+            }
+            
+            // 如果找不到，用所有題目
+            if (currentQuestions.length === 0) {
+                for (const questions of Object.values(questionsBySubject)) {
+                    currentQuestions = currentQuestions.concat(questions.slice(0, 20));
+                }
+            }
+            
+            // 隨機打亂
+            currentQuestions = currentQuestions.sort(() => Math.random() - 0.5);
+        }
+
+        // ============================================================
         // 載入題目
+        // ============================================================
         function loadQuestion() {
-            if (questions.length === 0) {
-                addLog('❌ 題目已用完');
-                return;
+            if (currentQuestions.length === 0) {
+                addLog('❌ 題目已用完，自動重載');
+                loadQuestionsForMonster();
             }
 
-            currentQuestion = questions.pop();
+            const q = currentQuestions.pop();
             answered = false;
 
-            document.getElementById('question-topic').textContent = currentQuestion.topic || currentQuestion.subject || '';
-            document.getElementById('question-text').textContent = currentQuestion.question;
+            document.getElementById('question-topic').textContent = q.topic || q.subject || '';
+            document.getElementById('question-text').textContent = q.question;
 
             // 難度
             const diffBadge = document.getElementById('difficulty-badge');
             const diffColors = ['', 'bg-green-600', 'bg-green-500', 'bg-yellow-500', 'bg-orange-500', 'bg-red-500'];
             const diffNames = ['', '簡單', '基礎', '中等', '困難', '極難'];
-            const diff = currentQuestion.difficulty || 3;
+            const diff = q.difficulty || 3;
             diffBadge.className = `px-3 py-1 rounded-full text-sm ${diffColors[diff]}`;
             diffBadge.textContent = diffNames[diff];
 
@@ -264,31 +354,37 @@
             const container = document.getElementById('options-container');
             container.innerHTML = '';
             
-            let options = currentQuestion.options;
+            let options = q.options;
             if (typeof options === 'string') {
                 try { options = JSON.parse(options); } catch { options = [options]; }
             }
+            if (!Array.isArray(options)) options = [];
 
             const labels = ['A', 'B', 'C', 'D'];
             options.slice(0, 4).forEach((opt, i) => {
                 const btn = document.createElement('button');
                 btn.className = 'option-btn w-full text-left p-4 bg-gray-700 rounded-xl';
                 btn.innerHTML = `<span class="font-bold mr-3">${labels[i]}.</span>${opt}`;
-                btn.onclick = () => selectAnswer(i);
+                btn.onclick = () => selectAnswer(i, q.answer, q.explanation);
                 container.appendChild(btn);
             });
+
+            // 儲存當前題目供答案判斷
+            window.currentQ = q;
         }
 
+        // ============================================================
         // 選擇答案
-        function selectAnswer(selected) {
+        // ============================================================
+        function selectAnswer(selected, correctAnswer, explanation) {
             if (answered) return;
             answered = true;
 
             const buttons = document.querySelectorAll('.option-btn');
             const labels = ['A', 'B', 'C', 'D'];
             
-            let correctIndex = labels.indexOf(currentQuestion.answer);
-            if (correctIndex === -1) correctIndex = parseInt(currentQuestion.answer) || 0;
+            let correctIndex = labels.indexOf(correctAnswer);
+            if (correctIndex === -1) correctIndex = parseInt(correctAnswer) || 0;
 
             const isCorrect = selected === correctIndex;
 
@@ -300,17 +396,23 @@
 
             if (isCorrect) {
                 // 攻擊怪物
-                const damage = 20 + Math.floor(Math.random() * 10);
+                const baseDamage = 20;
+                const bonus = Math.floor(Math.random() * 15);
+                const damage = baseDamage + bonus;
                 monsterStats.hp = Math.max(0, monsterStats.hp - damage);
                 
+                // 動畫效果
                 document.getElementById('monster-display').classList.add('shake');
                 setTimeout(() => document.getElementById('monster-display').classList.remove('shake'), 500);
+                
+                // 傷害數字
+                showDamage(damage, 'monster');
                 
                 document.getElementById('monster-hp').textContent = monsterStats.hp;
                 document.getElementById('monster-hp-bar').style.width = 
                     `${(monsterStats.hp / monsterStats.maxHp) * 100}%`;
                 
-                addLog(`✓ 答對！對 ${currentMonster.name} 造成 ${damage} 點傷害`);
+                addLog(`✅ 答對！對 ${currentMonster.name} 造成 ${damage} 點傷害`);
 
                 if (monsterStats.hp <= 0) {
                     victory();
@@ -321,15 +423,24 @@
                 const damage = 15 + Math.floor(Math.random() * 10);
                 playerStats.hp = Math.max(0, playerStats.hp - damage);
                 
+                showDamage(damage, 'player');
+                
                 document.getElementById('player-hp').textContent = playerStats.hp;
                 document.getElementById('player-hp-bar').style.width = 
                     `${(playerStats.hp / playerStats.maxHp) * 100}%`;
                 
                 const dialogue = dialogues[currentMonster.id] || {};
                 document.getElementById('monster-dialogue').textContent = 
-                    `"${dialogue.hurt || '哈哈！'}"`;
+                    `"${dialogue.hurt || '哈哈，太弱了！'}"`;
                 
-                addLog(`✗ 答錯！${currentMonster.name} 對你造成 ${damage} 點傷害`);
+                addLog(`❌ 答錯！${currentMonster.name} 對你造成 ${damage} 點傷害`);
+                if (explanation) addLog(`💡 ${explanation}`);
+
+                // === A04: 存儲錯題 ===
+                const currentQ = currentQuestions[currentQuestionIndex];
+                if (currentQ) {
+                    saveWrongQuestion(currentQ, labels[selected] || selected);
+                }
 
                 if (playerStats.hp <= 0) {
                     defeat();
@@ -341,38 +452,188 @@
             setTimeout(loadQuestion, 1500);
         }
 
+        // ============================================================
+        // 顯示傷害數字
+        // ============================================================
+        function showDamage(damage, target) {
+            const container = target === 'monster' 
+                ? document.getElementById('monster-display')
+                : document.querySelector('main');
+            
+            const dmgEl = document.createElement('div');
+            dmgEl.className = 'damage-pop ' + (target === 'monster' ? 'text-yellow-400' : 'text-red-400');
+            dmgEl.textContent = `-${damage}`;
+            dmgEl.style.left = '50%';
+            dmgEl.style.top = target === 'monster' ? '30%' : '60%';
+            container.appendChild(dmgEl);
+            
+            setTimeout(() => dmgEl.remove(), 1000);
+        }
+
+        // ============================================================
         // 勝利
+        // ============================================================
         function victory() {
             const expGain = 50 + Math.floor(Math.random() * 30);
             const coinGain = 20 + Math.floor(Math.random() * 20);
             
             playerStats.exp += expGain;
             playerStats.coins += coinGain;
+            playerStats.wins++;
             
-            document.getElementById('exp').textContent = playerStats.exp;
-            document.getElementById('coins').textContent = playerStats.coins;
+            // 升級檢查
+            const expNeeded = playerStats.level * 100;
+            if (playerStats.exp >= expNeeded) {
+                playerStats.level++;
+                playerStats.maxHp += 10;
+                playerStats.hp = playerStats.maxHp;
+                addLog(`🎉 升級！等級 ${playerStats.level}`);
+            }
+            
+            updateStats();
+
+            // === A01-A04: 存入 localStorage ===
+            saveBattleResult(true, expGain, coinGain);
 
             const dialogue = dialogues[currentMonster.id] || {};
-            document.getElementById('victory-message').textContent = 
-                `擊敗了 ${currentMonster.name}！\n獲得 ${expGain} XP 和 ${coinGain} 金幣`;
+            document.getElementById('victory-monster').textContent = 
+                `擊敗了 ${currentMonster.name}！\n${dialogue.defeat || '下次不會輸的...'}`;
+            document.getElementById('reward-coins').textContent = coinGain;
+            document.getElementById('reward-exp').textContent = expGain;
             document.getElementById('victory-modal').classList.remove('hidden');
             
             addLog(`🏆 勝利！獲得 ${expGain} XP, ${coinGain} 金幣`);
+            
+            // === A06: 成就檢查 ===
+            checkAchievements();
         }
 
+        // ============================================================
         // 戰敗
+        // ============================================================
         function defeat() {
+            // === A01-A04: 存入 localStorage ===
+            saveBattleResult(false, 0, 0);
+            
             document.getElementById('defeat-modal').classList.remove('hidden');
             addLog('💀 戰敗...');
         }
 
+        // ============================================================
+        // A01-A04: 存儲戰鬥結果
+        // ============================================================
+        function saveBattleResult(won, expGain, coinGain) {
+            // A01: 總統計
+            const stats = JSON.parse(localStorage.getItem('beidou_battle_stats') || '{"totalBattles":0,"wins":0,"coins":0,"exp":0}');
+            stats.totalBattles++;
+            if (won) stats.wins++;
+            stats.coins += coinGain;
+            stats.exp += expGain;
+            localStorage.setItem('beidou_battle_stats', JSON.stringify(stats));
+            
+            // A02: 最近戰鬥記錄
+            const recentBattles = JSON.parse(localStorage.getItem('beidou_recent_battles') || '[]');
+            recentBattles.unshift({
+                monster: currentMonster.name,
+                subject: currentMonster.subject,
+                won: won,
+                time: new Date().toLocaleString('zh-TW'),
+                coins: coinGain,
+                exp: expGain
+            });
+            // 只保留最近 20 場
+            if (recentBattles.length > 20) recentBattles.pop();
+            localStorage.setItem('beidou_recent_battles', JSON.stringify(recentBattles));
+            
+            // A03: 科目統計
+            const subjectStats = JSON.parse(localStorage.getItem('beidou_subject_stats') || '{}');
+            const subj = currentMonster.subject || '其他';
+            if (!subjectStats[subj]) subjectStats[subj] = { battles: 0, wins: 0 };
+            subjectStats[subj].battles++;
+            if (won) subjectStats[subj].wins++;
+            localStorage.setItem('beidou_subject_stats', JSON.stringify(subjectStats));
+        }
+
+        // ============================================================
+        // A04: 存儲錯題
+        // ============================================================
+        function saveWrongQuestion(question, userAnswer) {
+            const wrongQuestions = JSON.parse(localStorage.getItem('beidou_wrong_questions') || '[]');
+            
+            // 檢查是否已存在（避免重複）
+            const exists = wrongQuestions.some(q => q.question === question.question);
+            if (!exists) {
+                wrongQuestions.unshift({
+                    question: question.question,
+                    options: question.options,
+                    answer: question.answer,
+                    userAnswer: userAnswer,
+                    subject: currentMonster.subject,
+                    node: currentMonster.node_id || currentMonster.name,
+                    time: new Date().toLocaleString('zh-TW')
+                });
+                // 最多保留 100 題
+                if (wrongQuestions.length > 100) wrongQuestions.pop();
+                localStorage.setItem('beidou_wrong_questions', JSON.stringify(wrongQuestions));
+            }
+        }
+
+        // ============================================================
+        // A06: 成就檢查
+        // ============================================================
+        function checkAchievements() {
+            const stats = JSON.parse(localStorage.getItem('beidou_battle_stats') || '{}');
+            const achievements = JSON.parse(localStorage.getItem('beidou_achievements') || '[]');
+            const unlockedIds = achievements.map(a => a.id);
+            
+            const achievementDefs = [
+                { id: 'first_win', name: '初戰告捷', emoji: '🎉', desc: '贏得第一場戰鬥', condition: () => stats.wins >= 1 },
+                { id: 'wins_10', name: '小試身手', emoji: '⚔️', desc: '累計勝利 10 場', condition: () => stats.wins >= 10 },
+                { id: 'wins_50', name: '身經百戰', emoji: '🗡️', desc: '累計勝利 50 場', condition: () => stats.wins >= 50 },
+                { id: 'wins_100', name: '百戰百勝', emoji: '🏆', desc: '累計勝利 100 場', condition: () => stats.wins >= 100 },
+                { id: 'coins_500', name: '小富翁', emoji: '💰', desc: '累計獲得 500 金幣', condition: () => stats.coins >= 500 },
+                { id: 'coins_2000', name: '財源滾滾', emoji: '💎', desc: '累計獲得 2000 金幣', condition: () => stats.coins >= 2000 },
+                { id: 'exp_1000', name: '求知若渴', emoji: '📚', desc: '累計獲得 1000 經驗', condition: () => stats.exp >= 1000 },
+                { id: 'battles_100', name: '勤奮學習', emoji: '🔥', desc: '累計戰鬥 100 場', condition: () => stats.totalBattles >= 100 }
+            ];
+            
+            for (const def of achievementDefs) {
+                if (!unlockedIds.includes(def.id) && def.condition()) {
+                    achievements.push({
+                        id: def.id,
+                        name: def.name,
+                        emoji: def.emoji,
+                        desc: def.desc,
+                        unlockedAt: new Date().toISOString()
+                    });
+                    // 顯示成就通知
+                    showAchievementToast(def);
+                }
+            }
+            
+            localStorage.setItem('beidou_achievements', JSON.stringify(achievements));
+        }
+
+        // 成就通知
+        function showAchievementToast(achievement) {
+            const toast = document.createElement('div');
+            toast.className = 'fixed top-20 left-1/2 transform -translate-x-1/2 bg-yellow-500 text-black px-6 py-3 rounded-full font-bold z-50 animate-bounce';
+            toast.innerHTML = `🏅 成就解鎖：${achievement.emoji} ${achievement.name}`;
+            document.body.appendChild(toast);
+            setTimeout(() => toast.remove(), 3000);
+        }
+
+        // ============================================================
         // 下一場戰鬥
+        // ============================================================
         function nextBattle() {
             document.getElementById('victory-modal').classList.add('hidden');
             startBattle();
         }
 
+        // ============================================================
         // 重新開始
+        // ============================================================
         function restartBattle() {
             playerStats.hp = playerStats.maxHp;
             document.getElementById('player-hp').textContent = playerStats.hp;
@@ -381,10 +642,24 @@
             startBattle();
         }
 
+        // ============================================================
+        // 更新統計
+        // ============================================================
+        function updateStats() {
+            document.getElementById('exp').textContent = playerStats.exp;
+            document.getElementById('coins').textContent = playerStats.coins;
+            document.getElementById('wins').textContent = playerStats.wins;
+            document.getElementById('player-level').textContent = playerStats.level;
+            document.getElementById('player-max-hp').textContent = playerStats.maxHp;
+        }
+
+        // ============================================================
         // 新增戰鬥記錄
+        // ============================================================
         function addLog(message) {
             const log = document.getElementById('battle-log');
             const entry = document.createElement('div');
+            entry.className = 'py-1 border-b border-gray-700 last:border-0';
             entry.textContent = message;
             log.appendChild(entry);
             log.scrollTop = log.scrollHeight;
@@ -392,6 +667,13 @@
 
         // 啟動
         init();
+        
+        // 檢查登入狀態
+        const user = JSON.parse(localStorage.getItem('beidou_user') || 'null');
+        if (user && !user.guest) {
+            document.getElementById('authLink').textContent = user.username || '會員';
+            document.getElementById('authLink').href = 'dashboard.html';
+        }
     </script>
 </body>
 </html>

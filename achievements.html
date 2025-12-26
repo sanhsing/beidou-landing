@@ -3,83 +3,242 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>北斗教育 - 成就系統</title>
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <title>北斗教育 | 成就系統</title>
+    <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        .gradient-bg { background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%); }
-        .achievement-card { transition: all 0.3s ease; }
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&display=swap');
+        body { font-family: 'Noto Sans TC', sans-serif; }
+        .gradient-bg { background: linear-gradient(135deg, #0f172a 0%, #1e3a5f 50%, #0f172a 100%); }
+        .card { background: rgba(30, 41, 59, 0.8); border: 1px solid rgba(255,255,255,0.1); }
+        .achievement-card { transition: all 0.3s; }
         .achievement-card:hover { transform: translateY(-3px); }
-        .locked { opacity: 0.5; filter: grayscale(100%); }
+        .achievement-card.locked { opacity: 0.5; filter: grayscale(1); }
+        .achievement-card.unlocked { border-color: #f59e0b; }
     </style>
 </head>
 <body class="gradient-bg min-h-screen text-white">
-    <header class="py-4 px-6 flex justify-between items-center border-b border-gray-700">
-        <a href="index.html" class="flex items-center space-x-2">
-            <span class="text-2xl">⭐</span>
-            <span class="font-bold">北斗教育</span>
-        </a>
-        <div class="text-yellow-400">
-            🏆 <span id="unlocked-count">0</span> / <span id="total-count">0</span>
-        </div>
-    </header>
 
-    <main class="max-w-6xl mx-auto px-6 py-8">
-        <h2 class="text-3xl font-bold text-center mb-8">🏆 成就系統</h2>
-        
-        <div id="achievements-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            <!-- 動態載入 -->
+    <!-- 導航列 -->
+    <nav class="py-4 px-6 border-b border-white/10">
+        <div class="container mx-auto flex justify-between items-center">
+            <a href="index.html" class="flex items-center gap-2">
+                <span class="text-2xl">🌟</span>
+                <span class="font-bold text-xl">北斗教育</span>
+            </a>
+            <div class="hidden md:flex items-center gap-6">
+                <a href="courses.html" class="text-gray-300 hover:text-white">學測課程</a>
+                <a href="dashboard.html" class="text-gray-300 hover:text-white">儀表板</a>
+                <a href="battle.html" class="text-orange-400 hover:text-orange-300">⚔️ 戰鬥</a>
+            </div>
+            <a href="auth.html" id="authLink" class="text-gray-300 hover:text-white">登入</a>
+        </div>
+    </nav>
+
+    <main class="container mx-auto px-4 py-8 max-w-5xl">
+        <!-- 標題 -->
+        <div class="text-center mb-8">
+            <h1 class="text-3xl font-bold mb-2">🏆 成就系統</h1>
+            <p class="text-gray-400">完成挑戰，解鎖榮耀！</p>
+        </div>
+
+        <!-- 進度總覽 -->
+        <div class="card rounded-xl p-6 mb-8">
+            <div class="flex justify-between items-center mb-4">
+                <span class="text-gray-400">成就進度</span>
+                <span class="text-xl font-bold">
+                    <span id="unlockedCount" class="text-yellow-400">0</span>
+                    <span class="text-gray-500">/</span>
+                    <span id="totalCount" class="text-gray-400">0</span>
+                </span>
+            </div>
+            <div class="h-3 bg-gray-700 rounded-full overflow-hidden">
+                <div id="progressBar" class="h-full bg-gradient-to-r from-yellow-500 to-orange-500 rounded-full transition-all" style="width: 0%"></div>
+            </div>
+        </div>
+
+        <!-- 成就分類 -->
+        <div class="space-y-8">
+            <!-- 戰鬥成就 -->
+            <section>
+                <h2 class="text-xl font-bold mb-4 flex items-center gap-2">
+                    <span>⚔️</span> 戰鬥成就
+                </h2>
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4" id="battleAchievements"></div>
+            </section>
+
+            <!-- 財富成就 -->
+            <section>
+                <h2 class="text-xl font-bold mb-4 flex items-center gap-2">
+                    <span>💰</span> 財富成就
+                </h2>
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4" id="wealthAchievements"></div>
+            </section>
+
+            <!-- 學習成就 -->
+            <section>
+                <h2 class="text-xl font-bold mb-4 flex items-center gap-2">
+                    <span>📚</span> 學習成就
+                </h2>
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4" id="learningAchievements"></div>
+            </section>
+
+            <!-- 特殊成就 -->
+            <section>
+                <h2 class="text-xl font-bold mb-4 flex items-center gap-2">
+                    <span>✨</span> 特殊成就
+                </h2>
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4" id="specialAchievements"></div>
+            </section>
         </div>
     </main>
 
-    <script>
-        async function loadAchievements() {
-            try {
-                const res = await fetch('data/achievements.json');
-                const achievements = await res.json();
-                
-                document.getElementById('total-count').textContent = achievements.length;
-                
-                // 模擬已解鎖 (隨機 30%)
-                const unlocked = new Set();
-                achievements.forEach((a, i) => {
-                    if (Math.random() < 0.3) unlocked.add(i);
-                });
-                document.getElementById('unlocked-count').textContent = unlocked.size;
+    <!-- Footer -->
+    <footer class="py-8 border-t border-white/10 mt-8">
+        <div class="container mx-auto px-4 text-center text-gray-500">
+            <p>© 2025 北斗七星文創數位有限公司</p>
+        </div>
+    </footer>
 
-                const grid = document.getElementById('achievements-grid');
+    <script>
+        // 成就定義
+        const achievementDefs = {
+            battle: [
+                { id: 'first_win', name: '初戰告捷', emoji: '🎉', desc: '贏得第一場戰鬥', condition: 'wins >= 1' },
+                { id: 'wins_10', name: '小試身手', emoji: '⚔️', desc: '累計勝利 10 場', condition: 'wins >= 10' },
+                { id: 'wins_50', name: '身經百戰', emoji: '🗡️', desc: '累計勝利 50 場', condition: 'wins >= 50' },
+                { id: 'wins_100', name: '百戰百勝', emoji: '🏆', desc: '累計勝利 100 場', condition: 'wins >= 100' },
+                { id: 'wins_500', name: '戰神降臨', emoji: '👑', desc: '累計勝利 500 場', condition: 'wins >= 500' },
+                { id: 'battles_100', name: '勤奮學習', emoji: '🔥', desc: '累計戰鬥 100 場', condition: 'battles >= 100' },
+                { id: 'battles_500', name: '永不放棄', emoji: '💪', desc: '累計戰鬥 500 場', condition: 'battles >= 500' },
+                { id: 'battles_1000', name: '鋼鐵意志', emoji: '🦾', desc: '累計戰鬥 1000 場', condition: 'battles >= 1000' }
+            ],
+            wealth: [
+                { id: 'coins_100', name: '小有積蓄', emoji: '🪙', desc: '累計獲得 100 金幣', condition: 'coins >= 100' },
+                { id: 'coins_500', name: '小富翁', emoji: '💰', desc: '累計獲得 500 金幣', condition: 'coins >= 500' },
+                { id: 'coins_2000', name: '財源滾滾', emoji: '💎', desc: '累計獲得 2000 金幣', condition: 'coins >= 2000' },
+                { id: 'coins_10000', name: '富可敵國', emoji: '🏦', desc: '累計獲得 10000 金幣', condition: 'coins >= 10000' }
+            ],
+            learning: [
+                { id: 'exp_100', name: '學習新手', emoji: '📖', desc: '累計獲得 100 經驗', condition: 'exp >= 100' },
+                { id: 'exp_1000', name: '求知若渴', emoji: '📚', desc: '累計獲得 1000 經驗', condition: 'exp >= 1000' },
+                { id: 'exp_5000', name: '學富五車', emoji: '🎓', desc: '累計獲得 5000 經驗', condition: 'exp >= 5000' },
+                { id: 'exp_20000', name: '學術大師', emoji: '🧠', desc: '累計獲得 20000 經驗', condition: 'exp >= 20000' }
+            ],
+            special: [
+                { id: 'first_login', name: '初來乍到', emoji: '👋', desc: '首次登入系統', condition: 'always' },
+                { id: 'night_owl', name: '夜貓子', emoji: '🦉', desc: '在凌晨 2-4 點戰鬥', condition: 'special' },
+                { id: 'perfect_10', name: '完美十連', emoji: '⭐', desc: '連續答對 10 題', condition: 'special' },
+                { id: 'all_subjects', name: '全科挑戰', emoji: '🌈', desc: '在所有科目都獲得勝利', condition: 'special' }
+            ]
+        };
+
+        // 獲取統計數據
+        function getStats() {
+            const stats = JSON.parse(localStorage.getItem('beidou_battle_stats') || '{}');
+            return {
+                wins: stats.wins || 0,
+                battles: stats.totalBattles || 0,
+                coins: stats.coins || 0,
+                exp: stats.exp || 0
+            };
+        }
+
+        // 獲取已解鎖成就
+        function getUnlocked() {
+            return JSON.parse(localStorage.getItem('beidou_achievements') || '[]');
+        }
+
+        // 檢查成就是否解鎖
+        function isUnlocked(achievementId) {
+            const unlocked = getUnlocked();
+            return unlocked.some(a => a.id === achievementId);
+        }
+
+        // 計算進度
+        function getProgress(condition, stats) {
+            if (condition === 'always') return 100;
+            if (condition === 'special') return 0;
+            
+            const match = condition.match(/(\w+)\s*>=\s*(\d+)/);
+            if (match) {
+                const [, field, target] = match;
+                const current = stats[field] || 0;
+                return Math.min(100, Math.round((current / parseInt(target)) * 100));
+            }
+            return 0;
+        }
+
+        // 渲染成就卡片
+        function renderAchievements() {
+            const stats = getStats();
+            const unlocked = getUnlocked();
+            let totalUnlocked = 0;
+            let totalAchievements = 0;
+
+            for (const [category, achievements] of Object.entries(achievementDefs)) {
+                const container = document.getElementById(`${category}Achievements`);
                 
-                // 成就圖示
-                const icons = ['🌟', '⭐', '🏆', '🎯', '💎', '🔥', '⚡', '🎮', '📚', '🧠'];
-                
-                achievements.forEach((a, i) => {
-                    const isUnlocked = unlocked.has(i);
-                    grid.innerHTML += `
-                        <div class="achievement-card bg-gray-800 bg-opacity-50 rounded-xl p-6 ${isUnlocked ? '' : 'locked'}">
-                            <div class="flex items-center space-x-4">
-                                <div class="text-4xl">${icons[i % icons.length]}</div>
-                                <div class="flex-1">
-                                    <h3 class="font-bold text-lg">${a.name || '未知成就'}</h3>
-                                    <p class="text-gray-400 text-sm">${a.description || ''}</p>
+                container.innerHTML = achievements.map(a => {
+                    totalAchievements++;
+                    const isAchieved = isUnlocked(a.id);
+                    if (isAchieved) totalUnlocked++;
+                    
+                    const progress = isAchieved ? 100 : getProgress(a.condition, stats);
+                    const unlockedData = isAchieved ? unlocked.find(u => u.id === a.id) : null;
+                    
+                    return `
+                        <div class="card achievement-card rounded-xl p-4 ${isAchieved ? 'unlocked border-2' : 'locked'}">
+                            <div class="text-4xl mb-2 text-center">${a.emoji}</div>
+                            <h3 class="font-bold text-center mb-1">${a.name}</h3>
+                            <p class="text-xs text-gray-400 text-center mb-3">${a.desc}</p>
+                            ${isAchieved ? `
+                                <div class="text-center text-yellow-400 text-xs">
+                                    ✓ 已解鎖
                                 </div>
-                                <div class="text-right">
-                                    ${isUnlocked ? 
-                                        '<span class="text-green-400">✓ 已解鎖</span>' : 
-                                        '<span class="text-gray-500">🔒</span>'}
+                            ` : `
+                                <div class="h-1.5 bg-gray-700 rounded-full overflow-hidden">
+                                    <div class="h-full bg-purple-500 rounded-full" style="width: ${progress}%"></div>
                                 </div>
-                            </div>
-                            <div class="mt-4 flex justify-between text-sm">
-                                <span class="text-yellow-400">+${a.reward_xp || 50} XP</span>
-                                <span class="text-purple-400">${a.category || '一般'}</span>
-                            </div>
+                                <div class="text-center text-gray-500 text-xs mt-1">${progress}%</div>
+                            `}
                         </div>
                     `;
+                }).join('');
+            }
+
+            // 更新總進度
+            document.getElementById('unlockedCount').textContent = totalUnlocked;
+            document.getElementById('totalCount').textContent = totalAchievements;
+            document.getElementById('progressBar').style.width = `${(totalUnlocked / totalAchievements) * 100}%`;
+        }
+
+        // 初始化
+        function init() {
+            renderAchievements();
+            
+            // 自動解鎖「初來乍到」
+            const unlocked = getUnlocked();
+            if (!unlocked.some(a => a.id === 'first_login')) {
+                unlocked.push({
+                    id: 'first_login',
+                    name: '初來乍到',
+                    emoji: '👋',
+                    desc: '首次登入系統',
+                    unlockedAt: new Date().toISOString()
                 });
-            } catch (error) {
-                console.error('載入失敗:', error);
+                localStorage.setItem('beidou_achievements', JSON.stringify(unlocked));
+                renderAchievements();
+            }
+            
+            // 登入狀態
+            const user = JSON.parse(localStorage.getItem('beidou_user') || 'null');
+            if (user && !user.guest) {
+                document.getElementById('authLink').textContent = user.username || '會員';
+                document.getElementById('authLink').href = 'dashboard.html';
             }
         }
 
-        loadAchievements();
+        init();
     </script>
 </body>
 </html>

@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>北斗教育 | 道</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;700&display=swap');
+        body { font-family: 'Noto Serif TC', serif; }
+        .dao-bg { 
+            background: radial-gradient(ellipse at center, #1a1a2e 0%, #0f0f1a 50%, #000 100%);
+            min-height: 100vh;
+        }
+        .star { position: absolute; background: white; border-radius: 50%; animation: twinkle 2s infinite; }
+        @keyframes twinkle { 0%, 100% { opacity: 0.3; } 50% { opacity: 1; } }
+        .principle-card {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.1);
+            transition: all 0.5s;
+        }
+        .principle-card:hover {
+            background: rgba(255,255,255,0.08);
+            border-color: rgba(255,215,0,0.3);
+            transform: scale(1.02);
+        }
+        .golden { color: #ffd700; }
+        .fade-in { animation: fadeIn 1s ease-in; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
+</head>
+<body class="dao-bg text-white overflow-x-hidden">
+
+    <!-- 星空背景 -->
+    <div id="stars" class="fixed inset-0 pointer-events-none"></div>
+
+    <!-- 返回 -->
+    <a href="index.html" class="fixed top-4 left-4 text-gray-500 hover:text-white z-50">← 返回</a>
+
+    <main class="relative z-10 container mx-auto px-4 py-16 max-w-3xl">
+        <!-- 標題 -->
+        <div class="text-center mb-16 fade-in">
+            <div class="text-6xl mb-4">☯</div>
+            <h1 class="text-4xl font-bold golden mb-2">道</h1>
+            <p class="text-gray-400 text-lg">苦海無涯，AI作舟，你我共渡</p>
+        </div>
+
+        <!-- 隨機原則展示 -->
+        <div id="featuredPrinciple" class="principle-card rounded-2xl p-8 mb-12 text-center fade-in">
+            <div class="text-3xl golden mb-4" id="principleName">載入中...</div>
+            <div class="text-gray-300 text-lg leading-relaxed" id="principleDesc"></div>
+        </div>
+
+        <!-- 換一條 -->
+        <div class="text-center mb-12">
+            <button onclick="showRandom()" class="px-6 py-2 border border-white/20 rounded-full hover:border-golden hover:text-golden transition">
+                🎲 換一條
+            </button>
+        </div>
+
+        <!-- 全部原則 -->
+        <div class="mb-8">
+            <h2 class="text-xl text-gray-400 mb-4 text-center">── 道的原則 ──</h2>
+        </div>
+
+        <div id="principleList" class="space-y-4">
+            <!-- 動態生成 -->
+        </div>
+
+        <!-- 底部 -->
+        <div class="text-center mt-16 text-gray-600 text-sm">
+            <p>「被記得的，就活著」</p>
+            <p class="mt-2">北斗宇宙觀 v1.4</p>
+        </div>
+    </main>
+
+    <script>
+        let principles = [];
+
+        async function loadData() {
+            try {
+                const res = await fetch('data/dao_principles.json');
+                const data = await res.json();
+                principles = data.principles;
+                showRandom();
+                renderList();
+                createStars();
+            } catch (e) {
+                console.error('載入失敗:', e);
+            }
+        }
+
+        function showRandom() {
+            const p = principles[Math.floor(Math.random() * principles.length)];
+            document.getElementById('principleName').textContent = p.name;
+            document.getElementById('principleDesc').textContent = p.description;
+        }
+
+        function renderList() {
+            const list = document.getElementById('principleList');
+            list.innerHTML = principles.map((p, i) => `
+                <div class="principle-card rounded-xl p-4 flex items-center gap-4" style="animation-delay: ${i * 0.05}s">
+                    <div class="w-8 h-8 rounded-full bg-gradient-to-br from-yellow-600 to-amber-800 flex items-center justify-center text-sm font-bold">
+                        ${i + 1}
+                    </div>
+                    <div class="flex-1">
+                        <div class="font-bold golden">${p.name}</div>
+                        <div class="text-sm text-gray-400">${p.description}</div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function createStars() {
+            const container = document.getElementById('stars');
+            for (let i = 0; i < 100; i++) {
+                const star = document.createElement('div');
+                star.className = 'star';
+                star.style.left = Math.random() * 100 + '%';
+                star.style.top = Math.random() * 100 + '%';
+                star.style.width = Math.random() * 2 + 1 + 'px';
+                star.style.height = star.style.width;
+                star.style.animationDelay = Math.random() * 2 + 's';
+                container.appendChild(star);
+            }
+        }
+
+        loadData();
+    </script>
+</body>
+</html>

@@ -1,0 +1,793 @@
+{
+  "daily_quests": {
+    "total": 12,
+    "items": [
+      {
+        "id": "DAILY_BATTLE_3",
+        "name": "小試身手",
+        "description": "完成3場戰鬥",
+        "type": "battle",
+        "target": 3,
+        "reward_type": "coins",
+        "reward_amount": 100,
+        "difficulty": "easy",
+        "icon": "⚔️"
+      },
+      {
+        "id": "DAILY_BATTLE_5",
+        "name": "勤奮學習",
+        "description": "完成5場戰鬥",
+        "type": "battle",
+        "target": 5,
+        "reward_type": "coins",
+        "reward_amount": 200,
+        "difficulty": "medium",
+        "icon": "⚔️"
+      },
+      {
+        "id": "DAILY_BATTLE_10",
+        "name": "學霸日常",
+        "description": "完成10場戰鬥",
+        "type": "battle",
+        "target": 10,
+        "reward_type": "exp",
+        "reward_amount": 500,
+        "difficulty": "hard",
+        "icon": "⚔️"
+      },
+      {
+        "id": "DAILY_ACC_80",
+        "name": "穩紮穩打",
+        "description": "單場正確率≥80%",
+        "type": "accuracy",
+        "target": 80,
+        "reward_type": "coins",
+        "reward_amount": 150,
+        "difficulty": "easy",
+        "icon": "🎯"
+      },
+      {
+        "id": "DAILY_ACC_100",
+        "name": "完美答題",
+        "description": "單場正確率100%",
+        "type": "accuracy",
+        "target": 100,
+        "reward_type": "exp",
+        "reward_amount": 300,
+        "difficulty": "hard",
+        "icon": "🎯"
+      },
+      {
+        "id": "DAILY_STREAK_5",
+        "name": "連擊新手",
+        "description": "達成5連擊",
+        "type": "streak",
+        "target": 5,
+        "reward_type": "coins",
+        "reward_amount": 100,
+        "difficulty": "easy",
+        "icon": "🔥"
+      },
+      {
+        "id": "DAILY_STREAK_10",
+        "name": "連擊達人",
+        "description": "達成10連擊",
+        "type": "streak",
+        "target": 10,
+        "reward_type": "item",
+        "reward_amount": 1,
+        "difficulty": "hard",
+        "icon": "🔥"
+      },
+      {
+        "id": "DAILY_MULTI_SUB",
+        "name": "全科發展",
+        "description": "完成3個不同科目",
+        "type": "subject",
+        "target": 3,
+        "reward_type": "coins",
+        "reward_amount": 200,
+        "difficulty": "medium",
+        "icon": "📚"
+      },
+      {
+        "id": "WEEKLY_BATTLE_30",
+        "name": "週間勇士",
+        "description": "完成30場戰鬥",
+        "type": "battle",
+        "target": 30,
+        "reward_type": "diamonds",
+        "reward_amount": 5,
+        "difficulty": "medium",
+        "icon": "⚔️"
+      },
+      {
+        "id": "WEEKLY_BOSS_1",
+        "name": "挑戰守護神",
+        "description": "擊敗1隻守護神",
+        "type": "boss",
+        "target": 1,
+        "reward_type": "diamonds",
+        "reward_amount": 10,
+        "difficulty": "hard",
+        "icon": "👑"
+      },
+      {
+        "id": "WEEKLY_STREAK_15",
+        "name": "連擊傳說",
+        "description": "達成15連擊",
+        "type": "streak",
+        "target": 15,
+        "reward_type": "item",
+        "reward_amount": 1,
+        "difficulty": "hard",
+        "icon": "🔥"
+      },
+      {
+        "id": "WEEKLY_ALL_SUB",
+        "name": "十科精通",
+        "description": "完成全部10科目",
+        "type": "subject",
+        "target": 10,
+        "reward_type": "diamonds",
+        "reward_amount": 20,
+        "difficulty": "hard",
+        "icon": "📚"
+      }
+    ]
+  },
+  "shop": {
+    "total": 13,
+    "items": [
+      {
+        "id": 1,
+        "item_id": "ITEM_HP_S",
+        "type": "permanent",
+        "stock": -1,
+        "discount": 0,
+        "level_req": 1
+      },
+      {
+        "id": 2,
+        "item_id": "ITEM_HP_M",
+        "type": "permanent",
+        "stock": -1,
+        "discount": 0,
+        "level_req": 10
+      },
+      {
+        "id": 3,
+        "item_id": "ITEM_HP_L",
+        "type": "permanent",
+        "stock": -1,
+        "discount": 0,
+        "level_req": 20
+      },
+      {
+        "id": 4,
+        "item_id": "ITEM_HINT",
+        "type": "permanent",
+        "stock": -1,
+        "discount": 0,
+        "level_req": 1
+      },
+      {
+        "id": 5,
+        "item_id": "ITEM_ATK_BOOST",
+        "type": "permanent",
+        "stock": -1,
+        "discount": 0,
+        "level_req": 5
+      },
+      {
+        "id": 6,
+        "item_id": "ITEM_DEF_BOOST",
+        "type": "permanent",
+        "stock": -1,
+        "discount": 0,
+        "level_req": 5
+      },
+      {
+        "id": 7,
+        "item_id": "ITEM_SKIP",
+        "type": "daily",
+        "stock": 3,
+        "discount": 0,
+        "level_req": 10
+      },
+      {
+        "id": 8,
+        "item_id": "ITEM_EXP_BOOST",
+        "type": "daily",
+        "stock": 2,
+        "discount": 0,
+        "level_req": 15
+      },
+      {
+        "id": 9,
+        "item_id": "ITEM_COIN_BOOST",
+        "type": "daily",
+        "stock": 2,
+        "discount": 0,
+        "level_req": 15
+      },
+      {
+        "id": 10,
+        "item_id": "ITEM_REVIVE",
+        "type": "weekly",
+        "stock": 5,
+        "discount": 0,
+        "level_req": 20
+      },
+      {
+        "id": 11,
+        "item_id": "ITEM_FREEZE",
+        "type": "weekly",
+        "stock": 3,
+        "discount": 0,
+        "level_req": 25
+      },
+      {
+        "id": 12,
+        "item_id": "ITEM_TICKET_BOSS",
+        "type": "weekly",
+        "stock": 1,
+        "discount": 0,
+        "level_req": 30
+      },
+      {
+        "id": 13,
+        "item_id": "ITEM_GACHA",
+        "type": "permanent",
+        "stock": -1,
+        "discount": 0,
+        "level_req": 10
+      }
+    ]
+  },
+  "titles": {
+    "total": 60,
+    "items": [
+      {
+        "id": 1,
+        "title_id": "TITLE_RANK_BRONZE",
+        "name": "青銅學徒",
+        "description": "段位達到青銅",
+        "rarity": "common",
+        "condition": "rank >= bronze",
+        "color": "#CD7F32"
+      },
+      {
+        "id": 2,
+        "title_id": "TITLE_RANK_SILVER",
+        "name": "白銀戰士",
+        "description": "段位達到白銀",
+        "rarity": "uncommon",
+        "condition": "rank >= silver",
+        "color": "#C0C0C0"
+      },
+      {
+        "id": 3,
+        "title_id": "TITLE_RANK_GOLD",
+        "name": "黃金勇者",
+        "description": "段位達到黃金",
+        "rarity": "rare",
+        "condition": "rank >= gold",
+        "color": "#FFD700"
+      },
+      {
+        "id": 4,
+        "title_id": "TITLE_RANK_PLATINUM",
+        "name": "白金高手",
+        "description": "段位達到白金",
+        "rarity": "epic",
+        "condition": "rank >= platinum",
+        "color": "#E5E4E2"
+      },
+      {
+        "id": 5,
+        "title_id": "TITLE_RANK_DIAMOND",
+        "name": "鑽石大師",
+        "description": "段位達到鑽石",
+        "rarity": "legendary",
+        "condition": "rank >= diamond",
+        "color": "#B9F2FF"
+      },
+      {
+        "id": 6,
+        "title_id": "TITLE_RANK_MASTER",
+        "name": "宗師",
+        "description": "段位達到宗師",
+        "rarity": "legendary",
+        "condition": "rank >= master",
+        "color": "#9400D3"
+      },
+      {
+        "id": 7,
+        "title_id": "TITLE_RANK_GRANDMASTER",
+        "name": "傳奇宗師",
+        "description": "段位達到傳奇宗師",
+        "rarity": "mythic",
+        "condition": "rank >= grandmaster",
+        "color": "#FF4500"
+      },
+      {
+        "id": 8,
+        "title_id": "TITLE_RANK_CHALLENGER",
+        "name": "王者",
+        "description": "段位達到王者",
+        "rarity": "mythic",
+        "condition": "rank >= challenger",
+        "color": "#FF0000"
+      },
+      {
+        "id": 9,
+        "title_id": "TITLE_NEWBIE",
+        "name": "初心者",
+        "description": "完成第1場戰鬥",
+        "rarity": "common",
+        "condition": "battles >= 1",
+        "color": "#90EE90"
+      },
+      {
+        "id": 10,
+        "title_id": "TITLE_WARRIOR",
+        "name": "戰士",
+        "description": "完成50場戰鬥",
+        "rarity": "uncommon",
+        "condition": "battles >= 50",
+        "color": "#4169E1"
+      },
+      {
+        "id": 11,
+        "title_id": "TITLE_VETERAN",
+        "name": "老兵",
+        "description": "完成200場戰鬥",
+        "rarity": "rare",
+        "condition": "battles >= 200",
+        "color": "#9932CC"
+      },
+      {
+        "id": 12,
+        "title_id": "TITLE_LEGEND",
+        "name": "傳說",
+        "description": "完成500場戰鬥",
+        "rarity": "epic",
+        "condition": "battles >= 500",
+        "color": "#FFD700"
+      },
+      {
+        "id": 13,
+        "title_id": "TITLE_MYTH",
+        "name": "神話",
+        "description": "完成1000場戰鬥",
+        "rarity": "legendary",
+        "condition": "battles >= 1000",
+        "color": "#FF4500"
+      },
+      {
+        "id": 14,
+        "title_id": "TITLE_IMMORTAL",
+        "name": "不朽",
+        "description": "完成2000場戰鬥",
+        "rarity": "mythic",
+        "condition": "battles >= 2000",
+        "color": "#FF0000"
+      },
+      {
+        "id": 15,
+        "title_id": "TITLE_STUDENT",
+        "name": "學生",
+        "description": "累計1000經驗",
+        "rarity": "common",
+        "condition": "exp >= 1000",
+        "color": "#87CEEB"
+      },
+      {
+        "id": 16,
+        "title_id": "TITLE_SCHOLAR",
+        "name": "學者",
+        "description": "累計10000經驗",
+        "rarity": "uncommon",
+        "condition": "exp >= 10000",
+        "color": "#4682B4"
+      },
+      {
+        "id": 17,
+        "title_id": "TITLE_MASTER",
+        "name": "大師",
+        "description": "累計50000經驗",
+        "rarity": "rare",
+        "condition": "exp >= 50000",
+        "color": "#0000CD"
+      },
+      {
+        "id": 18,
+        "title_id": "TITLE_SAGE",
+        "name": "聖人",
+        "description": "累計200000經驗",
+        "rarity": "epic",
+        "condition": "exp >= 200000",
+        "color": "#8B008B"
+      },
+      {
+        "id": 19,
+        "title_id": "TITLE_ENLIGHTENED",
+        "name": "覺者",
+        "description": "累計500000經驗",
+        "rarity": "legendary",
+        "condition": "exp >= 500000",
+        "color": "#FFD700"
+      },
+      {
+        "id": 20,
+        "title_id": "TITLE_COMBO_5",
+        "name": "連擊新手",
+        "description": "達成5連擊",
+        "rarity": "common",
+        "condition": "streak >= 5",
+        "color": "#98FB98"
+      },
+      {
+        "id": 21,
+        "title_id": "TITLE_COMBO_10",
+        "name": "連擊達人",
+        "description": "達成10連擊",
+        "rarity": "uncommon",
+        "condition": "streak >= 10",
+        "color": "#00FA9A"
+      },
+      {
+        "id": 22,
+        "title_id": "TITLE_COMBO_15",
+        "name": "連擊高手",
+        "description": "達成15連擊",
+        "rarity": "rare",
+        "condition": "streak >= 15",
+        "color": "#00FF7F"
+      },
+      {
+        "id": 23,
+        "title_id": "TITLE_COMBO_20",
+        "name": "連擊之王",
+        "description": "達成20連擊",
+        "rarity": "epic",
+        "condition": "streak >= 20",
+        "color": "#32CD32"
+      },
+      {
+        "id": 24,
+        "title_id": "TITLE_COMBO_30",
+        "name": "連擊神話",
+        "description": "達成30連擊",
+        "rarity": "legendary",
+        "condition": "streak >= 30",
+        "color": "#228B22"
+      },
+      {
+        "id": 25,
+        "title_id": "TITLE_COLLECTOR_10",
+        "name": "收集者",
+        "description": "圖鑑收集10隻",
+        "rarity": "common",
+        "condition": "pokedex >= 10",
+        "color": "#DDA0DD"
+      },
+      {
+        "id": 26,
+        "title_id": "TITLE_COLLECTOR_50",
+        "name": "獵人",
+        "description": "圖鑑收集50隻",
+        "rarity": "uncommon",
+        "condition": "pokedex >= 50",
+        "color": "#DA70D6"
+      },
+      {
+        "id": 27,
+        "title_id": "TITLE_COLLECTOR_200",
+        "name": "圖鑑大師",
+        "description": "圖鑑收集200隻",
+        "rarity": "rare",
+        "condition": "pokedex >= 200",
+        "color": "#BA55D3"
+      },
+      {
+        "id": 28,
+        "title_id": "TITLE_COLLECTOR_ALL",
+        "name": "全圖鑑",
+        "description": "收集全部560隻",
+        "rarity": "legendary",
+        "condition": "pokedex >= 560",
+        "color": "#9400D3"
+      },
+      {
+        "id": 29,
+        "title_id": "TITLE_MATH_MASTER",
+        "name": "數學大師",
+        "description": "數學正確率95%+",
+        "rarity": "legendary",
+        "condition": "math_acc >= 0.95",
+        "color": "#FF6347"
+      },
+      {
+        "id": 30,
+        "title_id": "TITLE_PHYSICS_MASTER",
+        "name": "物理大師",
+        "description": "物理正確率95%+",
+        "rarity": "legendary",
+        "condition": "physics_acc >= 0.95",
+        "color": "#4169E1"
+      },
+      {
+        "id": 31,
+        "title_id": "TITLE_CHEM_MASTER",
+        "name": "化學大師",
+        "description": "化學正確率95%+",
+        "rarity": "legendary",
+        "condition": "chem_acc >= 0.95",
+        "color": "#32CD32"
+      },
+      {
+        "id": 32,
+        "title_id": "TITLE_BIO_MASTER",
+        "name": "生物大師",
+        "description": "生物正確率95%+",
+        "rarity": "legendary",
+        "condition": "bio_acc >= 0.95",
+        "color": "#FF69B4"
+      },
+      {
+        "id": 33,
+        "title_id": "TITLE_EARTH_MASTER",
+        "name": "地科大師",
+        "description": "地科正確率95%+",
+        "rarity": "legendary",
+        "condition": "earth_acc >= 0.95",
+        "color": "#8B4513"
+      },
+      {
+        "id": 34,
+        "title_id": "TITLE_CHN_MASTER",
+        "name": "國文大師",
+        "description": "國文正確率95%+",
+        "rarity": "legendary",
+        "condition": "chn_acc >= 0.95",
+        "color": "#DC143C"
+      },
+      {
+        "id": 35,
+        "title_id": "TITLE_ENG_MASTER",
+        "name": "英文大師",
+        "description": "英文正確率95%+",
+        "rarity": "legendary",
+        "condition": "eng_acc >= 0.95",
+        "color": "#00CED1"
+      },
+      {
+        "id": 36,
+        "title_id": "TITLE_HIST_MASTER",
+        "name": "歷史大師",
+        "description": "歷史正確率95%+",
+        "rarity": "legendary",
+        "condition": "hist_acc >= 0.95",
+        "color": "#DAA520"
+      },
+      {
+        "id": 37,
+        "title_id": "TITLE_GEO_MASTER",
+        "name": "地理大師",
+        "description": "地理正確率95%+",
+        "rarity": "legendary",
+        "condition": "geo_acc >= 0.95",
+        "color": "#2E8B57"
+      },
+      {
+        "id": 38,
+        "title_id": "TITLE_CIV_MASTER",
+        "name": "公民大師",
+        "description": "公民正確率95%+",
+        "rarity": "legendary",
+        "condition": "civ_acc >= 0.95",
+        "color": "#4B0082"
+      },
+      {
+        "id": 39,
+        "title_id": "TITLE_BOSS_SLAYER",
+        "name": "守護獵人",
+        "description": "擊敗1位守護神",
+        "rarity": "rare",
+        "condition": "boss_beat >= 1",
+        "color": "#FF4500"
+      },
+      {
+        "id": 40,
+        "title_id": "TITLE_BOSS_5",
+        "name": "五星獵人",
+        "description": "擊敗5位守護神",
+        "rarity": "epic",
+        "condition": "boss_beat >= 5",
+        "color": "#FF6347"
+      },
+      {
+        "id": 41,
+        "title_id": "TITLE_TEN_GUARDIAN",
+        "name": "十冠王",
+        "description": "擊敗全部守護神",
+        "rarity": "legendary",
+        "condition": "boss_beat >= 10",
+        "color": "#FFD700"
+      },
+      {
+        "id": 42,
+        "title_id": "TITLE_NIGHT_OWL",
+        "name": "夜貓子",
+        "description": "凌晨0-5點答題",
+        "rarity": "uncommon",
+        "condition": "night_battles >= 10",
+        "color": "#191970"
+      },
+      {
+        "id": 43,
+        "title_id": "TITLE_EARLY_BIRD",
+        "name": "早起鳥",
+        "description": "早上5-7點答題",
+        "rarity": "uncommon",
+        "condition": "morning_battles >= 10",
+        "color": "#FFD700"
+      },
+      {
+        "id": 44,
+        "title_id": "TITLE_WEEKEND_WARRIOR",
+        "name": "週末戰士",
+        "description": "週末累計100場",
+        "rarity": "rare",
+        "condition": "weekend_battles >= 100",
+        "color": "#FF69B4"
+      },
+      {
+        "id": 45,
+        "title_id": "TITLE_SPEED_DEMON",
+        "name": "閃電手",
+        "description": "平均答題<3秒",
+        "rarity": "epic",
+        "condition": "avg_time <= 3",
+        "color": "#00FFFF"
+      },
+      {
+        "id": 46,
+        "title_id": "TITLE_PERFECTIONIST",
+        "name": "完美主義",
+        "description": "10場全對通關",
+        "rarity": "legendary",
+        "condition": "perfect >= 10",
+        "color": "#FFD700"
+      },
+      {
+        "id": 47,
+        "title_id": "TITLE_COMEBACK_KING",
+        "name": "逆轉王",
+        "description": "血量<10%翻盤",
+        "rarity": "epic",
+        "condition": "comeback >= 5",
+        "color": "#FF4500"
+      },
+      {
+        "id": 48,
+        "title_id": "TITLE_FIRST_BLOOD",
+        "name": "先發制人",
+        "description": "開場3題全對",
+        "rarity": "rare",
+        "condition": "first_blood >= 20",
+        "color": "#DC143C"
+      },
+      {
+        "id": 49,
+        "title_id": "TITLE_UNSTOPPABLE",
+        "name": "勢不可擋",
+        "description": "連勝10場",
+        "rarity": "epic",
+        "condition": "win_streak >= 10",
+        "color": "#FF0000"
+      },
+      {
+        "id": 50,
+        "title_id": "TITLE_BETA_TESTER",
+        "name": "測試先驅",
+        "description": "參與Beta測試",
+        "rarity": "mythic",
+        "condition": "beta_tester == true",
+        "color": "#00FF00"
+      },
+      {
+        "id": 51,
+        "title_id": "TITLE_XMAS_2025",
+        "name": "聖誕2025",
+        "description": "2025聖誕活動",
+        "rarity": "epic",
+        "condition": "xmas_2025 == true",
+        "color": "#FF0000"
+      },
+      {
+        "id": 52,
+        "title_id": "TITLE_NEW_YEAR_2026",
+        "name": "新春2026",
+        "description": "2026新年活動",
+        "rarity": "epic",
+        "condition": "newyear_2026 == true",
+        "color": "#FFD700"
+      },
+      {
+        "id": 53,
+        "title_id": "TITLE_ANNIVERSARY_1",
+        "name": "週年紀念",
+        "description": "一週年活動",
+        "rarity": "legendary",
+        "condition": "anniversary_1 == true",
+        "color": "#9400D3"
+      },
+      {
+        "id": 54,
+        "title_id": "TITLE_TOP_100",
+        "name": "百強",
+        "description": "排行榜前100",
+        "rarity": "legendary",
+        "condition": "rank_top_100 == true",
+        "color": "#FFD700"
+      },
+      {
+        "id": 55,
+        "title_id": "TITLE_PVP_BRONZE",
+        "name": "PvP青銅",
+        "description": "PvP段位青銅",
+        "rarity": "common",
+        "condition": "pvp_rank >= bronze",
+        "color": "#CD7F32"
+      },
+      {
+        "id": 56,
+        "title_id": "TITLE_PVP_SILVER",
+        "name": "PvP白銀",
+        "description": "PvP段位白銀",
+        "rarity": "uncommon",
+        "condition": "pvp_rank >= silver",
+        "color": "#C0C0C0"
+      },
+      {
+        "id": 57,
+        "title_id": "TITLE_PVP_GOLD",
+        "name": "PvP黃金",
+        "description": "PvP段位黃金",
+        "rarity": "rare",
+        "condition": "pvp_rank >= gold",
+        "color": "#FFD700"
+      },
+      {
+        "id": 58,
+        "title_id": "TITLE_PVP_DIAMOND",
+        "name": "PvP鑽石",
+        "description": "PvP段位鑽石",
+        "rarity": "epic",
+        "condition": "pvp_rank >= diamond",
+        "color": "#B9F2FF"
+      },
+      {
+        "id": 59,
+        "title_id": "TITLE_PVP_MASTER",
+        "name": "PvP宗師",
+        "description": "PvP段位宗師",
+        "rarity": "legendary",
+        "condition": "pvp_rank >= master",
+        "color": "#9400D3"
+      },
+      {
+        "id": 60,
+        "title_id": "TITLE_RICH",
+        "name": "富翁",
+        "description": "金幣達10萬",
+        "rarity": "epic",
+        "condition": "coins >= 100000",
+        "color": "#FFD700"
+      }
+    ]
+  }
+}

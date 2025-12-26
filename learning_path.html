@@ -3,309 +3,292 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>北斗教育 | 三層學習路徑</title>
+    <title>北斗教育 | 學習路徑</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&display=swap');
         body { font-family: 'Noto Sans TC', sans-serif; }
-        .gradient-bg { background: linear-gradient(135deg, #1e3a5f 0%, #3b82f6 100%); }
-        .path-line { 
-            position: absolute; 
-            left: 50%; 
-            transform: translateX(-50%);
-            width: 4px;
-            background: linear-gradient(to bottom, #10b981, #3b82f6, #8b5cf6);
-        }
-        .level-node {
-            position: relative;
-            z-index: 10;
-        }
-        .level-node::before {
-            content: '';
-            position: absolute;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 20px;
-            height: 20px;
-            border-radius: 50%;
-            border: 4px solid white;
-            box-shadow: 0 0 0 4px currentColor;
-        }
-        .animate-pulse-slow { animation: pulse 3s infinite; }
-        .card-3d {
-            transform-style: preserve-3d;
-            transition: transform 0.3s ease;
-        }
-        .card-3d:hover {
-            transform: translateY(-8px) rotateX(5deg);
-        }
+        .gradient-bg { background: linear-gradient(135deg, #0f172a 0%, #1e3a5f 50%, #0f172a 100%); }
+        .card { background: rgba(30, 41, 59, 0.8); border: 1px solid rgba(255,255,255,0.1); }
+        .node-card { transition: all 0.3s; }
+        .node-card:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(0,0,0,0.3); }
+        .node-card.completed { border-color: #22c55e; background: rgba(34,197,94,0.1); }
+        .node-card.current { border-color: #f59e0b; background: rgba(245,158,11,0.1); animation: pulse 2s infinite; }
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.7; } }
+        .path-line { position: absolute; left: 24px; top: 60px; bottom: 0; width: 2px; background: linear-gradient(to bottom, #3b82f6, #8b5cf6); }
+        .subject-icon { font-size: 2rem; }
     </style>
-<!-- Google Analytics -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-8X0VB6K9G7"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag("js", new Date());
-  gtag("config", "G-8X0VB6K9G7");
-</script>
 </head>
-<body class="bg-gray-900 min-h-screen text-white">
-    <!-- Header -->
-    <header class="gradient-bg py-8">
-        <div class="container mx-auto px-4 text-center">
-            <h1 class="text-4xl font-bold mb-2">⭐ 北斗三層學習系統</h1>
-            <p class="text-blue-200 text-lg">L1 知識 → L2 練習 → L3 素養</p>
-        </div>
-    </header>
+<body class="gradient-bg min-h-screen text-white">
 
-    <!-- Main Content -->
-    <main class="container mx-auto px-4 py-12">
-        <!-- 三層說明 -->
-        <div class="max-w-4xl mx-auto mb-16">
-            <div class="relative">
-                <!-- 連接線 -->
-                <div class="path-line h-full top-0" style="height: calc(100% - 60px); top: 60px;"></div>
+    <nav class="py-4 px-6 border-b border-white/10">
+        <div class="container mx-auto flex justify-between items-center">
+            <a href="index.html" class="flex items-center gap-2">
+                <span class="text-2xl">🌟</span>
+                <span class="font-bold text-xl">北斗教育</span>
+            </a>
+            <div class="flex items-center gap-4">
+                <a href="courses.html" class="text-gray-300 hover:text-white">← 返回課程</a>
+                <a href="learn.html" class="text-blue-400 hover:text-blue-300">📖 開始學習</a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="container mx-auto px-4 py-8 max-w-6xl">
+        <!-- 選擇科目 -->
+        <div id="subjectPanel">
+            <h1 class="text-3xl font-bold text-center mb-2">🗺️ 學習路徑</h1>
+            <p class="text-center text-gray-400 mb-8">選擇科目，開啟你的學習旅程</p>
+            
+            <div id="subjectGrid" class="grid grid-cols-2 md:grid-cols-5 gap-4 mb-8">
+                <!-- 動態生成 -->
+            </div>
+        </div>
+
+        <!-- 選擇難度 -->
+        <div id="difficultyPanel" class="hidden">
+            <button onclick="showSubjects()" class="text-gray-400 hover:text-white mb-4">← 返回選擇科目</button>
+            
+            <h2 id="subjectTitle" class="text-2xl font-bold mb-6 flex items-center gap-3">
+                <span id="subjectIcon" class="subject-icon">📐</span>
+                <span id="subjectName">數學</span>
+            </h2>
+            
+            <div id="pathCards" class="grid md:grid-cols-3 gap-6">
+                <!-- 動態生成 -->
+            </div>
+        </div>
+
+        <!-- 路徑詳情 -->
+        <div id="pathPanel" class="hidden">
+            <button onclick="showDifficulty()" class="text-gray-400 hover:text-white mb-4">← 返回選擇難度</button>
+            
+            <div class="card rounded-2xl p-6 mb-6">
+                <div class="flex items-center justify-between mb-4">
+                    <div>
+                        <h2 id="pathTitle" class="text-2xl font-bold">數學 基礎入門</h2>
+                        <p id="pathDesc" class="text-gray-400 mt-1">建立紮實基礎</p>
+                    </div>
+                    <div class="text-right">
+                        <div class="text-3xl font-bold text-blue-400"><span id="progressPct">0</span>%</div>
+                        <div class="text-sm text-gray-400">完成進度</div>
+                    </div>
+                </div>
                 
-                <!-- L1 知識節點 -->
-                <div class="level-node text-emerald-400 mb-16">
-                    <div class="flex items-center justify-center mb-4">
-                        <div class="w-16 h-16 rounded-full bg-emerald-500 flex items-center justify-center text-2xl font-bold text-white shadow-lg shadow-emerald-500/50">
-                            L1
-                        </div>
-                    </div>
-                    <div class="bg-gray-800 rounded-2xl p-8 border border-emerald-500/30 card-3d">
-                        <div class="flex items-start gap-6">
-                            <div class="text-5xl">📚</div>
-                            <div>
-                                <h2 class="text-2xl font-bold text-emerald-400 mb-2">知識節點層</h2>
-                                <p class="text-gray-300 mb-4">108課綱完整知識圖譜，3,749 個知識節點</p>
-                                <div class="grid grid-cols-2 gap-4">
-                                    <div class="bg-gray-700/50 rounded-lg p-4">
-                                        <div class="text-3xl font-bold text-emerald-400">3,749</div>
-                                        <div class="text-sm text-gray-400">知識節點</div>
-                                    </div>
-                                    <div class="bg-gray-700/50 rounded-lg p-4">
-                                        <div class="text-3xl font-bold text-emerald-400">10</div>
-                                        <div class="text-sm text-gray-400">學測科目</div>
-                                    </div>
-                                </div>
-                                <div class="mt-4 flex flex-wrap gap-2">
-                                    <span class="px-3 py-1 bg-emerald-500/20 text-emerald-300 rounded-full text-sm">定義</span>
-                                    <span class="px-3 py-1 bg-emerald-500/20 text-emerald-300 rounded-full text-sm">白話</span>
-                                    <span class="px-3 py-1 bg-emerald-500/20 text-emerald-300 rounded-full text-sm">前後關係</span>
-                                    <span class="px-3 py-1 bg-emerald-500/20 text-emerald-300 rounded-full text-sm">樞紐節點</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                <div class="flex items-center gap-6 text-sm text-gray-400">
+                    <span>📚 <span id="nodeCount">10</span> 個知識點</span>
+                    <span>⏱️ 約 <span id="estHours">5</span> 小時</span>
+                    <span>⭐ 難度 <span id="diffLevel">2</span>/5</span>
                 </div>
-
-                <!-- L2 基礎題庫 -->
-                <div class="level-node text-blue-400 mb-16">
-                    <div class="flex items-center justify-center mb-4">
-                        <div class="w-16 h-16 rounded-full bg-blue-500 flex items-center justify-center text-2xl font-bold text-white shadow-lg shadow-blue-500/50">
-                            L2
-                        </div>
-                    </div>
-                    <div class="bg-gray-800 rounded-2xl p-8 border border-blue-500/30 card-3d">
-                        <div class="flex items-start gap-6">
-                            <div class="text-5xl">✍️</div>
-                            <div>
-                                <h2 class="text-2xl font-bold text-blue-400 mb-2">基礎練習層</h2>
-                                <p class="text-gray-300 mb-4">節點對應題目，鞏固基礎概念</p>
-                                <div class="grid grid-cols-2 gap-4">
-                                    <div class="bg-gray-700/50 rounded-lg p-4">
-                                        <div class="text-3xl font-bold text-blue-400">1,811</div>
-                                        <div class="text-sm text-gray-400">基礎題目</div>
-                                    </div>
-                                    <div class="bg-gray-700/50 rounded-lg p-4">
-                                        <div class="text-3xl font-bold text-blue-400">3</div>
-                                        <div class="text-sm text-gray-400">難度層級</div>
-                                    </div>
-                                </div>
-                                <div class="mt-4 flex flex-wrap gap-2">
-                                    <span class="px-3 py-1 bg-blue-500/20 text-blue-300 rounded-full text-sm">選擇題</span>
-                                    <span class="px-3 py-1 bg-blue-500/20 text-blue-300 rounded-full text-sm">計算題</span>
-                                    <span class="px-3 py-1 bg-blue-500/20 text-blue-300 rounded-full text-sm">即時解析</span>
-                                    <span class="px-3 py-1 bg-blue-500/20 text-blue-300 rounded-full text-sm">誘答分析</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- L3 素養題庫 -->
-                <div class="level-node text-purple-400">
-                    <div class="flex items-center justify-center mb-4">
-                        <div class="w-16 h-16 rounded-full bg-purple-500 flex items-center justify-center text-2xl font-bold text-white shadow-lg shadow-purple-500/50 animate-pulse-slow">
-                            L3
-                        </div>
-                    </div>
-                    <div class="bg-gray-800 rounded-2xl p-8 border border-purple-500/30 card-3d">
-                        <div class="flex items-start gap-6">
-                            <div class="text-5xl">🎯</div>
-                            <div>
-                                <h2 class="text-2xl font-bold text-purple-400 mb-2">素養題庫層</h2>
-                                <p class="text-gray-300 mb-4">學測素養導向，情境化題組</p>
-                                <div class="grid grid-cols-3 gap-4">
-                                    <div class="bg-gray-700/50 rounded-lg p-4">
-                                        <div class="text-3xl font-bold text-purple-400">1,710</div>
-                                        <div class="text-sm text-gray-400">素養題目</div>
-                                    </div>
-                                    <div class="bg-gray-700/50 rounded-lg p-4">
-                                        <div class="text-3xl font-bold text-purple-400">114</div>
-                                        <div class="text-sm text-gray-400">素養種子</div>
-                                    </div>
-                                    <div class="bg-gray-700/50 rounded-lg p-4">
-                                        <div class="text-3xl font-bold text-purple-400">5</div>
-                                        <div class="text-sm text-gray-400">情境/種子</div>
-                                    </div>
-                                </div>
-                                <div class="mt-4 flex flex-wrap gap-2">
-                                    <span class="px-3 py-1 bg-purple-500/20 text-purple-300 rounded-full text-sm">Basic 基礎</span>
-                                    <span class="px-3 py-1 bg-purple-500/20 text-purple-300 rounded-full text-sm">Apply 應用</span>
-                                    <span class="px-3 py-1 bg-purple-500/20 text-purple-300 rounded-full text-sm">Extend 延伸</span>
-                                    <span class="px-3 py-1 bg-purple-500/20 text-purple-300 rounded-full text-sm">跨領域</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                
+                <div class="mt-4 h-2 bg-gray-700 rounded-full overflow-hidden">
+                    <div id="progressBar" class="h-full bg-gradient-to-r from-green-500 to-blue-500 rounded-full transition-all" style="width: 0%"></div>
                 </div>
             </div>
-        </div>
 
-        <!-- 科目統計 -->
-        <div class="max-w-6xl mx-auto">
-            <h2 class="text-2xl font-bold text-center mb-8">📊 各科三層覆蓋統計</h2>
-            <div class="grid grid-cols-2 md:grid-cols-5 gap-4">
-                <div class="bg-gray-800 rounded-xl p-4 text-center border border-gray-700">
-                    <div class="text-3xl mb-2">📐</div>
-                    <div class="font-bold">數學</div>
-                    <div class="text-sm text-gray-400 mt-2">
-                        <span class="text-emerald-400">754</span> /
-                        <span class="text-blue-400">162</span> /
-                        <span class="text-purple-400">225</span>
-                    </div>
-                </div>
-                <div class="bg-gray-800 rounded-xl p-4 text-center border border-gray-700">
-                    <div class="text-3xl mb-2">⚡</div>
-                    <div class="font-bold">物理</div>
-                    <div class="text-sm text-gray-400 mt-2">
-                        <span class="text-emerald-400">537</span> /
-                        <span class="text-blue-400">112</span> /
-                        <span class="text-purple-400">225</span>
-                    </div>
-                </div>
-                <div class="bg-gray-800 rounded-xl p-4 text-center border border-gray-700">
-                    <div class="text-3xl mb-2">🧪</div>
-                    <div class="font-bold">化學</div>
-                    <div class="text-sm text-gray-400 mt-2">
-                        <span class="text-emerald-400">358</span> /
-                        <span class="text-blue-400">652</span> /
-                        <span class="text-purple-400">225</span>
-                    </div>
-                </div>
-                <div class="bg-gray-800 rounded-xl p-4 text-center border border-gray-700">
-                    <div class="text-3xl mb-2">🧬</div>
-                    <div class="font-bold">生物</div>
-                    <div class="text-sm text-gray-400 mt-2">
-                        <span class="text-emerald-400">348</span> /
-                        <span class="text-blue-400">109</span> /
-                        <span class="text-purple-400">180</span>
-                    </div>
-                </div>
-                <div class="bg-gray-800 rounded-xl p-4 text-center border border-gray-700">
-                    <div class="text-3xl mb-2">📖</div>
-                    <div class="font-bold">國文</div>
-                    <div class="text-sm text-gray-400 mt-2">
-                        <span class="text-emerald-400">418</span> /
-                        <span class="text-blue-400">187</span> /
-                        <span class="text-purple-400">150</span>
-                    </div>
-                </div>
-                <div class="bg-gray-800 rounded-xl p-4 text-center border border-gray-700">
-                    <div class="text-3xl mb-2">🔤</div>
-                    <div class="font-bold">英文</div>
-                    <div class="text-sm text-gray-400 mt-2">
-                        <span class="text-emerald-400">281</span> /
-                        <span class="text-blue-400">93</span> /
-                        <span class="text-purple-400">150</span>
-                    </div>
-                </div>
-                <div class="bg-gray-800 rounded-xl p-4 text-center border border-gray-700">
-                    <div class="text-3xl mb-2">🏛️</div>
-                    <div class="font-bold">歷史</div>
-                    <div class="text-sm text-gray-400 mt-2">
-                        <span class="text-emerald-400">294</span> /
-                        <span class="text-blue-400">45</span> /
-                        <span class="text-purple-400">135</span>
-                    </div>
-                </div>
-                <div class="bg-gray-800 rounded-xl p-4 text-center border border-gray-700">
-                    <div class="text-3xl mb-2">🌍</div>
-                    <div class="font-bold">地理</div>
-                    <div class="text-sm text-gray-400 mt-2">
-                        <span class="text-emerald-400">253</span> /
-                        <span class="text-blue-400">74</span> /
-                        <span class="text-purple-400">135</span>
-                    </div>
-                </div>
-                <div class="bg-gray-800 rounded-xl p-4 text-center border border-gray-700">
-                    <div class="text-3xl mb-2">⚖️</div>
-                    <div class="font-bold">公民</div>
-                    <div class="text-sm text-gray-400 mt-2">
-                        <span class="text-emerald-400">252</span> /
-                        <span class="text-blue-400">67</span> /
-                        <span class="text-purple-400">150</span>
-                    </div>
-                </div>
-                <div class="bg-gray-800 rounded-xl p-4 text-center border border-gray-700">
-                    <div class="text-3xl mb-2">🌋</div>
-                    <div class="font-bold">地科</div>
-                    <div class="text-sm text-gray-400 mt-2">
-                        <span class="text-emerald-400">254</span> /
-                        <span class="text-blue-400">310</span> /
-                        <span class="text-purple-400">135</span>
-                    </div>
-                </div>
+            <!-- 節點列表 -->
+            <div id="nodeList" class="relative space-y-4 pl-12">
+                <div class="path-line"></div>
+                <!-- 動態生成 -->
             </div>
-            <div class="text-center mt-4 text-sm text-gray-500">
-                格式：<span class="text-emerald-400">L1</span> / <span class="text-blue-400">L2</span> / <span class="text-purple-400">L3</span>
-            </div>
-        </div>
-
-        <!-- 總計 -->
-        <div class="max-w-2xl mx-auto mt-12 bg-gradient-to-r from-emerald-500/20 via-blue-500/20 to-purple-500/20 rounded-2xl p-8 border border-gray-700">
-            <div class="text-center">
-                <h3 class="text-xl font-bold mb-6">📈 題庫總覽</h3>
-                <div class="grid grid-cols-4 gap-4">
-                    <div>
-                        <div class="text-4xl font-bold text-emerald-400">3,749</div>
-                        <div class="text-sm text-gray-400">L1 知識</div>
-                    </div>
-                    <div>
-                        <div class="text-4xl font-bold text-blue-400">1,811</div>
-                        <div class="text-sm text-gray-400">L2 題庫</div>
-                    </div>
-                    <div>
-                        <div class="text-4xl font-bold text-purple-400">1,710</div>
-                        <div class="text-sm text-gray-400">L3 素養</div>
-                    </div>
-                    <div>
-                        <div class="text-4xl font-bold text-white">7,270</div>
-                        <div class="text-sm text-gray-400">總計</div>
-                    </div>
-                </div>
+            
+            <!-- 操作按鈕 -->
+            <div class="mt-8 flex gap-4">
+                <button onclick="resetProgress()" class="flex-1 bg-slate-700 hover:bg-slate-600 py-3 rounded-xl font-bold">
+                    🔄 重置進度
+                </button>
+                <button onclick="startLearning()" class="flex-1 bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-400 hover:to-purple-500 py-3 rounded-xl font-bold">
+                    🚀 開始學習
+                </button>
             </div>
         </div>
     </main>
 
-    <!-- Footer -->
-    <footer class="bg-gray-800 py-6 mt-12">
-        <div class="container mx-auto px-4 text-center text-gray-400">
-            <p>© 2025 北斗數位工作室</p>
-            <p class="text-sm mt-1">三層學習系統 | 10 科完整覆蓋</p>
-        </div>
-    </footer>
+    <script>
+        let pathsData = null;
+        let currentSubject = '';
+        let currentPath = null;
+        let progress = {}; // localStorage 追蹤
+
+        const subjectIcons = {
+            '數學': '📐', '物理': '⚛️', '化學': '🧪', '生物': '🧬',
+            '國文': '📜', '英文': '🔤', '歷史': '🏛️', '地理': '🌍',
+            '地球科學': '🌏', '公民與社會': '⚖️'
+        };
+
+        const difficultyInfo = {
+            2: { name: '基礎入門', color: 'from-green-500 to-teal-500', icon: '🌱', desc: '從零開始，穩紮穩打' },
+            4: { name: '進階強化', color: 'from-blue-500 to-purple-500', icon: '🚀', desc: '深入理解，融會貫通' },
+            5: { name: '考前衝刺', color: 'from-orange-500 to-red-500', icon: '🎯', desc: '重點複習，高效備考' }
+        };
+
+        // 載入資料
+        async function loadData() {
+            try {
+                const res = await fetch('data/learning_paths.json');
+                pathsData = await res.json();
+                loadProgress();
+                renderSubjects();
+            } catch (e) {
+                console.error('載入失敗:', e);
+            }
+        }
+
+        function loadProgress() {
+            try {
+                progress = JSON.parse(localStorage.getItem('beidou_path_progress') || '{}');
+            } catch { progress = {}; }
+        }
+
+        function saveProgress() {
+            localStorage.setItem('beidou_path_progress', JSON.stringify(progress));
+        }
+
+        function renderSubjects() {
+            const grid = document.getElementById('subjectGrid');
+            grid.innerHTML = pathsData.subjects.map(subj => `
+                <button onclick="selectSubject('${subj}')" 
+                    class="card p-6 rounded-xl hover:border-blue-500/50 transition text-center">
+                    <div class="text-4xl mb-2">${subjectIcons[subj] || '📚'}</div>
+                    <div class="font-bold">${subj}</div>
+                    <div class="text-xs text-gray-400 mt-1">${pathsData.by_subject[subj].length} 條路徑</div>
+                </button>
+            `).join('');
+        }
+
+        function selectSubject(subj) {
+            currentSubject = subj;
+            document.getElementById('subjectPanel').classList.add('hidden');
+            document.getElementById('difficultyPanel').classList.remove('hidden');
+            document.getElementById('subjectIcon').textContent = subjectIcons[subj] || '📚';
+            document.getElementById('subjectName').textContent = subj;
+            
+            const paths = pathsData.by_subject[subj];
+            document.getElementById('pathCards').innerHTML = paths.map(p => {
+                const info = difficultyInfo[p.difficulty] || difficultyInfo[2];
+                const completed = getPathProgress(p.id);
+                return `
+                    <button onclick="selectPath('${p.id}')" 
+                        class="card p-6 rounded-xl hover:border-white/30 transition text-left">
+                        <div class="flex items-center justify-between mb-3">
+                            <span class="text-3xl">${info.icon}</span>
+                            <span class="text-sm text-gray-400">${completed}% 完成</span>
+                        </div>
+                        <div class="font-bold text-lg mb-1">${info.name}</div>
+                        <div class="text-sm text-gray-400 mb-3">${info.desc}</div>
+                        <div class="flex items-center gap-4 text-xs text-gray-500">
+                            <span>📚 ${p.node_count} 節點</span>
+                            <span>⏱️ ${p.hours}h</span>
+                        </div>
+                        <div class="mt-3 h-1.5 bg-gray-700 rounded-full overflow-hidden">
+                            <div class="h-full bg-gradient-to-r ${info.color} rounded-full" style="width: ${completed}%"></div>
+                        </div>
+                    </button>
+                `;
+            }).join('');
+        }
+
+        function getPathProgress(pathId) {
+            if (!progress[pathId]) return 0;
+            const path = pathsData.paths.find(p => p.id === pathId);
+            if (!path) return 0;
+            const completed = progress[pathId].filter(Boolean).length;
+            return Math.round((completed / path.node_count) * 100);
+        }
+
+        function selectPath(pathId) {
+            currentPath = pathsData.paths.find(p => p.id === pathId);
+            if (!currentPath) return;
+            
+            if (!progress[pathId]) {
+                progress[pathId] = new Array(currentPath.node_count).fill(false);
+            }
+            
+            document.getElementById('difficultyPanel').classList.add('hidden');
+            document.getElementById('pathPanel').classList.remove('hidden');
+            
+            renderPath();
+        }
+
+        function renderPath() {
+            const p = currentPath;
+            const info = difficultyInfo[p.difficulty] || difficultyInfo[2];
+            const completed = progress[p.id].filter(Boolean).length;
+            const pct = Math.round((completed / p.node_count) * 100);
+            
+            document.getElementById('pathTitle').textContent = p.title;
+            document.getElementById('pathDesc').textContent = info.desc;
+            document.getElementById('nodeCount').textContent = p.node_count;
+            document.getElementById('estHours').textContent = p.hours;
+            document.getElementById('diffLevel').textContent = p.difficulty;
+            document.getElementById('progressPct').textContent = pct;
+            document.getElementById('progressBar').style.width = pct + '%';
+            
+            // 找當前節點
+            let currentIdx = progress[p.id].findIndex(v => !v);
+            if (currentIdx === -1) currentIdx = p.node_count; // 全完成
+            
+            document.getElementById('nodeList').innerHTML = p.nodes.map((node, i) => {
+                const isCompleted = progress[p.id][i];
+                const isCurrent = i === currentIdx;
+                let status = '';
+                if (isCompleted) status = 'completed';
+                else if (isCurrent) status = 'current';
+                
+                return `
+                    <div class="node-card card ${status} p-4 rounded-xl flex items-center gap-4 cursor-pointer relative"
+                         onclick="toggleNode(${i})">
+                        <div class="w-10 h-10 rounded-full flex items-center justify-center text-lg font-bold
+                            ${isCompleted ? 'bg-green-500' : isCurrent ? 'bg-amber-500' : 'bg-slate-600'}">
+                            ${isCompleted ? '✓' : i + 1}
+                        </div>
+                        <div class="flex-1">
+                            <div class="font-bold">${node.name}</div>
+                            <div class="text-sm text-gray-400">${node.id}</div>
+                        </div>
+                        <div class="text-2xl">
+                            ${isCompleted ? '✅' : isCurrent ? '👉' : '⬜'}
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function toggleNode(idx) {
+            progress[currentPath.id][idx] = !progress[currentPath.id][idx];
+            saveProgress();
+            renderPath();
+        }
+
+        function resetProgress() {
+            if (!confirm('確定要重置此路徑的進度嗎？')) return;
+            progress[currentPath.id] = new Array(currentPath.node_count).fill(false);
+            saveProgress();
+            renderPath();
+        }
+
+        function startLearning() {
+            const currentIdx = progress[currentPath.id].findIndex(v => !v);
+            if (currentIdx === -1) {
+                alert('🎉 你已完成此路徑的所有節點！');
+                return;
+            }
+            const node = currentPath.nodes[currentIdx];
+            window.location.href = `learn.html?node=${encodeURIComponent(node.id)}`;
+        }
+
+        function showSubjects() {
+            document.getElementById('difficultyPanel').classList.add('hidden');
+            document.getElementById('subjectPanel').classList.remove('hidden');
+        }
+
+        function showDifficulty() {
+            document.getElementById('pathPanel').classList.add('hidden');
+            document.getElementById('difficultyPanel').classList.remove('hidden');
+        }
+
+        // 初始化
+        loadData();
+    </script>
 </body>
 </html>

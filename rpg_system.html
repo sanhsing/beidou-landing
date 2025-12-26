@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>北斗教育 | RPG 系統</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&display=swap');
+        body { font-family: 'Noto Sans TC', sans-serif; }
+        .gradient-bg { background: linear-gradient(135deg, #0f172a 0%, #1e3a5f 50%, #0f172a 100%); }
+        .card { background: rgba(30, 41, 59, 0.8); border: 1px solid rgba(255,255,255,0.1); }
+        .tab-btn.active { border-color: #f59e0b; background: rgba(245,158,11,0.2); }
+        .quest-card { transition: all 0.3s; }
+        .quest-card:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(0,0,0,0.3); }
+        .rarity-common { border-color: #9ca3af; }
+        .rarity-uncommon { border-color: #22c55e; }
+        .rarity-rare { border-color: #3b82f6; }
+        .rarity-epic { border-color: #a855f7; }
+        .rarity-legendary { border-color: #f59e0b; }
+    </style>
+</head>
+<body class="gradient-bg min-h-screen text-white">
+
+    <nav class="py-4 px-6 border-b border-white/10">
+        <div class="container mx-auto flex justify-between items-center">
+            <a href="index.html" class="flex items-center gap-2">
+                <span class="text-2xl">🌟</span>
+                <span class="font-bold text-xl">北斗教育</span>
+            </a>
+            <div class="flex items-center gap-4">
+                <a href="battle.html" class="text-gray-300 hover:text-white">← 返回戰鬥</a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="container mx-auto px-4 py-8 max-w-4xl">
+        <h1 class="text-3xl font-bold text-center mb-2">🎮 RPG 系統</h1>
+        <p class="text-center text-gray-400 mb-8">每日任務、商店、稱號收集</p>
+
+        <!-- 標籤 -->
+        <div class="flex justify-center gap-4 mb-8">
+            <button onclick="switchTab('daily')" id="tabDaily" class="tab-btn px-6 py-2 rounded-full border border-white/20 hover:border-amber-400 transition active">
+                📋 每日任務
+            </button>
+            <button onclick="switchTab('shop')" id="tabShop" class="tab-btn px-6 py-2 rounded-full border border-white/20 hover:border-amber-400 transition">
+                🛒 商店
+            </button>
+            <button onclick="switchTab('titles')" id="tabTitles" class="tab-btn px-6 py-2 rounded-full border border-white/20 hover:border-amber-400 transition">
+                🏅 稱號
+            </button>
+        </div>
+
+        <!-- 每日任務 -->
+        <div id="dailyPanel">
+            <div class="grid gap-4" id="dailyList">
+                <!-- 動態生成 -->
+            </div>
+        </div>
+
+        <!-- 商店 -->
+        <div id="shopPanel" class="hidden">
+            <div class="card rounded-xl p-4 mb-6 flex items-center justify-between">
+                <div class="flex items-center gap-4">
+                    <span class="text-2xl">💰</span>
+                    <div>
+                        <div class="text-sm text-gray-400">我的金幣</div>
+                        <div class="text-xl font-bold text-yellow-400" id="myCoins">0</div>
+                    </div>
+                </div>
+                <div class="flex items-center gap-4">
+                    <span class="text-2xl">💎</span>
+                    <div>
+                        <div class="text-sm text-gray-400">鑽石</div>
+                        <div class="text-xl font-bold text-blue-400" id="myDiamonds">0</div>
+                    </div>
+                </div>
+            </div>
+            <div class="grid md:grid-cols-2 gap-4" id="shopList">
+                <!-- 動態生成 -->
+            </div>
+        </div>
+
+        <!-- 稱號 -->
+        <div id="titlesPanel" class="hidden">
+            <div class="text-center mb-6">
+                <div class="text-sm text-gray-400">已收集</div>
+                <div class="text-2xl font-bold"><span id="collectedCount">0</span> / <span id="totalTitles">60</span></div>
+            </div>
+            <div class="grid md:grid-cols-2 gap-4" id="titlesList">
+                <!-- 動態生成 -->
+            </div>
+        </div>
+    </main>
+
+    <script>
+        let rpgData = null;
+        let playerData = { coins: 500, diamonds: 10, completedQuests: [], ownedTitles: ['TITLE_RANK_BRONZE'] };
+
+        const itemInfo = {
+            'ITEM_HP_S': { name: '小補血藥', icon: '🧪', price: 50 },
+            'ITEM_HP_M': { name: '中補血藥', icon: '🧪', price: 100 },
+            'ITEM_HP_L': { name: '大補血藥', icon: '🧪', price: 200 },
+            'ITEM_EXP_S': { name: '經驗藥水', icon: '⚗️', price: 150 },
+            'ITEM_HINT': { name: '提示卡', icon: '💡', price: 80 },
+        };
+
+        const rarityColors = {
+            'common': { bg: 'bg-gray-700', border: 'border-gray-500', text: 'text-gray-300' },
+            'uncommon': { bg: 'bg-green-900/30', border: 'border-green-500', text: 'text-green-400' },
+            'rare': { bg: 'bg-blue-900/30', border: 'border-blue-500', text: 'text-blue-400' },
+            'epic': { bg: 'bg-purple-900/30', border: 'border-purple-500', text: 'text-purple-400' },
+            'legendary': { bg: 'bg-amber-900/30', border: 'border-amber-500', text: 'text-amber-400' }
+        };
+
+        async function loadData() {
+            try {
+                const res = await fetch('data/rpg_system.json');
+                rpgData = await res.json();
+                
+                // 載入玩家資料
+                const saved = localStorage.getItem('beidou_player_rpg');
+                if (saved) playerData = { ...playerData, ...JSON.parse(saved) };
+                
+                renderDaily();
+                renderShop();
+                renderTitles();
+            } catch (e) {
+                console.error('載入失敗:', e);
+            }
+        }
+
+        function switchTab(tab) {
+            ['daily', 'shop', 'titles'].forEach(t => {
+                document.getElementById(`tab${t.charAt(0).toUpperCase() + t.slice(1)}`).classList.toggle('active', t === tab);
+                document.getElementById(`${t}Panel`).classList.toggle('hidden', t !== tab);
+            });
+        }
+
+        function renderDaily() {
+            const list = document.getElementById('dailyList');
+            list.innerHTML = rpgData.daily_quests.items.map(q => {
+                const completed = playerData.completedQuests.includes(q.id);
+                const diffColor = q.difficulty === 'easy' ? 'text-green-400' : q.difficulty === 'medium' ? 'text-yellow-400' : 'text-red-400';
+                
+                return `
+                    <div class="quest-card card rounded-xl p-4 ${completed ? 'opacity-50' : ''}">
+                        <div class="flex items-center gap-4">
+                            <div class="text-3xl">${q.icon}</div>
+                            <div class="flex-1">
+                                <div class="font-bold">${q.name}</div>
+                                <div class="text-sm text-gray-400">${q.description}</div>
+                                <div class="flex items-center gap-4 mt-2 text-sm">
+                                    <span class="${diffColor}">${q.difficulty}</span>
+                                    <span class="text-yellow-400">🎁 ${q.reward_amount} ${q.reward_type === 'coins' ? '💰' : '✨'}</span>
+                                </div>
+                            </div>
+                            <div>
+                                ${completed 
+                                    ? '<span class="text-green-400">✓ 已完成</span>'
+                                    : `<button onclick="completeQuest('${q.id}', ${q.reward_amount}, '${q.reward_type}')" class="px-4 py-2 bg-amber-600 hover:bg-amber-500 rounded-lg text-sm font-bold">領取</button>`
+                                }
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function completeQuest(id, amount, type) {
+            if (playerData.completedQuests.includes(id)) return;
+            playerData.completedQuests.push(id);
+            if (type === 'coins') playerData.coins += amount;
+            else playerData.diamonds += amount;
+            savePlayer();
+            renderDaily();
+            renderShop();
+            alert(`🎉 獲得 ${amount} ${type === 'coins' ? '金幣' : '經驗'}！`);
+        }
+
+        function renderShop() {
+            document.getElementById('myCoins').textContent = playerData.coins;
+            document.getElementById('myDiamonds').textContent = playerData.diamonds;
+            
+            const list = document.getElementById('shopList');
+            list.innerHTML = rpgData.shop.items.map(s => {
+                const info = itemInfo[s.item_id] || { name: s.item_id, icon: '📦', price: 100 };
+                const canBuy = playerData.coins >= info.price;
+                
+                return `
+                    <div class="card rounded-xl p-4 flex items-center gap-4">
+                        <div class="text-4xl">${info.icon}</div>
+                        <div class="flex-1">
+                            <div class="font-bold">${info.name}</div>
+                            <div class="text-sm text-yellow-400">💰 ${info.price}</div>
+                        </div>
+                        <button onclick="buyItem('${s.item_id}', ${info.price})" 
+                            class="px-4 py-2 rounded-lg font-bold ${canBuy ? 'bg-green-600 hover:bg-green-500' : 'bg-gray-700 cursor-not-allowed'}"
+                            ${canBuy ? '' : 'disabled'}>
+                            購買
+                        </button>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function buyItem(itemId, price) {
+            if (playerData.coins < price) return;
+            playerData.coins -= price;
+            savePlayer();
+            renderShop();
+            alert(`🛒 購買成功！`);
+        }
+
+        function renderTitles() {
+            document.getElementById('totalTitles').textContent = rpgData.titles.total;
+            document.getElementById('collectedCount').textContent = playerData.ownedTitles.length;
+            
+            const list = document.getElementById('titlesList');
+            list.innerHTML = rpgData.titles.items.map(t => {
+                const owned = playerData.ownedTitles.includes(t.title_id);
+                const rc = rarityColors[t.rarity] || rarityColors.common;
+                
+                return `
+                    <div class="card rounded-xl p-4 border-2 ${rc.border} ${owned ? rc.bg : 'opacity-40'}">
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="font-bold ${rc.text}">${t.name}</span>
+                            <span class="text-xs px-2 py-1 rounded ${rc.bg} ${rc.text}">${t.rarity}</span>
+                        </div>
+                        <div class="text-sm text-gray-400">${t.description}</div>
+                        ${owned ? '<div class="text-xs text-green-400 mt-2">✓ 已獲得</div>' : ''}
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function savePlayer() {
+            localStorage.setItem('beidou_player_rpg', JSON.stringify(playerData));
+        }
+
+        loadData();
+    </script>
+</body>
+</html>

@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>北斗教育 | XTF 概念學習</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&display=swap');
+        body { font-family: 'Noto Sans TC', sans-serif; }
+        .gradient-bg { background: linear-gradient(135deg, #0f172a 0%, #1e3a5f 50%, #0f172a 100%); }
+        .card { background: rgba(30, 41, 59, 0.8); border: 1px solid rgba(255,255,255,0.1); }
+        .xtf-tab { transition: all 0.3s; }
+        .xtf-tab.active { border-bottom: 3px solid; }
+        .xtf-content { display: none; }
+        .xtf-content.active { display: block; }
+        .node-card { transition: all 0.3s; cursor: pointer; }
+        .node-card:hover { transform: translateY(-2px); border-color: rgba(255,255,255,0.3); }
+        .node-card.selected { border-color: #f59e0b; background: rgba(245, 158, 11, 0.1); }
+    </style>
+</head>
+<body class="gradient-bg min-h-screen text-white">
+
+    <!-- 導航列 -->
+    <nav class="py-4 px-6 border-b border-white/10">
+        <div class="container mx-auto flex justify-between items-center">
+            <a href="index.html" class="flex items-center gap-2">
+                <span class="text-2xl">🌟</span>
+                <span class="font-bold text-xl">北斗教育</span>
+            </a>
+            <div class="hidden md:flex items-center gap-6">
+                <a href="courses.html" class="text-gray-300 hover:text-white">學測課程</a>
+                <a href="starmap.html" class="text-gray-300 hover:text-white">知識星圖</a>
+                <a href="battle.html" class="text-orange-400 hover:text-orange-300">⚔️ 戰鬥</a>
+            </div>
+            <a href="auth.html" id="authLink" class="text-gray-300 hover:text-white">登入</a>
+        </div>
+    </nav>
+
+    <main class="container mx-auto px-4 py-8 max-w-6xl">
+        <!-- 標題 -->
+        <div class="text-center mb-8">
+            <h1 class="text-3xl font-bold mb-2">📖 XTF 概念學習</h1>
+            <p class="text-gray-400">消(理解) → 拓(記憶) → 融(應用)</p>
+        </div>
+
+        <div class="grid md:grid-cols-4 gap-6">
+            <!-- 左側：科目與節點選擇 -->
+            <div class="md:col-span-1 space-y-4">
+                <!-- 科目選擇 -->
+                <div class="card rounded-xl p-4">
+                    <h3 class="font-bold mb-3">📚 選擇科目</h3>
+                    <select id="subjectSelect" onchange="loadNodes()" class="w-full bg-slate-700 rounded-lg p-2 text-white">
+                        <option value="">-- 選擇科目 --</option>
+                    </select>
+                </div>
+
+                <!-- 節點列表 -->
+                <div class="card rounded-xl p-4 max-h-[500px] overflow-y-auto">
+                    <h3 class="font-bold mb-3">📋 知識節點 <span id="nodeCount" class="text-gray-400 text-sm">(0)</span></h3>
+                    <div id="nodeList" class="space-y-2">
+                        <p class="text-gray-500 text-sm">請先選擇科目</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 右側：XTF 內容 -->
+            <div class="md:col-span-3">
+                <div class="card rounded-xl overflow-hidden">
+                    <!-- XTF 標籤 -->
+                    <div class="flex border-b border-white/10">
+                        <button onclick="showTab('understand')" class="xtf-tab active flex-1 py-4 text-center border-blue-400 text-blue-400" data-tab="understand">
+                            🔻 消 (理解)
+                        </button>
+                        <button onclick="showTab('memorize')" class="xtf-tab flex-1 py-4 text-center text-gray-400 hover:text-purple-400" data-tab="memorize">
+                            🔀 拓 (記憶)
+                        </button>
+                        <button onclick="showTab('apply')" class="xtf-tab flex-1 py-4 text-center text-gray-400 hover:text-green-400" data-tab="apply">
+                            🔺 融 (應用)
+                        </button>
+                    </div>
+
+                    <!-- 內容區 -->
+                    <div class="p-6">
+                        <!-- 節點標題 -->
+                        <div id="nodeTitle" class="mb-6">
+                            <h2 class="text-2xl font-bold mb-2">選擇一個知識節點</h2>
+                            <p class="text-gray-400">從左側列表選擇要學習的概念</p>
+                        </div>
+
+                        <!-- 消：理解 -->
+                        <div id="tab-understand" class="xtf-content active">
+                            <div class="bg-blue-900/20 border border-blue-500/30 rounded-xl p-6">
+                                <h3 class="text-lg font-bold text-blue-400 mb-4">🔻 消：白話理解</h3>
+                                <div id="content-understand" class="text-gray-300 leading-relaxed whitespace-pre-wrap">
+                                    選擇節點後顯示內容...
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 拓：記憶 -->
+                        <div id="tab-memorize" class="xtf-content">
+                            <div class="bg-purple-900/20 border border-purple-500/30 rounded-xl p-6">
+                                <h3 class="text-lg font-bold text-purple-400 mb-4">🔀 拓：口訣記憶</h3>
+                                <div id="content-memorize" class="text-gray-300 leading-relaxed whitespace-pre-wrap">
+                                    選擇節點後顯示內容...
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 融：應用 -->
+                        <div id="tab-apply" class="xtf-content">
+                            <div class="bg-green-900/20 border border-green-500/30 rounded-xl p-6">
+                                <h3 class="text-lg font-bold text-green-400 mb-4">🔺 融：考試應用</h3>
+                                <div id="content-apply" class="text-gray-300 leading-relaxed whitespace-pre-wrap">
+                                    選擇節點後顯示內容...
+                                </div>
+                            </div>
+
+                            <!-- 相關連結 -->
+                            <div id="linkSection" class="mt-4 hidden">
+                                <div class="text-gray-400 text-sm mb-2">📎 相關概念：</div>
+                                <div id="content-link" class="text-purple-400"></div>
+                            </div>
+                        </div>
+
+                        <!-- 操作按鈕 -->
+                        <div id="actionButtons" class="mt-6 flex gap-3 hidden">
+                            <a id="btn-starmap" href="starmap.html" class="flex-1 bg-purple-600 hover:bg-purple-500 py-3 rounded-lg font-bold text-center">
+                                🌟 查看星圖
+                            </a>
+                            <a id="btn-battle" href="battle.html" class="flex-1 bg-gradient-to-r from-orange-500 to-red-600 hover:from-orange-400 hover:to-red-500 py-3 rounded-lg font-bold text-center">
+                                ⚔️ 開始戰鬥
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="py-8 border-t border-white/10 mt-8">
+        <div class="container mx-auto px-4 text-center text-gray-500">
+            <p>© 2025 北斗七星文創數位有限公司</p>
+        </div>
+    </footer>
+
+    <script>
+        let nodesData = null;
+        let currentNode = null;
+
+        const subjectNames = {
+            'math': '數學',
+            'physics': '物理',
+            'chemistry': '化學',
+            'biology': '生物',
+            'earth_science': '地球科學',
+            'chinese': '國文',
+            'english': '英文',
+            'history': '歷史',
+            'geography': '地理',
+            'civics': '公民'
+        };
+
+        const subjectEmojis = {
+            'math': '📐',
+            'physics': '⚡',
+            'chemistry': '🧪',
+            'biology': '🧬',
+            'earth_science': '🌍',
+            'chinese': '📚',
+            'english': '🔤',
+            'history': '📜',
+            'geography': '🗺️',
+            'civics': '⚖️'
+        };
+
+        // 初始化
+        async function init() {
+            try {
+                const res = await fetch('data/nodes_xtf.json');
+                nodesData = await res.json();
+                console.log(`載入 ${nodesData.meta.total} 個節點`);
+                
+                // 填充科目選擇
+                const select = document.getElementById('subjectSelect');
+                for (const subj of nodesData.meta.subjects) {
+                    const opt = document.createElement('option');
+                    opt.value = subj;
+                    opt.textContent = `${subjectEmojis[subj] || '📝'} ${subjectNames[subj] || subj}`;
+                    select.appendChild(opt);
+                }
+
+                // URL 參數
+                const params = new URLSearchParams(window.location.search);
+                const subject = params.get('subject');
+                if (subject) {
+                    // 轉換中文科目名到 key
+                    const subjectKey = Object.entries(subjectNames).find(([k, v]) => v === subject)?.[0];
+                    if (subjectKey) {
+                        select.value = subjectKey;
+                        loadNodes();
+                    }
+                }
+            } catch (e) {
+                console.error('載入失敗:', e);
+            }
+
+            // 登入狀態
+            const user = JSON.parse(localStorage.getItem('beidou_user') || 'null');
+            if (user && !user.guest) {
+                document.getElementById('authLink').textContent = user.username || '會員';
+                document.getElementById('authLink').href = 'dashboard.html';
+            }
+        }
+
+        // 載入節點列表
+        function loadNodes() {
+            const subject = document.getElementById('subjectSelect').value;
+            const container = document.getElementById('nodeList');
+            
+            if (!subject || !nodesData.by_subject[subject]) {
+                container.innerHTML = '<p class="text-gray-500 text-sm">請選擇科目</p>';
+                document.getElementById('nodeCount').textContent = '(0)';
+                return;
+            }
+
+            const nodes = nodesData.by_subject[subject];
+            document.getElementById('nodeCount').textContent = `(${nodes.length})`;
+
+            container.innerHTML = nodes.map((n, i) => `
+                <div class="node-card card rounded-lg p-3 text-sm" onclick="selectNode('${subject}', ${i})">
+                    <div class="font-medium">${n.name}</div>
+                    <div class="text-xs text-gray-500 mt-1">
+                        ${'⭐'.repeat(n.importance || 3)}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // 選擇節點
+        function selectNode(subject, index) {
+            const node = nodesData.by_subject[subject][index];
+            currentNode = node;
+
+            // 更新選中狀態
+            document.querySelectorAll('.node-card').forEach((el, i) => {
+                el.classList.toggle('selected', i === index);
+            });
+
+            // 更新標題
+            document.getElementById('nodeTitle').innerHTML = `
+                <h2 class="text-2xl font-bold mb-2">${subjectEmojis[subject] || '📝'} ${node.name}</h2>
+                <div class="flex items-center gap-4 text-sm text-gray-400">
+                    <span>重要度：${'⭐'.repeat(node.importance || 3)}</span>
+                    <span>難度：${'🔥'.repeat(node.difficulty || 2)}</span>
+                </div>
+            `;
+
+            // 填充 XTF 內容
+            document.getElementById('content-understand').textContent = node.understand || '暫無內容';
+            document.getElementById('content-memorize').textContent = node.memorize || '暫無內容';
+            document.getElementById('content-apply').textContent = node.apply || '暫無內容';
+            
+            // 相關連結
+            if (node.link) {
+                document.getElementById('linkSection').classList.remove('hidden');
+                document.getElementById('content-link').textContent = node.link;
+            } else {
+                document.getElementById('linkSection').classList.add('hidden');
+            }
+
+            // 顯示操作按鈕
+            document.getElementById('actionButtons').classList.remove('hidden');
+            
+            // 更新連結
+            const subjectZh = subjectNames[subject] || subject;
+            document.getElementById('btn-starmap').href = `starmap.html?subject=${subjectZh}`;
+            document.getElementById('btn-battle').href = `battle.html?subject=${subjectZh}`;
+        }
+
+        // 切換標籤
+        function showTab(tab) {
+            // 更新標籤樣式
+            document.querySelectorAll('.xtf-tab').forEach(el => {
+                const isActive = el.dataset.tab === tab;
+                el.classList.toggle('active', isActive);
+                el.classList.toggle('text-gray-400', !isActive);
+                
+                if (isActive) {
+                    if (tab === 'understand') el.classList.add('text-blue-400', 'border-blue-400');
+                    else if (tab === 'memorize') el.classList.add('text-purple-400', 'border-purple-400');
+                    else if (tab === 'apply') el.classList.add('text-green-400', 'border-green-400');
+                } else {
+                    el.classList.remove('text-blue-400', 'border-blue-400', 'text-purple-400', 'border-purple-400', 'text-green-400', 'border-green-400');
+                }
+            });
+
+            // 顯示對應內容
+            document.querySelectorAll('.xtf-content').forEach(el => {
+                el.classList.toggle('active', el.id === `tab-${tab}`);
+            });
+        }
+
+        init();
+    </script>
+</body>
+</html>

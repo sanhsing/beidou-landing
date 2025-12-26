@@ -5,397 +5,186 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>北斗教育 | 錯題本</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Google Analytics -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-8X0VB6K9G7"></script>
-    <script>
-        window.dataLayer = window.dataLayer || [];
-        function gtag(){dataLayer.push(arguments);}
-        gtag('js', new Date());
-        gtag('config', 'G-8X0VB6K9G7');
-    </script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&display=swap');
         body { font-family: 'Noto Sans TC', sans-serif; }
-        .gradient-bg {
-            background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #0f172a 100%);
-        }
-        .card {
-            background: rgba(255, 255, 255, 0.05);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-        }
-        .wrong-card {
-            border-left: 4px solid #ef4444;
-        }
-        .wrong-card:hover {
-            background: rgba(239, 68, 68, 0.1);
-        }
+        .gradient-bg { background: linear-gradient(135deg, #0f172a 0%, #1e3a5f 50%, #0f172a 100%); }
+        .card { background: rgba(30, 41, 59, 0.8); border: 1px solid rgba(255,255,255,0.1); }
+        .tab-btn.active { border-color: #3b82f6; background: rgba(59,130,246,0.2); }
+        .misconception-card { transition: all 0.3s; }
+        .misconception-card:hover { transform: translateX(4px); }
     </style>
 </head>
 <body class="gradient-bg min-h-screen text-white">
-    
-    <!-- 導航列 -->
-    <nav class="border-b border-white/10 px-6 py-4">
-        <div class="max-w-4xl mx-auto flex items-center justify-between">
+
+    <nav class="py-4 px-6 border-b border-white/10">
+        <div class="container mx-auto flex justify-between items-center">
             <a href="index.html" class="flex items-center gap-2">
                 <span class="text-2xl">🌟</span>
                 <span class="font-bold text-xl">北斗教育</span>
             </a>
-            <div class="flex items-center gap-4">
-                <a href="dashboard.html" class="text-gray-400 hover:text-white transition">儀表板</a>
-                <a href="quiz_ui.html" class="text-gray-400 hover:text-white transition">測驗</a>
-            </div>
+            <a href="dashboard.html" class="text-gray-300 hover:text-white">← 返回</a>
         </div>
     </nav>
 
-    <main class="max-w-4xl mx-auto px-6 py-8">
-        <!-- 標題 -->
-        <div class="flex items-center justify-between mb-8">
-            <div>
-                <h1 class="text-3xl font-bold mb-2">📕 錯題本</h1>
-                <p class="text-gray-400">從錯誤中學習，越錯越強</p>
-            </div>
-            <div class="text-right">
-                <div class="text-3xl font-bold text-red-400" id="totalWrong">0</div>
-                <div class="text-gray-500 text-sm">累計錯題</div>
-            </div>
-        </div>
-        
-        <!-- 篩選器 -->
-        <div class="flex flex-wrap gap-2 mb-6">
-            <button onclick="filterSubject('all')" id="filter-all"
-                class="px-4 py-2 rounded-full text-sm bg-purple-600">
-                全部
+    <main class="container mx-auto px-4 py-8 max-w-4xl">
+        <h1 class="text-3xl font-bold text-center mb-2">📕 錯題本</h1>
+        <p class="text-center text-gray-400 mb-8">從錯誤中學習，避免重蹈覆轍</p>
+
+        <!-- 標籤切換 -->
+        <div class="flex justify-center gap-4 mb-8">
+            <button onclick="switchTab('wrong')" id="tabWrong" class="tab-btn px-6 py-2 rounded-full border border-white/20 hover:border-blue-400 transition active">
+                📝 我的錯題
             </button>
-            <button onclick="filterSubject('數學')" id="filter-數學"
-                class="px-4 py-2 rounded-full text-sm bg-white/10 text-gray-400">
-                數學
-            </button>
-            <button onclick="filterSubject('物理')" id="filter-物理"
-                class="px-4 py-2 rounded-full text-sm bg-white/10 text-gray-400">
-                物理
-            </button>
-            <button onclick="filterSubject('化學')" id="filter-化學"
-                class="px-4 py-2 rounded-full text-sm bg-white/10 text-gray-400">
-                化學
-            </button>
-            <button onclick="filterSubject('生物')" id="filter-生物"
-                class="px-4 py-2 rounded-full text-sm bg-white/10 text-gray-400">
-                生物
-            </button>
-            <button onclick="filterSubject('英文')" id="filter-英文"
-                class="px-4 py-2 rounded-full text-sm bg-white/10 text-gray-400">
-                英文
+            <button onclick="switchTab('misconception')" id="tabMisconception" class="tab-btn px-6 py-2 rounded-full border border-white/20 hover:border-blue-400 transition">
+                ⚠️ 常見迷思
             </button>
         </div>
-        
-        <!-- 錯題列表 -->
-        <div id="wrongList" class="space-y-4">
-            <div class="text-center py-12 text-gray-500">
-                載入中...
+
+        <!-- 我的錯題 -->
+        <div id="wrongPanel">
+            <div id="wrongList" class="space-y-4">
+                <!-- 動態生成 -->
+            </div>
+            <div id="emptyWrong" class="card rounded-xl p-12 text-center hidden">
+                <div class="text-6xl mb-4">🎉</div>
+                <div class="text-xl font-bold mb-2">太棒了！</div>
+                <div class="text-gray-400">目前沒有錯題記錄</div>
+                <a href="learn.html" class="inline-block mt-4 px-6 py-2 bg-blue-600 hover:bg-blue-500 rounded-lg transition">
+                    去練習
+                </a>
             </div>
         </div>
-        
-        <!-- 空狀態 -->
-        <div id="emptyState" class="hidden text-center py-16">
-            <div class="text-6xl mb-4">🎉</div>
-            <h3 class="text-xl font-semibold mb-2">太棒了！沒有錯題</h3>
-            <p class="text-gray-400 mb-6">繼續保持，或者去挑戰更多題目？</p>
-            <a href="quiz_ui.html" class="inline-block bg-purple-600 hover:bg-purple-700 px-6 py-3 rounded-lg transition">
-                開始練習
-            </a>
-        </div>
-        
-        <!-- 分頁 -->
-        <div id="pagination" class="hidden flex justify-center gap-2 mt-8">
-            <button onclick="prevPage()" id="prevBtn" class="px-4 py-2 bg-white/10 rounded-lg disabled:opacity-50">
-                ← 上一頁
-            </button>
-            <span id="pageInfo" class="px-4 py-2 text-gray-400">1 / 1</span>
-            <button onclick="nextPage()" id="nextBtn" class="px-4 py-2 bg-white/10 rounded-lg disabled:opacity-50">
-                下一頁 →
-            </button>
+
+        <!-- 常見迷思 -->
+        <div id="misconceptionPanel" class="hidden">
+            <!-- 領域篩選 -->
+            <div id="domainTabs" class="flex flex-wrap justify-center gap-2 mb-6">
+                <!-- 動態生成 -->
+            </div>
+
+            <div id="misconceptionList" class="space-y-4">
+                <!-- 動態生成 -->
+            </div>
         </div>
     </main>
-    
-    <!-- 詳情 Modal -->
-    <div id="detailModal" class="hidden fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4">
-        <div class="card rounded-2xl max-w-2xl w-full max-h-[80vh] overflow-y-auto">
-            <div class="p-6">
-                <div class="flex justify-between items-start mb-4">
-                    <span id="modalSubject" class="px-3 py-1 bg-purple-600/50 rounded-full text-sm"></span>
-                    <button onclick="closeModal()" class="text-gray-400 hover:text-white text-2xl">×</button>
-                </div>
-                <h3 id="modalQuestion" class="text-lg font-medium mb-4"></h3>
-                <div id="modalOptions" class="space-y-2 mb-4"></div>
-                <div class="bg-red-500/10 border border-red-500/30 rounded-lg p-4 mb-4">
-                    <div class="text-red-400 text-sm mb-1">你的答案</div>
-                    <div id="modalUserAnswer" class="font-medium"></div>
-                </div>
-                <div class="bg-green-500/10 border border-green-500/30 rounded-lg p-4 mb-4">
-                    <div class="text-green-400 text-sm mb-1">正確答案</div>
-                    <div id="modalCorrectAnswer" class="font-medium"></div>
-                </div>
-                <div class="bg-blue-500/10 border border-blue-500/30 rounded-lg p-4">
-                    <div class="text-blue-400 text-sm mb-1">解析</div>
-                    <div id="modalExplanation"></div>
-                </div>
-                <div class="mt-6 flex gap-3">
-                    <button onclick="retryQuestion()" class="flex-1 bg-purple-600 hover:bg-purple-700 py-3 rounded-lg transition">
-                        🔄 重新練習這題
-                    </button>
-                    <button onclick="closeModal()" class="flex-1 border border-gray-600 py-3 rounded-lg hover:bg-white/5 transition">
-                        關閉
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
 
     <script>
-        const API_BASE = 'https://beidou-edu-server-1.onrender.com/api';
         let wrongQuestions = [];
-        let filteredQuestions = [];
-        let currentFilter = 'all';
-        let currentPage = 1;
-        const pageSize = 10;
-        let currentQuestion = null;
-        
-        // 初始化
-        document.addEventListener('DOMContentLoaded', () => {
-            const token = localStorage.getItem('beidou_token');
-            if (!token) {
-                window.location.href = 'auth.html';
-                return;
-            }
-            
-            loadWrongQuestions();
-            
-            gtag('event', 'page_view', {
-                'event_category': 'wrong_book'
-            });
-        });
-        
-        // 載入錯題
-        async function loadWrongQuestions() {
-            const token = localStorage.getItem('beidou_token');
-            
+        let misconceptions = [];
+        let currentDomain = 'all';
+
+        async function loadData() {
+            // 載入錯題 (localStorage)
             try {
-                const res = await fetch(`${API_BASE}/user/wrong-questions`, {
-                    headers: { 'Authorization': `Bearer ${token}` }
-                });
+                wrongQuestions = JSON.parse(localStorage.getItem('beidou_wrong_questions') || '[]');
+            } catch { wrongQuestions = []; }
+
+            // 載入迷思庫
+            try {
+                const res = await fetch('data/misconceptions.json');
                 const data = await res.json();
-                
-                if (data.success) {
-                    wrongQuestions = data.data.questions;
-                    document.getElementById('totalWrong').textContent = wrongQuestions.length;
-                    applyFilter();
-                } else {
-                    throw new Error('載入失敗');
-                }
-            } catch (err) {
-                console.error('載入錯題失敗:', err);
-                // 使用模擬資料
-                useMockData();
+                misconceptions = data.items;
+            } catch (e) {
+                console.error('載入迷思庫失敗:', e);
             }
+
+            renderWrong();
+            renderDomainTabs();
+            renderMisconceptions();
         }
-        
-        // 模擬資料
-        function useMockData() {
-            wrongQuestions = [
-                {
-                    id: 'q1',
-                    subject: '數學',
-                    text: '若 x² - 5x + 6 = 0，則 x = ?',
-                    options: ['1, 2', '2, 3', '3, 4', '1, 6'],
-                    userAnswer: 0,
-                    correctAnswer: 1,
-                    explanation: '因式分解：(x-2)(x-3) = 0，所以 x = 2 或 x = 3',
-                    wrongAt: new Date().toISOString()
-                },
-                {
-                    id: 'q2',
-                    subject: '物理',
-                    text: '自由落體運動中，物體下落 2 秒的位移為多少？（g = 10 m/s²）',
-                    options: ['10 m', '20 m', '30 m', '40 m'],
-                    userAnswer: 0,
-                    correctAnswer: 1,
-                    explanation: 's = ½gt² = ½ × 10 × 4 = 20 m',
-                    wrongAt: new Date().toISOString()
-                },
-                {
-                    id: 'q3',
-                    subject: '化學',
-                    text: '下列何者為共價化合物？',
-                    options: ['NaCl', 'H₂O', 'CaO', 'KBr'],
-                    userAnswer: 0,
-                    correctAnswer: 1,
-                    explanation: 'H₂O 由氫和氧以共價鍵結合，其餘為離子化合物',
-                    wrongAt: new Date().toISOString()
-                }
-            ];
-            document.getElementById('totalWrong').textContent = wrongQuestions.length;
-            applyFilter();
+
+        function switchTab(tab) {
+            document.getElementById('tabWrong').classList.toggle('active', tab === 'wrong');
+            document.getElementById('tabMisconception').classList.toggle('active', tab === 'misconception');
+            document.getElementById('wrongPanel').classList.toggle('hidden', tab !== 'wrong');
+            document.getElementById('misconceptionPanel').classList.toggle('hidden', tab !== 'misconception');
         }
-        
-        // 篩選
-        function filterSubject(subject) {
-            currentFilter = subject;
-            currentPage = 1;
-            
-            // 更新按鈕樣式
-            document.querySelectorAll('[id^="filter-"]').forEach(btn => {
-                btn.classList.remove('bg-purple-600');
-                btn.classList.add('bg-white/10', 'text-gray-400');
-            });
-            document.getElementById(`filter-${subject}`).classList.remove('bg-white/10', 'text-gray-400');
-            document.getElementById(`filter-${subject}`).classList.add('bg-purple-600');
-            
-            applyFilter();
-            
-            gtag('event', 'filter_wrong', {
-                'event_category': 'wrong_book',
-                'event_label': subject
-            });
-        }
-        
-        // 套用篩選
-        function applyFilter() {
-            if (currentFilter === 'all') {
-                filteredQuestions = [...wrongQuestions];
-            } else {
-                filteredQuestions = wrongQuestions.filter(q => q.subject === currentFilter);
-            }
-            
-            renderList();
-        }
-        
-        // 渲染列表
-        function renderList() {
+
+        function renderWrong() {
             const list = document.getElementById('wrongList');
-            const emptyState = document.getElementById('emptyState');
-            const pagination = document.getElementById('pagination');
-            
-            if (filteredQuestions.length === 0) {
+            const empty = document.getElementById('emptyWrong');
+
+            if (wrongQuestions.length === 0) {
                 list.classList.add('hidden');
-                emptyState.classList.remove('hidden');
-                pagination.classList.add('hidden');
+                empty.classList.remove('hidden');
                 return;
             }
-            
+
             list.classList.remove('hidden');
-            emptyState.classList.add('hidden');
-            
-            // 分頁
-            const totalPages = Math.ceil(filteredQuestions.length / pageSize);
-            const start = (currentPage - 1) * pageSize;
-            const end = start + pageSize;
-            const pageQuestions = filteredQuestions.slice(start, end);
-            
-            list.innerHTML = pageQuestions.map((q, idx) => `
-                <div class="card wrong-card rounded-xl p-4 cursor-pointer transition" onclick="showDetail(${start + idx})">
-                    <div class="flex items-start justify-between">
+            empty.classList.add('hidden');
+
+            list.innerHTML = wrongQuestions.map((q, i) => `
+                <div class="card rounded-xl p-4">
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="text-sm text-gray-400">${q.subject || '未分類'}</span>
+                        <span class="text-xs text-gray-500">${q.date || ''}</span>
+                    </div>
+                    <div class="mb-2">${q.question}</div>
+                    <div class="flex items-center gap-4 text-sm">
+                        <span class="text-red-400">你的答案: ${q.userAnswer}</span>
+                        <span class="text-green-400">正確答案: ${q.correctAnswer}</span>
+                    </div>
+                    <button onclick="removeWrong(${i})" class="mt-2 text-xs text-gray-500 hover:text-red-400">
+                        🗑️ 移除
+                    </button>
+                </div>
+            `).join('');
+        }
+
+        function removeWrong(idx) {
+            wrongQuestions.splice(idx, 1);
+            localStorage.setItem('beidou_wrong_questions', JSON.stringify(wrongQuestions));
+            renderWrong();
+        }
+
+        function renderDomainTabs() {
+            const domains = [...new Set(misconceptions.map(m => m.domain))];
+            const tabs = document.getElementById('domainTabs');
+            tabs.innerHTML = `
+                <button onclick="filterDomain('all')" class="tab-btn px-4 py-1 rounded-full border border-white/20 text-sm ${currentDomain === 'all' ? 'active' : ''}">
+                    全部
+                </button>
+            ` + domains.map(d => `
+                <button onclick="filterDomain('${d}')" class="tab-btn px-4 py-1 rounded-full border border-white/20 text-sm ${currentDomain === d ? 'active' : ''}">
+                    ${d}
+                </button>
+            `).join('');
+        }
+
+        function filterDomain(domain) {
+            currentDomain = domain;
+            renderDomainTabs();
+            renderMisconceptions();
+        }
+
+        function renderMisconceptions() {
+            const list = document.getElementById('misconceptionList');
+            const filtered = currentDomain === 'all' 
+                ? misconceptions 
+                : misconceptions.filter(m => m.domain === currentDomain);
+
+            list.innerHTML = filtered.map(m => `
+                <div class="misconception-card card rounded-xl p-5">
+                    <div class="flex items-start gap-4">
+                        <div class="text-3xl">❌</div>
                         <div class="flex-1">
-                            <span class="inline-block px-2 py-0.5 bg-purple-600/30 rounded text-xs mb-2">${q.subject}</span>
-                            <p class="line-clamp-2">${q.text}</p>
-                        </div>
-                        <div class="text-gray-500 text-sm ml-4">
-                            ${formatDate(q.wrongAt)}
+                            <div class="text-sm text-gray-500 mb-1">${m.domain}</div>
+                            <div class="font-bold text-red-400 mb-2">迷思：${m.misconception}</div>
+                            <div class="text-gray-400 text-sm mb-2">
+                                <span class="text-gray-500">錯誤想法：</span>${m.wrong_thinking}
+                            </div>
+                            <div class="bg-green-900/20 border border-green-500/20 rounded-lg p-3">
+                                <div class="text-green-400 font-bold mb-1">✓ 正確觀念</div>
+                                <div class="text-gray-300 text-sm">${m.truth}</div>
+                            </div>
                         </div>
                     </div>
                 </div>
             `).join('');
-            
-            // 分頁控制
-            if (totalPages > 1) {
-                pagination.classList.remove('hidden');
-                document.getElementById('pageInfo').textContent = `${currentPage} / ${totalPages}`;
-                document.getElementById('prevBtn').disabled = currentPage === 1;
-                document.getElementById('nextBtn').disabled = currentPage === totalPages;
-            } else {
-                pagination.classList.add('hidden');
-            }
         }
-        
-        // 格式化日期
-        function formatDate(dateStr) {
-            const date = new Date(dateStr);
-            const now = new Date();
-            const diff = now - date;
-            
-            if (diff < 86400000) return '今天';
-            if (diff < 172800000) return '昨天';
-            if (diff < 604800000) return `${Math.floor(diff / 86400000)} 天前`;
-            return date.toLocaleDateString('zh-TW');
-        }
-        
-        // 分頁
-        function prevPage() {
-            if (currentPage > 1) {
-                currentPage--;
-                renderList();
-            }
-        }
-        
-        function nextPage() {
-            const totalPages = Math.ceil(filteredQuestions.length / pageSize);
-            if (currentPage < totalPages) {
-                currentPage++;
-                renderList();
-            }
-        }
-        
-        // 顯示詳情
-        function showDetail(idx) {
-            currentQuestion = filteredQuestions[idx];
-            const q = currentQuestion;
-            
-            document.getElementById('modalSubject').textContent = q.subject;
-            document.getElementById('modalQuestion').textContent = q.text;
-            
-            const opts = Array.isArray(q.options) ? q.options : JSON.parse(q.options || '[]');
-            document.getElementById('modalOptions').innerHTML = opts.map((opt, i) => {
-                let classes = 'p-3 rounded-lg ';
-                if (i === q.correctAnswer) classes += 'bg-green-500/20 border border-green-500/50';
-                else if (i === q.userAnswer) classes += 'bg-red-500/20 border border-red-500/50';
-                else classes += 'bg-white/5';
-                
-                return `<div class="${classes}">${String.fromCharCode(65 + i)}. ${opt}</div>`;
-            }).join('');
-            
-            document.getElementById('modalUserAnswer').textContent = 
-                `${String.fromCharCode(65 + q.userAnswer)}. ${opts[q.userAnswer]}`;
-            document.getElementById('modalCorrectAnswer').textContent = 
-                `${String.fromCharCode(65 + q.correctAnswer)}. ${opts[q.correctAnswer]}`;
-            document.getElementById('modalExplanation').textContent = q.explanation || '暫無解析';
-            
-            document.getElementById('detailModal').classList.remove('hidden');
-            
-            gtag('event', 'view_wrong_detail', {
-                'event_category': 'wrong_book',
-                'event_label': q.subject
-            });
-        }
-        
-        // 關閉 Modal
-        function closeModal() {
-            document.getElementById('detailModal').classList.add('hidden');
-            currentQuestion = null;
-        }
-        
-        // 重新練習
-        function retryQuestion() {
-            if (currentQuestion) {
-                // 儲存題目到 sessionStorage
-                sessionStorage.setItem('retryQuestion', JSON.stringify(currentQuestion));
-                window.location.href = 'quiz_ui.html?mode=retry';
-            }
-        }
-        
-        // ESC 關閉
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape') closeModal();
-        });
+
+        loadData();
     </script>
 </body>
 </html>

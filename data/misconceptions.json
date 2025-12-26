@@ -1,0 +1,173 @@
+{
+  "total": 24,
+  "items": [
+    {
+      "id": 1,
+      "domain": "AWS",
+      "misconception": "SageMaker只能用於訓練模型",
+      "truth": "SageMaker提供完整MLOps功能",
+      "wrong_thinking": "SageMaker僅支援模型訓練，不支援部署"
+    },
+    {
+      "id": 2,
+      "domain": "AWS",
+      "misconception": "Bedrock需要自己準備模型",
+      "truth": "Bedrock提供託管的基礎模型",
+      "wrong_thinking": "使用Bedrock前必須先訓練自己的模型"
+    },
+    {
+      "id": 3,
+      "domain": "AWS",
+      "misconception": "Rekognition只能辨識人臉",
+      "truth": "Rekognition支援多種視覺分析",
+      "wrong_thinking": "Rekognition是專門的人臉辨識服務"
+    },
+    {
+      "id": 4,
+      "domain": "AWS",
+      "misconception": "Comprehend需要標註資料",
+      "truth": "Comprehend提供預訓練NLP",
+      "wrong_thinking": "Comprehend需要大量標註資料才能使用"
+    },
+    {
+      "id": 5,
+      "domain": "AWS",
+      "misconception": "Lex只支援英文",
+      "truth": "Lex支援多種語言",
+      "wrong_thinking": "Amazon Lex目前僅支援英文對話"
+    },
+    {
+      "id": 6,
+      "domain": "AWS",
+      "misconception": "機器學習等於深度學習",
+      "truth": "ML包含多種技術",
+      "wrong_thinking": "所有機器學習都使用神經網路"
+    },
+    {
+      "id": 7,
+      "domain": "AWS",
+      "misconception": "AI能完全取代人類判斷",
+      "truth": "AI需要人類監督",
+      "wrong_thinking": "AI系統可以完全自主決策無需人工干預"
+    },
+    {
+      "id": 8,
+      "domain": "AWS",
+      "misconception": "更多資料一定更好",
+      "truth": "資料品質更重要",
+      "wrong_thinking": "只要收集更多資料就能提升模型效能"
+    },
+    {
+      "id": 9,
+      "domain": "AWS",
+      "misconception": "模型準確率是唯一指標",
+      "truth": "需要多維度評估",
+      "wrong_thinking": "評估模型只需要看準確率即可"
+    },
+    {
+      "id": 10,
+      "domain": "AWS",
+      "misconception": "AI沒有偏見",
+      "truth": "AI可能放大偏見",
+      "wrong_thinking": "AI是客觀的，不會產生任何偏見"
+    },
+    {
+      "id": 11,
+      "domain": "Azure",
+      "misconception": "Cognitive Services需要ML知識",
+      "truth": "Cognitive Services是預建API",
+      "wrong_thinking": "使用認知服務需要深度學習專業知識"
+    },
+    {
+      "id": 12,
+      "domain": "Azure",
+      "misconception": "Azure ML只有視覺介面",
+      "truth": "Azure ML支援多種方式",
+      "wrong_thinking": "Azure Machine Learning只能透過圖形介面操作"
+    },
+    {
+      "id": 13,
+      "domain": "Azure",
+      "misconception": "Form Recognizer只能讀PDF",
+      "truth": "Form Recognizer支援多格式",
+      "wrong_thinking": "Form Recognizer僅支援PDF文件格式"
+    },
+    {
+      "id": 14,
+      "domain": "Azure",
+      "misconception": "Bot Service需要自己寫NLU",
+      "truth": "Bot Service整合Language",
+      "wrong_thinking": "建立聊天機器人必須從頭開發語言理解"
+    },
+    {
+      "id": 15,
+      "domain": "Azure",
+      "misconception": "OpenAI Service與OpenAI相同",
+      "truth": "Azure提供企業級安全",
+      "wrong_thinking": "Azure OpenAI與直接使用OpenAI完全相同"
+    },
+    {
+      "id": 16,
+      "domain": "Azure",
+      "misconception": "負責任AI只是選項",
+      "truth": "負責任AI是必要考量",
+      "wrong_thinking": "負責任AI原則只是建議，非強制要求"
+    },
+    {
+      "id": 17,
+      "domain": "Azure",
+      "misconception": "AutoML能解決所有問題",
+      "truth": "AutoML有適用範圍",
+      "wrong_thinking": "AutoML可以自動解決所有機器學習問題"
+    },
+    {
+      "id": 18,
+      "domain": "Azure",
+      "misconception": "雲端AI不安全",
+      "truth": "Azure提供企業級安全",
+      "wrong_thinking": "將資料上傳雲端會有嚴重的安全風險"
+    },
+    {
+      "id": 19,
+      "domain": "Google",
+      "misconception": "Gemini只能處理文字",
+      "truth": "Gemini是多模態模型",
+      "wrong_thinking": "Gemini只能理解和生成文字內容"
+    },
+    {
+      "id": 20,
+      "domain": "Google",
+      "misconception": "提示越短越好",
+      "truth": "提示需要清晰具體",
+      "wrong_thinking": "給AI的提示應該越簡短越好"
+    },
+    {
+      "id": 21,
+      "domain": "Google",
+      "misconception": "AI生成內容可直接使用",
+      "truth": "需要人工審核",
+      "wrong_thinking": "AI生成的內容可以直接發布無需審核"
+    },
+    {
+      "id": 22,
+      "domain": "Google",
+      "misconception": "AI會記住所有對話",
+      "truth": "AI有上下文限制",
+      "wrong_thinking": "AI會永久記住我們之前的所有對話"
+    },
+    {
+      "id": 23,
+      "domain": "Google",
+      "misconception": "AI理解所有語言",
+      "truth": "AI有語言能力差異",
+      "wrong_thinking": "AI對所有語言的理解能力完全相同"
+    },
+    {
+      "id": 24,
+      "domain": "Google",
+      "misconception": "生成式AI沒有版權問題",
+      "truth": "需要注意智財權",
+      "wrong_thinking": "AI生成的內容不涉及任何版權問題"
+    }
+  ]
+}

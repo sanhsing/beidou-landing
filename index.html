@@ -3,132 +3,294 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>北斗教育 - 學測備考平台</title>
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <title>北斗教育 | 108課綱學測備考平台</title>
+    <meta name="description" content="結構化學習系統，40,833道精選題目，560隻知識怪物。讓學測備考從題海變RPG冒險。">
+    <link rel="manifest" href="manifest.json">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌟</text></svg>">
+    <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        .gradient-bg { background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%); }
-        .star-glow { box-shadow: 0 0 20px rgba(255,215,0,0.3); }
-        .card-hover:hover { transform: translateY(-5px); box-shadow: 0 10px 40px rgba(0,0,0,0.3); }
-        .btn-primary { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
-        .btn-primary:hover { background: linear-gradient(135deg, #764ba2 0%, #667eea 100%); }
-        .subject-card { transition: all 0.3s ease; }
-        @keyframes float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-10px)} }
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&display=swap');
+        body { font-family: 'Noto Sans TC', sans-serif; }
+        .gradient-bg { background: linear-gradient(135deg, #0f172a 0%, #1e3a5f 50%, #0f172a 100%); }
+        .glow { box-shadow: 0 0 30px rgba(59, 130, 246, 0.5); }
+        .card-hover { transition: all 0.3s; }
+        .card-hover:hover { transform: translateY(-8px); box-shadow: 0 20px 40px rgba(0,0,0,0.3); }
+        .subject-card { transition: all 0.2s; }
+        .subject-card:hover { transform: scale(1.05); }
+        .stat-number { font-variant-numeric: tabular-nums; }
         .float { animation: float 3s ease-in-out infinite; }
+        @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+        .fade-in { animation: fadeIn 0.6s ease-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        .pulse { animation: pulse 2s infinite; }
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.7; } }
     </style>
 </head>
-<body class="gradient-bg min-h-screen text-white">
-    <!-- Header -->
-    <header class="py-4 px-6 flex justify-between items-center border-b border-gray-700">
-        <div class="flex items-center space-x-3">
-            <span class="text-3xl">⭐</span>
-            <h1 class="text-2xl font-bold">北斗教育</h1>
+<body class="bg-slate-900 text-white">
+
+    <!-- ==================== 導航列 ==================== -->
+    <nav class="fixed top-0 left-0 right-0 z-50 bg-slate-900/95 backdrop-blur-md border-b border-white/10">
+        <div class="container mx-auto px-4">
+            <div class="flex items-center justify-between h-16">
+                <a href="index.html" class="flex items-center gap-2">
+                    <span class="text-2xl">🌟</span>
+                    <span class="font-bold text-xl">北斗教育</span>
+                </a>
+                
+                <div class="hidden md:flex items-center gap-6">
+                    <a href="courses.html" class="text-gray-300 hover:text-white">學測課程</a>
+                    <a href="ai_courses.html" class="text-gray-300 hover:text-white">AI認證</a>
+                    <a href="starmap.html" class="text-gray-300 hover:text-white">知識星圖</a>
+                    <a href="pricing.html" class="text-gray-300 hover:text-white">訂閱方案</a>
+                    <a href="battle.html" class="text-yellow-400 hover:text-yellow-300 font-medium flex items-center gap-1">
+                        ⚔️ RPG戰鬥
+                        <span class="bg-red-500 text-white text-xs px-1.5 py-0.5 rounded-full pulse">PLAY</span>
+                    </a>
+                </div>
+                
+                <div class="flex items-center gap-3">
+                    <a href="auth.html" id="authLink" class="text-gray-300 hover:text-white hidden sm:block">登入</a>
+                    <a href="auth.html?mode=register" id="registerBtn" class="bg-gradient-to-r from-orange-500 to-red-600 hover:from-orange-400 hover:to-red-500 text-white font-bold px-5 py-2 rounded-full transition-all">
+                        免費註冊
+                    </a>
+                </div>
+            </div>
         </div>
-        <nav class="flex space-x-6">
-            <a href="#subjects" class="hover:text-yellow-400">題庫</a>
-            <a href="battle.html" class="hover:text-yellow-400">RPG戰鬥</a>
-            <a href="pvp.html" class="hover:text-yellow-400">PvP對戰</a>
-            <a href="achievements.html" class="hover:text-yellow-400">成就</a>
-        </nav>
+    </nav>
+
+    <!-- ==================== Hero Section ==================== -->
+    <header class="gradient-bg relative overflow-hidden min-h-screen flex items-center pt-16">
+        <div class="absolute inset-0 opacity-20">
+            <div class="absolute top-20 left-10 text-6xl float" style="animation-delay: 0s">👹</div>
+            <div class="absolute top-40 right-20 text-5xl float" style="animation-delay: 0.5s">🐉</div>
+            <div class="absolute bottom-40 left-1/4 text-4xl float" style="animation-delay: 1s">👻</div>
+            <div class="absolute bottom-20 right-1/4 text-5xl float" style="animation-delay: 1.5s">🦇</div>
+        </div>
+        
+        <div class="container mx-auto px-4 py-16 relative z-10">
+            <div class="max-w-5xl mx-auto">
+                <div class="grid md:grid-cols-2 gap-12 items-center">
+                    
+                    <!-- 左側文字 -->
+                    <div class="text-center md:text-left fade-in">
+                        <div class="inline-flex items-center gap-2 bg-orange-500/20 text-orange-300 px-4 py-1 rounded-full text-sm mb-6">
+                            <span class="w-2 h-2 bg-orange-400 rounded-full animate-pulse"></span>
+                            RPG × 學習 · 全新體驗
+                        </div>
+                        
+                        <h1 class="text-4xl md:text-5xl lg:text-6xl font-black mb-6 leading-tight">
+                            學測不是刷題<br>
+                            <span class="text-orange-400">是打怪練功</span>
+                        </h1>
+                        
+                        <p class="text-xl text-gray-300 mb-4">
+                            560 隻知識怪物等你挑戰
+                        </p>
+                        <p class="text-gray-400 mb-8">
+                            答對攻擊、答錯被打，讓學習像遊戲一樣上癮
+                        </p>
+                        
+                        <div class="flex flex-col sm:flex-row gap-4 justify-center md:justify-start mb-6">
+                            <a href="battle.html" class="bg-gradient-to-r from-orange-500 to-red-600 hover:from-orange-400 hover:to-red-500 text-white font-bold py-4 px-8 rounded-full text-lg transition-all glow inline-flex items-center justify-center gap-2">
+                                <span>⚔️ 開始戰鬥</span>
+                            </a>
+                            <a href="#subjects" class="border-2 border-white/30 hover:border-white/60 text-white font-medium py-4 px-8 rounded-full text-lg transition-all inline-flex items-center justify-center">
+                                選擇科目
+                            </a>
+                        </div>
+                        
+                        <p class="text-gray-500 text-sm">
+                            ✓ 免費遊玩 &nbsp; ✓ 不需註冊 &nbsp; ✓ 即開即玩
+                        </p>
+                    </div>
+                    
+                    <!-- 右側數據卡片 -->
+                    <div class="grid grid-cols-2 gap-4 fade-in" style="animation-delay: 0.2s">
+                        <div class="bg-slate-800/50 backdrop-blur p-6 rounded-2xl border border-white/10 card-hover">
+                            <div class="text-4xl font-black text-blue-400 stat-number">40,833</div>
+                            <div class="text-gray-400 mt-1">精選題目</div>
+                            <div class="text-xs text-gray-500 mt-2">涵蓋10科學測範圍</div>
+                        </div>
+                        <div class="bg-slate-800/50 backdrop-blur p-6 rounded-2xl border border-white/10 card-hover">
+                            <div class="text-4xl font-black text-red-400 stat-number">560</div>
+                            <div class="text-gray-400 mt-1">知識怪物</div>
+                            <div class="text-xs text-gray-500 mt-2">每科都有Boss</div>
+                        </div>
+                        <div class="bg-slate-800/50 backdrop-blur p-6 rounded-2xl border border-white/10 card-hover">
+                            <div class="text-4xl font-black text-purple-400 stat-number">10</div>
+                            <div class="text-gray-400 mt-1">學科領域</div>
+                            <div class="text-xs text-gray-500 mt-2">國英數自社全科</div>
+                        </div>
+                        <div class="bg-slate-800/50 backdrop-blur p-6 rounded-2xl border border-white/10 card-hover">
+                            <div class="text-4xl font-black text-yellow-400 stat-number">50+</div>
+                            <div class="text-gray-400 mt-1">成就徽章</div>
+                            <div class="text-xs text-gray-500 mt-2">收集全部解鎖</div>
+                        </div>
+                    </div>
+                    
+                </div>
+            </div>
+        </div>
+        
+        <div class="absolute bottom-8 left-1/2 transform -translate-x-1/2 float">
+            <a href="#subjects" class="text-white/50 hover:text-white/80">
+                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"/>
+                </svg>
+            </a>
+        </div>
     </header>
 
-    <!-- Hero -->
-    <section class="py-20 text-center">
-        <div class="float">
-            <span class="text-8xl">🌟</span>
+    <!-- ==================== 科目選擇 ==================== -->
+    <section id="subjects" class="py-20 bg-slate-800">
+        <div class="container mx-auto px-4">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl md:text-4xl font-bold mb-4">選擇你的戰場</h2>
+                <p class="text-gray-400">10 大科目領域，各有獨特怪物等你挑戰</p>
+            </div>
+            
+            <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4 max-w-4xl mx-auto">
+                <a href="battle.html?subject=數學" class="subject-card bg-slate-700 hover:bg-blue-600 p-6 rounded-xl text-center">
+                    <div class="text-4xl mb-2">📐</div>
+                    <div class="font-medium">數學</div>
+                    <div class="text-xs text-gray-400 mt-1">6,780 題</div>
+                </a>
+                <a href="battle.html?subject=物理" class="subject-card bg-slate-700 hover:bg-yellow-600 p-6 rounded-xl text-center">
+                    <div class="text-4xl mb-2">⚡</div>
+                    <div class="font-medium">物理</div>
+                    <div class="text-xs text-gray-400 mt-1">4,779 題</div>
+                </a>
+                <a href="battle.html?subject=化學" class="subject-card bg-slate-700 hover:bg-purple-600 p-6 rounded-xl text-center">
+                    <div class="text-4xl mb-2">🧪</div>
+                    <div class="font-medium">化學</div>
+                    <div class="text-xs text-gray-400 mt-1">3,190 題</div>
+                </a>
+                <a href="battle.html?subject=生物" class="subject-card bg-slate-700 hover:bg-green-600 p-6 rounded-xl text-center">
+                    <div class="text-4xl mb-2">🧬</div>
+                    <div class="font-medium">生物</div>
+                    <div class="text-xs text-gray-400 mt-1">3,135 題</div>
+                </a>
+                <a href="battle.html?subject=地球科學" class="subject-card bg-slate-700 hover:bg-cyan-600 p-6 rounded-xl text-center">
+                    <div class="text-4xl mb-2">🌍</div>
+                    <div class="font-medium">地球科學</div>
+                    <div class="text-xs text-gray-400 mt-1">2,385 題</div>
+                </a>
+                <a href="battle.html?subject=國文" class="subject-card bg-slate-700 hover:bg-red-600 p-6 rounded-xl text-center">
+                    <div class="text-4xl mb-2">📚</div>
+                    <div class="font-medium">國文</div>
+                    <div class="text-xs text-gray-400 mt-1">5,264 題</div>
+                </a>
+                <a href="battle.html?subject=英文" class="subject-card bg-slate-700 hover:bg-indigo-600 p-6 rounded-xl text-center">
+                    <div class="text-4xl mb-2">🔤</div>
+                    <div class="font-medium">英文</div>
+                    <div class="text-xs text-gray-400 mt-1">3,800 題</div>
+                </a>
+                <a href="battle.html?subject=歷史" class="subject-card bg-slate-700 hover:bg-orange-600 p-6 rounded-xl text-center">
+                    <div class="text-4xl mb-2">📜</div>
+                    <div class="font-medium">歷史</div>
+                    <div class="text-xs text-gray-400 mt-1">3,860 題</div>
+                </a>
+                <a href="battle.html?subject=地理" class="subject-card bg-slate-700 hover:bg-teal-600 p-6 rounded-xl text-center">
+                    <div class="text-4xl mb-2">🗺️</div>
+                    <div class="font-medium">地理</div>
+                    <div class="text-xs text-gray-400 mt-1">3,261 題</div>
+                </a>
+                <a href="battle.html?subject=公民" class="subject-card bg-slate-700 hover:bg-pink-600 p-6 rounded-xl text-center">
+                    <div class="text-4xl mb-2">⚖️</div>
+                    <div class="font-medium">公民</div>
+                    <div class="text-xs text-gray-400 mt-1">2,655 題</div>
+                </a>
+            </div>
+            
+            <!-- 隨機戰鬥按鈕 -->
+            <div class="text-center mt-12">
+                <a href="battle.html" class="inline-flex items-center gap-3 bg-gradient-to-r from-red-600 to-orange-600 hover:from-red-500 hover:to-orange-500 text-white font-bold py-4 px-10 rounded-full text-xl transition-all">
+                    <span class="text-2xl">🎲</span>
+                    <span>隨機挑戰</span>
+                </a>
+                <p class="text-gray-500 text-sm mt-3">隨機科目、隨機怪物，測試你的綜合實力！</p>
+            </div>
         </div>
-        <h2 class="text-5xl font-bold mt-8 mb-4">苦海無涯，AI作舟</h2>
-        <p class="text-xl text-gray-300 mb-8">40,000+ 題庫 × 560 怪物 × RPG戰鬥 × PvP對戰</p>
-        <a href="#subjects" class="btn-primary px-8 py-4 rounded-full text-lg font-bold inline-block">
-            開始學習 →
-        </a>
     </section>
 
-    <!-- Stats -->
-    <section class="py-12 bg-black bg-opacity-30">
-        <div class="max-w-6xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-6 px-6">
-            <div class="text-center">
-                <div class="text-4xl font-bold text-yellow-400" id="stat-questions">40,833</div>
-                <div class="text-gray-400">題庫數量</div>
+    <!-- ==================== 功能特色 ==================== -->
+    <section id="features" class="py-20 bg-slate-900">
+        <div class="container mx-auto px-4">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl md:text-4xl font-bold mb-4">這不是普通的題庫</h2>
+                <p class="text-gray-400 max-w-2xl mx-auto">是一場知識的冒險</p>
             </div>
-            <div class="text-center">
-                <div class="text-4xl font-bold text-green-400">10</div>
-                <div class="text-gray-400">學科領域</div>
-            </div>
-            <div class="text-center">
-                <div class="text-4xl font-bold text-purple-400">560</div>
-                <div class="text-gray-400">RPG怪物</div>
-            </div>
-            <div class="text-center">
-                <div class="text-4xl font-bold text-red-400">7</div>
-                <div class="text-gray-400">PvP段位</div>
+            
+            <div class="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+                <div class="bg-slate-800 p-8 rounded-2xl card-hover">
+                    <div class="w-14 h-14 bg-red-500/20 rounded-xl flex items-center justify-center text-3xl mb-6">
+                        ⚔️
+                    </div>
+                    <h3 class="text-xl font-bold mb-3">RPG 戰鬥系統</h3>
+                    <p class="text-gray-400">
+                        遭遇怪物 → 出現題目<br>
+                        答對攻擊、答錯被打<br>
+                        戰勝獲得經驗與金幣
+                    </p>
+                </div>
+                
+                <div class="bg-slate-800 p-8 rounded-2xl card-hover">
+                    <div class="w-14 h-14 bg-purple-500/20 rounded-xl flex items-center justify-center text-3xl mb-6">
+                        👹
+                    </div>
+                    <h3 class="text-xl font-bold mb-3">560 隻知識怪物</h3>
+                    <p class="text-gray-400">
+                        每個知識點對應一隻怪物<br>
+                        有專屬對話、屬性、弱點<br>
+                        打敗它就征服這個知識！
+                    </p>
+                </div>
+                
+                <div class="bg-slate-800 p-8 rounded-2xl card-hover">
+                    <div class="w-14 h-14 bg-yellow-500/20 rounded-xl flex items-center justify-center text-3xl mb-6">
+                        🏆
+                    </div>
+                    <h3 class="text-xl font-bold mb-3">成就與獎勵</h3>
+                    <p class="text-gray-400">
+                        50+ 種成就等你解鎖<br>
+                        從「初心者」到「學測之神」<br>
+                        收集全部彰顯實力！
+                    </p>
+                </div>
             </div>
         </div>
     </section>
 
-    <!-- Subjects -->
-    <section id="subjects" class="py-16 px-6">
-        <h3 class="text-3xl font-bold text-center mb-12">選擇科目</h3>
-        <div class="max-w-6xl mx-auto grid grid-cols-2 md:grid-cols-5 gap-6" id="subject-grid">
-            <!-- 動態載入 -->
-        </div>
-    </section>
-
-    <!-- Features -->
-    <section class="py-16 px-6 bg-black bg-opacity-20">
-        <div class="max-w-6xl mx-auto grid md:grid-cols-3 gap-8">
-            <div class="bg-gray-800 bg-opacity-50 p-6 rounded-xl card-hover">
-                <div class="text-4xl mb-4">⚔️</div>
-                <h4 class="text-xl font-bold mb-2">RPG 戰鬥</h4>
-                <p class="text-gray-400">答對題目攻擊怪物，錯誤被反擊。560隻怪物等你挑戰！</p>
-                <a href="battle.html" class="text-yellow-400 mt-4 inline-block">開始戰鬥 →</a>
-            </div>
-            <div class="bg-gray-800 bg-opacity-50 p-6 rounded-xl card-hover">
-                <div class="text-4xl mb-4">🏆</div>
-                <h4 class="text-xl font-bold mb-2">PvP 對戰</h4>
-                <p class="text-gray-400">即時對戰，搶答計分。7個段位，青銅到傳說！</p>
-                <a href="pvp.html" class="text-yellow-400 mt-4 inline-block">匹配對手 →</a>
-            </div>
-            <div class="bg-gray-800 bg-opacity-50 p-6 rounded-xl card-hover">
-                <div class="text-4xl mb-4">🎯</div>
-                <h4 class="text-xl font-bold mb-2">成就系統</h4>
-                <p class="text-gray-400">50+ 成就等你解鎖，從「初心者」到「學測之神」！</p>
-                <a href="achievements.html" class="text-yellow-400 mt-4 inline-block">查看成就 →</a>
-            </div>
+    <!-- ==================== CTA ==================== -->
+    <section class="py-20 bg-gradient-to-r from-orange-900 to-red-900">
+        <div class="container mx-auto px-4 text-center">
+            <h2 class="text-3xl md:text-4xl font-bold mb-6">準備好了嗎？</h2>
+            <p class="text-xl text-gray-300 mb-8">40,833 道題目、560 隻怪物等你挑戰</p>
+            <a href="battle.html" class="inline-flex items-center gap-3 bg-white text-red-600 font-bold py-4 px-10 rounded-full text-xl hover:bg-gray-100 transition-all">
+                <span class="text-2xl">⚔️</span>
+                <span>開始冒險</span>
+            </a>
         </div>
     </section>
 
     <!-- Footer -->
-    <footer class="py-8 text-center text-gray-500 border-t border-gray-700">
-        <p>© 2025 北斗七星文創數位有限公司</p>
-        <p class="mt-2">v63 | 基於 education.db</p>
+    <footer class="py-8 bg-slate-900 border-t border-white/10">
+        <div class="container mx-auto px-4 text-center text-gray-500">
+            <p>© 2025 北斗七星文創數位有限公司</p>
+            <p class="mt-2 text-sm">v63 | 苦海無涯，AI作舟</p>
+        </div>
     </footer>
 
     <script>
-        // 科目資料
-        const subjects = [
-            {name: '數學', icon: '📐', color: 'blue', count: 6780},
-            {name: '國文', icon: '📚', color: 'red', count: 5264},
-            {name: '英文', icon: '🔤', color: 'green', count: 3800},
-            {name: '物理', icon: '⚡', color: 'yellow', count: 4779},
-            {name: '化學', icon: '🧪', color: 'purple', count: 3190},
-            {name: '生物', icon: '🧬', color: 'pink', count: 3135},
-            {name: '地球科學', icon: '🌍', color: 'indigo', count: 2385},
-            {name: '歷史', icon: '📜', color: 'orange', count: 3860},
-            {name: '地理', icon: '🗺️', color: 'teal', count: 3261},
-            {name: '公民與社會', icon: '⚖️', color: 'cyan', count: 2655}
-        ];
-
-        const grid = document.getElementById('subject-grid');
-        subjects.forEach(s => {
-            grid.innerHTML += `
-                <a href="quiz.html?subject=${encodeURIComponent(s.name)}" 
-                   class="subject-card bg-gray-800 p-6 rounded-xl text-center card-hover cursor-pointer">
-                    <div class="text-5xl mb-3">${s.icon}</div>
-                    <h4 class="font-bold text-lg">${s.name}</h4>
-                    <p class="text-gray-400 text-sm mt-1">${s.count.toLocaleString()} 題</p>
-                </a>
-            `;
-        });
+        // 登入狀態檢查
+        const user = JSON.parse(localStorage.getItem('beidou_user') || 'null');
+        if (user && !user.guest) {
+            document.getElementById('authLink').textContent = user.username || '會員中心';
+            document.getElementById('authLink').href = 'dashboard.html';
+            document.getElementById('registerBtn').textContent = '儀表板';
+            document.getElementById('registerBtn').href = 'dashboard.html';
+        }
     </script>
+
 </body>
 </html>

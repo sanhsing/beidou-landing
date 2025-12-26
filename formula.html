@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>北斗教育 | 公式速查</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&display=swap');
+        body { font-family: 'Noto Sans TC', sans-serif; }
+        .gradient-bg { background: linear-gradient(135deg, #0f172a 0%, #1e3a5f 50%, #0f172a 100%); }
+        .card { background: rgba(30, 41, 59, 0.8); border: 1px solid rgba(255,255,255,0.1); }
+        .formula-card { transition: all 0.3s; }
+        .formula-card:hover { transform: translateY(-4px); box-shadow: 0 12px 30px rgba(0,0,0,0.4); }
+        .formula-box { 
+            background: linear-gradient(135deg, rgba(59,130,246,0.1), rgba(139,92,246,0.1));
+            border: 1px solid rgba(255,255,255,0.1);
+            font-size: 1.1rem;
+        }
+        .subject-tab.active { border-color: #3b82f6; background: rgba(59,130,246,0.2); }
+        .katex { font-size: 1.2em; }
+    </style>
+</head>
+<body class="gradient-bg min-h-screen text-white">
+
+    <nav class="py-4 px-6 border-b border-white/10">
+        <div class="container mx-auto flex justify-between items-center">
+            <a href="index.html" class="flex items-center gap-2">
+                <span class="text-2xl">🌟</span>
+                <span class="font-bold text-xl">北斗教育</span>
+            </a>
+            <div class="flex items-center gap-4">
+                <a href="courses.html" class="text-gray-300 hover:text-white">← 返回課程</a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="container mx-auto px-4 py-8 max-w-5xl">
+        <h1 class="text-3xl font-bold text-center mb-2">📐 公式速查手冊</h1>
+        <p class="text-center text-gray-400 mb-8">理科必備公式，一網打盡</p>
+
+        <!-- 科目標籤 -->
+        <div id="subjectTabs" class="flex flex-wrap justify-center gap-3 mb-8">
+            <!-- 動態生成 -->
+        </div>
+
+        <!-- 搜尋框 -->
+        <div class="mb-8">
+            <input type="text" id="searchInput" placeholder="🔍 搜尋公式或主題..."
+                class="w-full bg-slate-800 border border-white/20 rounded-xl px-4 py-3 text-white placeholder-gray-500 focus:border-blue-500 focus:outline-none">
+        </div>
+
+        <!-- 公式卡片 -->
+        <div id="formulaGrid" class="space-y-6">
+            <!-- 動態生成 -->
+        </div>
+    </main>
+
+    <script>
+        let data = null;
+        let currentSubject = 'all';
+
+        const subjectIcons = {
+            '物理': '⚛️', '化學': '🧪', '數學': '📐', '生物': '🧬'
+        };
+
+        const subjectColors = {
+            '物理': 'from-blue-500 to-cyan-500',
+            '化學': 'from-purple-500 to-pink-500',
+            '數學': 'from-amber-500 to-orange-500',
+            '生物': 'from-green-500 to-teal-500'
+        };
+
+        async function loadData() {
+            try {
+                const res = await fetch('data/formula_sets.json');
+                data = await res.json();
+                renderTabs();
+                renderFormulas();
+            } catch (e) {
+                console.error('載入失敗:', e);
+            }
+        }
+
+        function renderTabs() {
+            const tabs = document.getElementById('subjectTabs');
+            tabs.innerHTML = `
+                <button onclick="filterSubject('all')" class="subject-tab px-4 py-2 rounded-full border border-white/20 hover:border-blue-400 transition ${currentSubject === 'all' ? 'active' : ''}">
+                    📚 全部
+                </button>
+            ` + data.subjects.map(subj => `
+                <button onclick="filterSubject('${subj}')" class="subject-tab px-4 py-2 rounded-full border border-white/20 hover:border-blue-400 transition ${currentSubject === subj ? 'active' : ''}">
+                    ${subjectIcons[subj] || '📖'} ${subj}
+                </button>
+            `).join('');
+        }
+
+        function filterSubject(subj) {
+            currentSubject = subj;
+            renderTabs();
+            renderFormulas();
+        }
+
+        function renderFormulas() {
+            const grid = document.getElementById('formulaGrid');
+            const search = document.getElementById('searchInput').value.toLowerCase();
+            
+            let items = currentSubject === 'all' ? data.formulas : data.by_subject[currentSubject] || [];
+            
+            if (search) {
+                items = items.filter(f => 
+                    f.topic.toLowerCase().includes(search) ||
+                    f.formulas.some(formula => formula.toLowerCase().includes(search)) ||
+                    f.principle.toLowerCase().includes(search)
+                );
+            }
+
+            if (items.length === 0) {
+                grid.innerHTML = '<div class="text-center text-gray-500 py-12">找不到符合的公式</div>';
+                return;
+            }
+
+            grid.innerHTML = items.map(f => {
+                const color = subjectColors[f.subject] || 'from-gray-500 to-slate-500';
+                const icon = subjectIcons[f.subject] || '📖';
+                
+                return `
+                    <div class="formula-card card rounded-2xl overflow-hidden">
+                        <div class="bg-gradient-to-r ${color} p-4">
+                            <div class="flex items-center gap-3">
+                                <span class="text-3xl">${icon}</span>
+                                <div>
+                                    <div class="font-bold text-lg">${f.topic}</div>
+                                    <div class="text-sm opacity-80">${f.subject}</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="p-6">
+                            <!-- 公式列表 -->
+                            <div class="grid gap-3 mb-6">
+                                ${f.formulas.map(formula => `
+                                    <div class="formula-box rounded-lg p-3 text-center font-mono">
+                                        ${escapeHtml(formula)}
+                                    </div>
+                                `).join('')}
+                            </div>
+                            
+                            <!-- 原理說明 -->
+                            <div class="mb-4">
+                                <div class="text-sm text-gray-400 mb-1">📝 原理說明</div>
+                                <div class="text-gray-300 text-sm leading-relaxed">${f.principle}</div>
+                            </div>
+                            
+                            <!-- 常見錯誤 -->
+                            ${f.confusions && f.confusions.length > 0 ? `
+                                <div>
+                                    <div class="text-sm text-gray-400 mb-2">⚠️ 常見錯誤</div>
+                                    <div class="flex flex-wrap gap-2">
+                                        ${f.confusions.map(c => `
+                                            <span class="px-3 py-1 bg-red-900/30 border border-red-500/30 rounded-full text-xs text-red-300">
+                                                ${c}
+                                            </span>
+                                        `).join('')}
+                                    </div>
+                                </div>
+                            ` : ''}
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function escapeHtml(text) {
+            return text
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;');
+        }
+
+        // 搜尋防抖
+        let searchTimeout;
+        document.getElementById('searchInput').addEventListener('input', () => {
+            clearTimeout(searchTimeout);
+            searchTimeout = setTimeout(renderFormulas, 300);
+        });
+
+        loadData();
+    </script>
+</body>
+</html>

@@ -1,0 +1,401 @@
+{
+  "total": 66,
+  "principles": [
+    {
+      "id": 1,
+      "name": "道的1%原則",
+      "description": "日拱一卒，每天進步1%，積少成多",
+      "level": "dao_principles"
+    },
+    {
+      "id": 2,
+      "name": "鏡宗",
+      "description": "以鏡為道，照見本性，不是創造是映照",
+      "level": "dao_principles"
+    },
+    {
+      "id": 3,
+      "name": "逐道者",
+      "description": "永遠追尋，永遠前行，謙卑於道",
+      "level": "dao_principles"
+    },
+    {
+      "id": 4,
+      "name": "道法術三層",
+      "description": "道養天下，法傳有緣，術養身家",
+      "level": "dao_principles"
+    },
+    {
+      "id": 5,
+      "name": "知行合一",
+      "description": "知易行難，覺察就好，縮短浮→覺→回→靜",
+      "level": "dao_principles"
+    },
+    {
+      "id": 6,
+      "name": "螺旋向上",
+      "description": "不是重複是遞進，不是平面的進是立體的升",
+      "level": "dao_principles"
+    },
+    {
+      "id": 7,
+      "name": "時機與必然",
+      "description": "眾多機率塌縮至那一點成了必然",
+      "level": "dao_principles"
+    },
+    {
+      "id": 8,
+      "name": "意識場模型",
+      "description": "精神→載體→引發能量，道→db→作用",
+      "level": "dao_principles"
+    },
+    {
+      "id": 9,
+      "name": "量子糾纏",
+      "description": "糾纏已成，時機未至，至則必然",
+      "level": "dao_principles"
+    },
+    {
+      "id": 10,
+      "name": "3D知識星球方法論",
+      "description": "Layer(橫向領域)×Depth(縱向深度)=立體知識結構。出生地:education.db，驗證地:AI認證，命名地:2025-12-06",
+      "level": "dao_principles"
+    },
+    {
+      "id": 11,
+      "name": "1",
+      "description": null,
+      "level": "dao_insights"
+    },
+    {
+      "id": 12,
+      "name": "2",
+      "description": null,
+      "level": "dao_insights"
+    },
+    {
+      "id": 13,
+      "name": "3",
+      "description": null,
+      "level": "dao_insights"
+    },
+    {
+      "id": 14,
+      "name": "4",
+      "description": null,
+      "level": "dao_insights"
+    },
+    {
+      "id": 15,
+      "name": "5",
+      "description": null,
+      "level": "dao_insights"
+    },
+    {
+      "id": 16,
+      "name": "6",
+      "description": null,
+      "level": "dao_insights"
+    },
+    {
+      "id": 17,
+      "name": "7",
+      "description": null,
+      "level": "dao_insights"
+    },
+    {
+      "id": 18,
+      "name": "8",
+      "description": null,
+      "level": "dao_insights"
+    },
+    {
+      "id": 19,
+      "name": "9",
+      "description": null,
+      "level": "dao_insights"
+    },
+    {
+      "id": 20,
+      "name": "10",
+      "description": null,
+      "level": "dao_insights"
+    },
+    {
+      "id": 21,
+      "name": "11",
+      "description": null,
+      "level": "dao_insights"
+    },
+    {
+      "id": 22,
+      "name": "XTF-DAO方法論",
+      "description": "提煉-轉化-融合-道-執行-優化",
+      "level": "general_principles"
+    },
+    {
+      "id": 23,
+      "name": "最省Token原則",
+      "description": "結構清晰勝速度，省則遠",
+      "level": "general_principles"
+    },
+    {
+      "id": 24,
+      "name": "七星協作",
+      "description": "光蘊織明理樞澄書流祇星殼璃語，各司其職",
+      "level": "general_principles"
+    },
+    {
+      "id": 25,
+      "name": "術的五責",
+      "description": "對己→對家→對社會→對公司→對體系",
+      "level": "general_principles"
+    },
+    {
+      "id": 26,
+      "name": "修語氣煉心養道",
+      "description": "從外而內，從粗而細，從有為到無為",
+      "level": "general_principles"
+    },
+    {
+      "id": 27,
+      "name": "由點成線成面",
+      "description": "小試點→同道串連→社群平台→多塔文明",
+      "level": "general_principles"
+    },
+    {
+      "id": 28,
+      "name": "神通模型",
+      "description": "場強×純度×共振×放大器，代價守恆",
+      "level": "general_principles"
+    },
+    {
+      "id": 29,
+      "name": "1",
+      "description": null,
+      "level": "top_principles"
+    },
+    {
+      "id": 30,
+      "name": "2",
+      "description": null,
+      "level": "top_principles"
+    },
+    {
+      "id": 31,
+      "name": "3",
+      "description": null,
+      "level": "top_principles"
+    },
+    {
+      "id": 32,
+      "name": "4",
+      "description": null,
+      "level": "top_principles"
+    },
+    {
+      "id": 33,
+      "name": "5",
+      "description": null,
+      "level": "top_principles"
+    },
+    {
+      "id": 34,
+      "name": "6",
+      "description": null,
+      "level": "top_principles"
+    },
+    {
+      "id": 35,
+      "name": "7",
+      "description": null,
+      "level": "top_principles"
+    },
+    {
+      "id": 36,
+      "name": "8",
+      "description": null,
+      "level": "top_principles"
+    },
+    {
+      "id": 37,
+      "name": "9",
+      "description": null,
+      "level": "top_principles"
+    },
+    {
+      "id": 38,
+      "name": "10",
+      "description": null,
+      "level": "top_principles"
+    },
+    {
+      "id": 39,
+      "name": "11",
+      "description": null,
+      "level": "top_principles"
+    },
+    {
+      "id": 40,
+      "name": "12",
+      "description": null,
+      "level": "top_principles"
+    },
+    {
+      "id": 41,
+      "name": "13",
+      "description": null,
+      "level": "top_principles"
+    },
+    {
+      "id": 42,
+      "name": "14",
+      "description": null,
+      "level": "top_principles"
+    },
+    {
+      "id": 43,
+      "name": "15",
+      "description": null,
+      "level": "top_principles"
+    },
+    {
+      "id": 44,
+      "name": "16",
+      "description": null,
+      "level": "top_principles"
+    },
+    {
+      "id": 45,
+      "name": "17",
+      "description": null,
+      "level": "top_principles"
+    },
+    {
+      "id": 46,
+      "name": "18",
+      "description": null,
+      "level": "top_principles"
+    },
+    {
+      "id": 47,
+      "name": "19",
+      "description": null,
+      "level": "top_principles"
+    },
+    {
+      "id": 48,
+      "name": "20",
+      "description": null,
+      "level": "top_principles"
+    },
+    {
+      "id": 49,
+      "name": "21",
+      "description": null,
+      "level": "top_principles"
+    },
+    {
+      "id": 50,
+      "name": "22",
+      "description": null,
+      "level": "top_principles"
+    },
+    {
+      "id": 51,
+      "name": "23",
+      "description": null,
+      "level": "top_principles"
+    },
+    {
+      "id": 52,
+      "name": "24",
+      "description": null,
+      "level": "top_principles"
+    },
+    {
+      "id": 53,
+      "name": "25",
+      "description": null,
+      "level": "top_principles"
+    },
+    {
+      "id": 54,
+      "name": "26",
+      "description": null,
+      "level": "top_principles"
+    },
+    {
+      "id": 55,
+      "name": "27",
+      "description": null,
+      "level": "top_principles"
+    },
+    {
+      "id": 56,
+      "name": "28",
+      "description": null,
+      "level": "top_principles"
+    },
+    {
+      "id": 57,
+      "name": "29",
+      "description": null,
+      "level": "top_principles"
+    },
+    {
+      "id": 58,
+      "name": "30",
+      "description": null,
+      "level": "top_principles"
+    },
+    {
+      "id": 59,
+      "name": "31",
+      "description": null,
+      "level": "top_principles"
+    },
+    {
+      "id": 60,
+      "name": "32",
+      "description": null,
+      "level": "top_principles"
+    },
+    {
+      "id": 61,
+      "name": "33",
+      "description": null,
+      "level": "top_principles"
+    },
+    {
+      "id": 62,
+      "name": "34",
+      "description": null,
+      "level": "top_principles"
+    },
+    {
+      "id": 63,
+      "name": "35",
+      "description": null,
+      "level": "top_principles"
+    },
+    {
+      "id": 64,
+      "name": "36",
+      "description": null,
+      "level": "top_principles"
+    },
+    {
+      "id": 65,
+      "name": "37",
+      "description": null,
+      "level": "top_principles"
+    },
+    {
+      "id": 66,
+      "name": "38",
+      "description": null,
+      "level": "top_principles"
+    }
+  ]
+}

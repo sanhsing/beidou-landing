@@ -3,439 +3,234 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI 認證課程 - 北斗教育</title>
+    <title>北斗教育 | 學測 XTF 課程</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="manifest" href="manifest.json">
     <style>
-        .card { background: linear-gradient(135deg, #1e1b4b 0%, #312e81 100%); }
-        .card-hover { transition: all 0.3s ease; }
-        .card-hover:hover { transform: translateY(-4px); box-shadow: 0 20px 40px rgba(139,92,246,0.3); }
-        .provider-google { border-color: #4285f4; }
-        .provider-aws { border-color: #ff9900; }
-        .provider-azure { border-color: #0078d4; }
-        .provider-ipas { border-color: #00a651; }
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&display=swap');
+        body { font-family: 'Noto Sans TC', sans-serif; }
+        .gradient-bg { background: linear-gradient(135deg, #0f172a 0%, #1e3a5f 50%, #0f172a 100%); }
+        .card-hover { transition: all 0.3s; }
+        .card-hover:hover { transform: translateY(-5px); box-shadow: 0 15px 30px rgba(0,0,0,0.3); }
     </style>
 </head>
-<body class="bg-gray-900 text-white min-h-screen">
-    <!-- 頂部導航 -->
-    <nav class="bg-gray-800/80 backdrop-blur border-b border-white/10 sticky top-0 z-50">
-        <div class="max-w-6xl mx-auto px-4 py-3 flex justify-between items-center">
-            <a href="index.html" class="text-xl font-bold text-purple-400">北斗教育</a>
-            <div class="flex items-center gap-4">
-                <a href="dashboard.html" class="text-gray-400 hover:text-white text-sm">儀表板</a>
-                <span id="userInfo" class="text-sm text-gray-400"></span>
+<body class="gradient-bg min-h-screen text-white">
+
+    <!-- 導航列 -->
+    <nav class="py-4 px-6 border-b border-white/10">
+        <div class="container mx-auto flex justify-between items-center">
+            <a href="index.html" class="flex items-center gap-2">
+                <span class="text-2xl">🌟</span>
+                <span class="font-bold text-xl">北斗教育</span>
+            </a>
+            <div class="hidden md:flex items-center gap-6">
+                <a href="courses.html" class="text-yellow-400 font-medium">學測課程</a>
+                <a href="ai_courses.html" class="text-gray-300 hover:text-white">AI認證</a>
+                <a href="starmap.html" class="text-gray-300 hover:text-white">知識星圖</a>
+                <a href="battle.html" class="text-gray-300 hover:text-white">⚔️ 戰鬥</a>
             </div>
+            <a href="auth.html" class="text-gray-300 hover:text-white" id="authLink">登入</a>
         </div>
     </nav>
 
-    <main class="max-w-6xl mx-auto px-4 py-8">
-        <!-- Hero Section -->
-        <section class="text-center mb-12">
-            <h1 class="text-3xl md:text-4xl font-bold mb-4">
-                🎓 AI 認證課程
-            </h1>
-            <p class="text-gray-400 max-w-2xl mx-auto">
-                取得全球認可的 AI 認證，提升職場競爭力。<br>
-                完整備考課程 + 題庫練習 + 模擬測驗
-            </p>
-        </section>
+    <!-- Hero -->
+    <header class="py-16 text-center">
+        <h1 class="text-4xl md:text-5xl font-bold mb-4">學測 XTF 結構化課程</h1>
+        <p class="text-gray-400 text-lg mb-6">消(理解) → 拓(記憶) → 融(應用)</p>
+        <p class="text-gray-500">10 科完整覆蓋 · 40,833 題 · 560 知識節點</p>
+    </header>
 
-        <!-- 課程列表 -->
-        <section id="courseList" class="grid md:grid-cols-2 gap-6 mb-12">
-            <div class="text-center py-8 text-gray-500">載入中...</div>
-        </section>
-
-        <!-- 我的課程 -->
-        <section id="myCourses" class="hidden">
-            <h2 class="text-2xl font-bold mb-6">📚 我的課程</h2>
-            <div id="myCoursesGrid" class="grid md:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
+    <!-- XTF 說明 -->
+    <section class="container mx-auto px-4 mb-16">
+        <div class="grid md:grid-cols-3 gap-6 max-w-4xl mx-auto">
+            <div class="bg-blue-900/30 border border-blue-500/30 rounded-xl p-6 text-center">
+                <div class="text-4xl mb-3">🔻</div>
+                <h3 class="text-xl font-bold text-blue-400 mb-2">消 Simplify</h3>
+                <p class="text-gray-400 text-sm">拆解概念本質<br>降維到能懂的程度</p>
             </div>
-        </section>
+            <div class="bg-purple-900/30 border border-purple-500/30 rounded-xl p-6 text-center">
+                <div class="text-4xl mb-3">🔀</div>
+                <h3 class="text-xl font-bold text-purple-400 mb-2">拓 Transform</h3>
+                <p class="text-gray-400 text-sm">建立知識連結<br>結構化記憶錨定</p>
+            </div>
+            <div class="bg-green-900/30 border border-green-500/30 rounded-xl p-6 text-center">
+                <div class="text-4xl mb-3">🔺</div>
+                <h3 class="text-xl font-bold text-green-400 mb-2">融 Integrate</h3>
+                <p class="text-gray-400 text-sm">應用解題實戰<br>RPG戰鬥練功</p>
+            </div>
+        </div>
+    </section>
 
-        <!-- 為什麼選擇我們 -->
-        <section class="bg-gray-800/50 rounded-2xl p-8 mb-12">
-            <h2 class="text-2xl font-bold text-center mb-8">為什麼選擇北斗？</h2>
-            <div class="grid md:grid-cols-3 gap-6">
-                <div class="text-center">
-                    <div class="text-4xl mb-3">📖</div>
-                    <h3 class="font-bold mb-2">完整課程內容</h3>
-                    <p class="text-gray-400 text-sm">涵蓋所有考試重點，系統化學習</p>
+    <!-- 課程網格 -->
+    <section class="container mx-auto px-4 pb-20">
+        <h2 class="text-2xl font-bold text-center mb-8">選擇科目開始學習</h2>
+        
+        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 max-w-5xl mx-auto">
+            <!-- 數學 -->
+            <div class="bg-slate-800 rounded-xl p-6 card-hover cursor-pointer" onclick="showCourse('數學')">
+                <div class="text-4xl mb-3 text-center">📐</div>
+                <h3 class="font-bold text-center mb-1">數學</h3>
+                <p class="text-xs text-gray-400 text-center">6,780 題</p>
+                <p class="text-xs text-blue-400 text-center mt-2">56 節點</p>
+            </div>
+            <!-- 物理 -->
+            <div class="bg-slate-800 rounded-xl p-6 card-hover cursor-pointer" onclick="showCourse('物理')">
+                <div class="text-4xl mb-3 text-center">⚡</div>
+                <h3 class="font-bold text-center mb-1">物理</h3>
+                <p class="text-xs text-gray-400 text-center">4,779 題</p>
+                <p class="text-xs text-yellow-400 text-center mt-2">52 節點</p>
+            </div>
+            <!-- 化學 -->
+            <div class="bg-slate-800 rounded-xl p-6 card-hover cursor-pointer" onclick="showCourse('化學')">
+                <div class="text-4xl mb-3 text-center">🧪</div>
+                <h3 class="font-bold text-center mb-1">化學</h3>
+                <p class="text-xs text-gray-400 text-center">3,190 題</p>
+                <p class="text-xs text-purple-400 text-center mt-2">48 節點</p>
+            </div>
+            <!-- 生物 -->
+            <div class="bg-slate-800 rounded-xl p-6 card-hover cursor-pointer" onclick="showCourse('生物')">
+                <div class="text-4xl mb-3 text-center">🧬</div>
+                <h3 class="font-bold text-center mb-1">生物</h3>
+                <p class="text-xs text-gray-400 text-center">3,135 題</p>
+                <p class="text-xs text-green-400 text-center mt-2">45 節點</p>
+            </div>
+            <!-- 地球科學 -->
+            <div class="bg-slate-800 rounded-xl p-6 card-hover cursor-pointer" onclick="showCourse('地球科學')">
+                <div class="text-4xl mb-3 text-center">🌍</div>
+                <h3 class="font-bold text-center mb-1">地球科學</h3>
+                <p class="text-xs text-gray-400 text-center">2,385 題</p>
+                <p class="text-xs text-cyan-400 text-center mt-2">38 節點</p>
+            </div>
+            <!-- 國文 -->
+            <div class="bg-slate-800 rounded-xl p-6 card-hover cursor-pointer" onclick="showCourse('國文')">
+                <div class="text-4xl mb-3 text-center">📚</div>
+                <h3 class="font-bold text-center mb-1">國文</h3>
+                <p class="text-xs text-gray-400 text-center">5,264 題</p>
+                <p class="text-xs text-red-400 text-center mt-2">62 節點</p>
+            </div>
+            <!-- 英文 -->
+            <div class="bg-slate-800 rounded-xl p-6 card-hover cursor-pointer" onclick="showCourse('英文')">
+                <div class="text-4xl mb-3 text-center">🔤</div>
+                <h3 class="font-bold text-center mb-1">英文</h3>
+                <p class="text-xs text-gray-400 text-center">3,800 題</p>
+                <p class="text-xs text-indigo-400 text-center mt-2">58 節點</p>
+            </div>
+            <!-- 歷史 -->
+            <div class="bg-slate-800 rounded-xl p-6 card-hover cursor-pointer" onclick="showCourse('歷史')">
+                <div class="text-4xl mb-3 text-center">📜</div>
+                <h3 class="font-bold text-center mb-1">歷史</h3>
+                <p class="text-xs text-gray-400 text-center">3,860 題</p>
+                <p class="text-xs text-orange-400 text-center mt-2">55 節點</p>
+            </div>
+            <!-- 地理 -->
+            <div class="bg-slate-800 rounded-xl p-6 card-hover cursor-pointer" onclick="showCourse('地理')">
+                <div class="text-4xl mb-3 text-center">🗺️</div>
+                <h3 class="font-bold text-center mb-1">地理</h3>
+                <p class="text-xs text-gray-400 text-center">3,261 題</p>
+                <p class="text-xs text-teal-400 text-center mt-2">48 節點</p>
+            </div>
+            <!-- 公民 -->
+            <div class="bg-slate-800 rounded-xl p-6 card-hover cursor-pointer" onclick="showCourse('公民')">
+                <div class="text-4xl mb-3 text-center">⚖️</div>
+                <h3 class="font-bold text-center mb-1">公民</h3>
+                <p class="text-xs text-gray-400 text-center">2,655 題</p>
+                <p class="text-xs text-pink-400 text-center mt-2">42 節點</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- 課程詳情模態框 -->
+    <div id="courseModal" class="fixed inset-0 bg-black/80 flex items-center justify-center z-50 hidden">
+        <div class="bg-slate-800 rounded-2xl p-8 max-w-lg mx-4 w-full">
+            <div class="flex justify-between items-center mb-6">
+                <h2 id="modalTitle" class="text-2xl font-bold">📐 數學</h2>
+                <button onclick="closeModal()" class="text-gray-400 hover:text-white text-2xl">&times;</button>
+            </div>
+            
+            <div class="space-y-4 mb-6">
+                <div class="flex justify-between py-2 border-b border-gray-700">
+                    <span class="text-gray-400">題目數量</span>
+                    <span id="modalQuestions" class="font-bold">6,780 題</span>
                 </div>
-                <div class="text-center">
-                    <div class="text-4xl mb-3">📝</div>
-                    <h3 class="font-bold mb-2">大量題庫練習</h3>
-                    <p class="text-gray-400 text-sm">每門課程 150-200 道練習題</p>
+                <div class="flex justify-between py-2 border-b border-gray-700">
+                    <span class="text-gray-400">知識節點</span>
+                    <span id="modalNodes" class="font-bold">56 個</span>
                 </div>
-                <div class="text-center">
-                    <div class="text-4xl mb-3">🎯</div>
-                    <h3 class="font-bold mb-2">模擬測驗</h3>
-                    <p class="text-gray-400 text-sm">仿真考試環境，提前適應</p>
+                <div class="flex justify-between py-2 border-b border-gray-700">
+                    <span class="text-gray-400">怪物數量</span>
+                    <span id="modalMonsters" class="font-bold">56 隻</span>
                 </div>
             </div>
-        </section>
 
-        <!-- FAQ -->
-        <section class="mb-12">
-            <h2 class="text-2xl font-bold text-center mb-8">常見問題</h2>
-            <div class="space-y-4 max-w-3xl mx-auto">
-                <details class="bg-gray-800 rounded-lg p-4">
-                    <summary class="font-bold cursor-pointer">課程有效期多長？</summary>
-                    <p class="text-gray-400 mt-2">購買後一年內有效，包含期間內的所有更新。</p>
-                </details>
-                <details class="bg-gray-800 rounded-lg p-4">
-                    <summary class="font-bold cursor-pointer">Pro 版有什麼額外功能？</summary>
-                    <p class="text-gray-400 mt-2">Pro 版包含 AI 助教答疑、無限次模擬測驗、認證考試代報名指導等進階功能。</p>
-                </details>
-                <details class="bg-gray-800 rounded-lg p-4">
-                    <summary class="font-bold cursor-pointer">可以退款嗎？</summary>
-                    <p class="text-gray-400 mt-2">購買後 7 天內，若進度低於 20%，可申請全額退款。</p>
-                </details>
-                <details class="bg-gray-800 rounded-lg p-4">
-                    <summary class="font-bold cursor-pointer">如何開始學習？</summary>
-                    <p class="text-gray-400 mt-2">購買後立即可在「我的課程」中開始學習，支援電腦和手機。</p>
-                </details>
+            <h3 class="font-bold mb-3">XTF 學習路徑</h3>
+            <div class="space-y-2 mb-6 text-sm">
+                <a href="#" id="modalLearnLink" class="flex items-center gap-2 text-blue-400 hover:text-blue-300">
+                    <span>🔻</span> 消：概念解說學習
+                </a>
+                <a href="#" id="modalStarmapLink" class="flex items-center gap-2 text-purple-400 hover:text-purple-300">
+                    <span>🔀</span> 拓：知識星圖連結
+                </a>
+                <a href="#" id="modalBattleLink" class="flex items-center gap-2 text-green-400 hover:text-green-300">
+                    <span>🔺</span> 融：RPG戰鬥實戰
+                </a>
             </div>
-        </section>
-    </main>
-
-    <!-- 課程詳情 Modal -->
-    <div id="courseModal" class="fixed inset-0 bg-black/80 hidden items-center justify-center z-50 p-4">
-        <div class="bg-gray-800 rounded-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
-            <div id="modalContent"></div>
+            
+            <div class="flex gap-3">
+                <a id="modalMainBtn" href="learn.html?subject=數學" class="flex-1 bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-400 hover:to-purple-500 text-center py-3 rounded-lg font-bold">
+                    📖 開始學習
+                </a>
+            </div>
         </div>
     </div>
 
     <!-- Footer -->
-    <footer class="py-8 border-t border-gray-800">
-        <div class="max-w-6xl mx-auto px-4 text-center text-gray-500 text-sm">
-            <p>北斗七星文創數位有限公司 © 2025</p>
-            <div class="mt-2">📧 sanhsing@gmail.com</div>
+    <footer class="py-8 border-t border-white/10">
+        <div class="container mx-auto px-4 text-center text-gray-500">
+            <p>© 2025 北斗七星文創數位有限公司</p>
         </div>
     </footer>
 
     <script>
-        const API_BASE = 'https://beidou-edu-server-1.onrender.com';
-        let currentUser = null;
-        let courses = [];
+        const courseData = {
+            '數學': { emoji: '📐', questions: '6,780', nodes: '56', monsters: '56' },
+            '物理': { emoji: '⚡', questions: '4,779', nodes: '52', monsters: '52' },
+            '化學': { emoji: '🧪', questions: '3,190', nodes: '48', monsters: '48' },
+            '生物': { emoji: '🧬', questions: '3,135', nodes: '45', monsters: '45' },
+            '地球科學': { emoji: '🌍', questions: '2,385', nodes: '38', monsters: '38' },
+            '國文': { emoji: '📚', questions: '5,264', nodes: '62', monsters: '62' },
+            '英文': { emoji: '🔤', questions: '3,800', nodes: '58', monsters: '58' },
+            '歷史': { emoji: '📜', questions: '3,860', nodes: '55', monsters: '55' },
+            '地理': { emoji: '🗺️', questions: '3,261', nodes: '48', monsters: '48' },
+            '公民': { emoji: '⚖️', questions: '2,655', nodes: '42', monsters: '42' }
+        };
 
-        // 初始化
-        document.addEventListener('DOMContentLoaded', () => {
-            checkAuth();
-            loadCourses();
-        });
-
-        // 檢查登入
-        function checkAuth() {
-            const token = localStorage.getItem('beidou_token');
-            const userData = localStorage.getItem('beidou_user');
-            
-            if (token && userData) {
-                currentUser = JSON.parse(userData);
-                document.getElementById('userInfo').textContent = currentUser.username || currentUser.email;
-                loadMyCourses();
-            }
-        }
-
-        // 載入課程列表
-        async function loadCourses() {
-            try {
-                const response = await fetch(`${API_BASE}/api/courses`);
-                const result = await response.json();
-                
-                if (result.success) {
-                    courses = result.data;
-                    renderCourses(courses);
-                }
-            } catch (error) {
-                console.error('Load courses error:', error);
-                // Fallback 靜態資料
-                courses = [
-                    { id: 'google-ai', name: 'Google AI Essentials', provider: 'Google', price: 199, proPrice: 399, description: 'Google 官方 AI 基礎認證備考課程', duration: '8 小時', questionCount: 150, badge: '🎖️' },
-                    { id: 'aws-ai', name: 'AWS AI Practitioner', provider: 'Amazon', price: 299, proPrice: 599, description: 'AWS 認證 AI 從業者備考課程', duration: '12 小時', questionCount: 200, badge: '🏅' },
-                    { id: 'azure-ai', name: 'Azure AI Fundamentals', provider: 'Microsoft', price: 299, proPrice: 599, description: 'Microsoft Azure AI-900 備考課程', duration: '10 小時', questionCount: 180, badge: '🥇' },
-                    { id: 'ipas-security', name: 'iPAS 資訊安全工程師', provider: '經濟部', price: 149, proPrice: 299, description: '經濟部 iPAS 資安認證備考課程', duration: '6 小時', questionCount: 120, badge: '🛡️' }
-                ];
-                renderCourses(courses);
-            }
-        }
-
-        // 渲染課程列表
-        function renderCourses(courses) {
-            const providerColors = {
-                'Google': 'border-l-4 border-blue-500',
-                'Amazon': 'border-l-4 border-yellow-500',
-                'Microsoft': 'border-l-4 border-sky-500',
-                '經濟部': 'border-l-4 border-green-500'
-            };
-            
-            const providerLogos = {
-                'Google': '🔵',
-                'Amazon': '🟠',
-                'Microsoft': '🔷',
-                '經濟部': '🟢'
-            };
-
-            const html = courses.map(c => `
-                <div class="card rounded-2xl overflow-hidden card-hover ${providerColors[c.provider] || ''}">
-                    <div class="p-6">
-                        <div class="flex justify-between items-start mb-4">
-                            <div>
-                                <div class="text-sm text-gray-400 mb-1">${providerLogos[c.provider] || ''} ${c.provider}</div>
-                                <h3 class="text-xl font-bold">${c.name}</h3>
-                            </div>
-                            <div class="text-3xl">${c.badge}</div>
-                        </div>
-                        
-                        <p class="text-gray-400 text-sm mb-4">${c.description}</p>
-                        
-                        <div class="flex gap-4 text-sm text-gray-400 mb-6">
-                            <span>⏱️ ${c.duration}</span>
-                            <span>📝 ${c.questionCount} 題</span>
-                        </div>
-                        
-                        <div class="flex items-end justify-between">
-                            <div>
-                                <div class="text-2xl font-bold text-purple-400">$${c.price}</div>
-                                <div class="text-xs text-gray-500">Pro 版 $${c.proPrice}</div>
-                            </div>
-                            <button onclick="showCourseDetail('${c.id}')" 
-                                    class="bg-purple-600 hover:bg-purple-700 px-6 py-2 rounded-lg transition">
-                                查看詳情
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            `).join('');
-            
-            document.getElementById('courseList').innerHTML = html;
-        }
-
-        // 載入我的課程
-        async function loadMyCourses() {
-            if (!currentUser) return;
-            
-            try {
-                const response = await fetch(`${API_BASE}/api/courses/my/${currentUser.userId}`);
-                const result = await response.json();
-                
-                if (result.success && result.data.length > 0) {
-                    document.getElementById('myCourses').classList.remove('hidden');
-                    renderMyCourses(result.data);
-                }
-            } catch (error) {
-                console.error('Load my courses error:', error);
-            }
-        }
-
-        // 渲染我的課程
-        function renderMyCourses(myCourses) {
-            const html = myCourses.map(c => `
-                <div class="bg-gray-800 rounded-xl p-4 card-hover cursor-pointer" onclick="continueLearning('${c.id}')">
-                    <div class="flex justify-between items-start mb-3">
-                        <div>
-                            <div class="font-bold">${c.name}</div>
-                            <div class="text-xs text-gray-400">${c.provider}</div>
-                        </div>
-                        <span class="text-xs bg-${c.tier === 'pro' ? 'yellow' : 'purple'}-600 px-2 py-1 rounded">
-                            ${c.tier === 'pro' ? 'Pro' : '標準'}
-                        </span>
-                    </div>
-                    
-                    <div class="mb-3">
-                        <div class="flex justify-between text-xs text-gray-400 mb-1">
-                            <span>學習進度</span>
-                            <span>${c.progress}%</span>
-                        </div>
-                        <div class="bg-gray-700 rounded-full h-2">
-                            <div class="bg-purple-500 h-2 rounded-full" style="width: ${c.progress}%"></div>
-                        </div>
-                    </div>
-                    
-                    <button class="w-full bg-green-600 hover:bg-green-700 py-2 rounded-lg text-sm transition">
-                        繼續學習
-                    </button>
-                </div>
-            `).join('');
-            
-            document.getElementById('myCoursesGrid').innerHTML = html;
-        }
-
-        // 顯示課程詳情
-        async function showCourseDetail(courseId) {
-            const course = courses.find(c => c.id === courseId);
-            if (!course) return;
-            
-            // 嘗試從 API 取得完整資訊
-            let fullCourse = course;
-            try {
-                const response = await fetch(`${API_BASE}/api/courses/${courseId}`);
-                const result = await response.json();
-                if (result.success) {
-                    fullCourse = result.data;
-                }
-            } catch (e) {}
-            
-            const html = `
-                <div class="p-6">
-                    <div class="flex justify-between items-start mb-6">
-                        <div>
-                            <div class="text-sm text-gray-400 mb-1">${fullCourse.provider}</div>
-                            <h2 class="text-2xl font-bold">${fullCourse.name}</h2>
-                        </div>
-                        <button onclick="closeModal()" class="text-gray-400 hover:text-white text-2xl">&times;</button>
-                    </div>
-                    
-                    <p class="text-gray-300 mb-6">${fullCourse.description}</p>
-                    
-                    <div class="grid grid-cols-3 gap-4 mb-6">
-                        <div class="bg-gray-700/50 rounded-lg p-3 text-center">
-                            <div class="text-2xl mb-1">⏱️</div>
-                            <div class="text-sm">${fullCourse.duration}</div>
-                        </div>
-                        <div class="bg-gray-700/50 rounded-lg p-3 text-center">
-                            <div class="text-2xl mb-1">📝</div>
-                            <div class="text-sm">${fullCourse.questionCount} 題</div>
-                        </div>
-                        <div class="bg-gray-700/50 rounded-lg p-3 text-center">
-                            <div class="text-2xl mb-1">🎯</div>
-                            <div class="text-sm">${fullCourse.passingScore || 70}% 及格</div>
-                        </div>
-                    </div>
-                    
-                    ${fullCourse.modules ? `
-                    <div class="mb-6">
-                        <h3 class="font-bold mb-3">📚 課程大綱</h3>
-                        <div class="space-y-2">
-                            ${fullCourse.modules.map((m, i) => `
-                                <div class="bg-gray-700/50 rounded-lg p-3 flex justify-between">
-                                    <span>${i + 1}. ${m.name}</span>
-                                    <span class="text-gray-400 text-sm">${m.duration}</span>
-                                </div>
-                            `).join('')}
-                        </div>
-                    </div>
-                    ` : ''}
-                    
-                    <!-- 方案選擇 -->
-                    <div class="grid md:grid-cols-2 gap-4 mb-6">
-                        <div class="border border-gray-600 rounded-xl p-4">
-                            <div class="font-bold mb-2">標準版</div>
-                            <div class="text-2xl font-bold text-purple-400 mb-3">$${fullCourse.price}</div>
-                            <ul class="text-sm text-gray-400 space-y-1 mb-4">
-                                ${(fullCourse.features?.standard || ['完整課程內容', '練習題庫', '模擬測驗 x2']).map(f => `<li>✓ ${f}</li>`).join('')}
-                            </ul>
-                            <button onclick="enrollCourse('${courseId}', 'standard')" 
-                                    class="w-full bg-purple-600 hover:bg-purple-700 py-2 rounded-lg transition">
-                                立即購買
-                            </button>
-                        </div>
-                        
-                        <div class="border border-yellow-500 rounded-xl p-4 relative">
-                            <div class="absolute -top-3 left-4 bg-yellow-500 text-black text-xs px-2 py-1 rounded">推薦</div>
-                            <div class="font-bold mb-2">Pro 版</div>
-                            <div class="text-2xl font-bold text-yellow-400 mb-3">$${fullCourse.proPrice}</div>
-                            <ul class="text-sm text-gray-400 space-y-1 mb-4">
-                                ${(fullCourse.features?.pro || ['標準版全部功能', 'AI 助教答疑', '無限次模擬測驗', '認證考試代報名']).map(f => `<li>✓ ${f}</li>`).join('')}
-                            </ul>
-                            <button onclick="enrollCourse('${courseId}', 'pro')" 
-                                    class="w-full bg-yellow-500 hover:bg-yellow-600 text-black py-2 rounded-lg transition">
-                                立即購買
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            `;
-            
-            document.getElementById('modalContent').innerHTML = html;
+        function showCourse(subject) {
+            const data = courseData[subject];
+            document.getElementById('modalTitle').textContent = `${data.emoji} ${subject}`;
+            document.getElementById('modalQuestions').textContent = data.questions + ' 題';
+            document.getElementById('modalNodes').textContent = data.nodes + ' 個';
+            document.getElementById('modalMonsters').textContent = data.monsters + ' 隻';
+            document.getElementById('modalLearnLink').href = `learn.html?subject=${subject}`;
+            document.getElementById('modalStarmapLink').href = `starmap.html?subject=${subject}`;
+            document.getElementById('modalBattleLink').href = `battle.html?subject=${subject}`;
+            document.getElementById('modalMainBtn').href = `learn.html?subject=${subject}`;
             document.getElementById('courseModal').classList.remove('hidden');
-            document.getElementById('courseModal').classList.add('flex');
         }
 
-        // 關閉 Modal
         function closeModal() {
             document.getElementById('courseModal').classList.add('hidden');
-            document.getElementById('courseModal').classList.remove('flex');
         }
 
-        // 報名課程
-        async function enrollCourse(courseId, tier) {
-            if (!currentUser) {
-                if (confirm('請先登入才能購買課程，是否前往登入？')) {
-                    window.location.href = `auth.html?redirect=courses.html`;
-                }
-                return;
-            }
-            
-            try {
-                // 建立報名
-                const enrollRes = await fetch(`${API_BASE}/api/courses/enroll`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        userId: currentUser.userId,
-                        courseId,
-                        tier
-                    })
-                });
-                
-                const enrollResult = await enrollRes.json();
-                
-                if (!enrollResult.success) {
-                    alert(enrollResult.error || '報名失敗');
-                    return;
-                }
-                
-                // 建立付款
-                const course = courses.find(c => c.id === courseId);
-                const price = tier === 'pro' ? course.proPrice : course.price;
-                
-                const payRes = await fetch(`${API_BASE}/api/payment/cert`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        userId: currentUser.userId,
-                        certId: courseId,
-                        isPro: tier === 'pro'
-                    })
-                });
-                
-                const payResult = await payRes.json();
-                
-                if (payResult.success) {
-                    // 導向 ECPay 付款
-                    const form = document.createElement('form');
-                    form.method = 'POST';
-                    form.action = payResult.paymentUrl;
-                    
-                    for (const [key, value] of Object.entries(payResult.params)) {
-                        const input = document.createElement('input');
-                        input.type = 'hidden';
-                        input.name = key;
-                        input.value = value;
-                        form.appendChild(input);
-                    }
-                    
-                    document.body.appendChild(form);
-                    form.submit();
-                } else {
-                    alert('付款建立失敗：' + payResult.error);
-                }
-            } catch (error) {
-                alert('操作失敗：' + error.message);
-            }
-        }
-
-        // 繼續學習
-        function continueLearning(courseId) {
-            window.location.href = `course_learn.html?id=${courseId}`;
-        }
-
-        // 點擊 Modal 外部關閉
+        // 點擊背景關閉
         document.getElementById('courseModal').addEventListener('click', (e) => {
-            if (e.target === document.getElementById('courseModal')) {
-                closeModal();
-            }
+            if (e.target.id === 'courseModal') closeModal();
         });
+
+        // 登入狀態
+        const user = JSON.parse(localStorage.getItem('beidou_user') || 'null');
+        if (user && !user.guest) {
+            document.getElementById('authLink').textContent = user.username || '會員';
+            document.getElementById('authLink').href = 'dashboard.html';
+        }
     </script>
 </body>
 </html>

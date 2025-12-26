@@ -3,556 +3,305 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>北斗教育 | AI 證照考試</title>
+    <title>北斗教育 | 證照模擬考</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&display=swap');
         body { font-family: 'Noto Sans TC', sans-serif; }
-        .gradient-bg { background: linear-gradient(135deg, #1e3a5f 0%, #3b82f6 100%); }
-        .card-hover { transition: all 0.3s ease; }
-        .card-hover:hover { transform: translateY(-2px); }
-        .option-btn { transition: all 0.2s ease; }
-        .option-btn:hover:not(.answered) { background: #f3f4f6; }
-        .option-btn.selected { border-color: #3b82f6; background: #eff6ff; }
-        .option-btn.correct { border-color: #10b981; background: #d1fae5; }
-        .option-btn.wrong { border-color: #ef4444; background: #fee2e2; }
-        .loading { animation: pulse 1.5s infinite; }
-        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+        .gradient-bg { background: linear-gradient(135deg, #0f172a 0%, #1e3a5f 50%, #0f172a 100%); }
+        .card { background: rgba(30, 41, 59, 0.8); border: 1px solid rgba(255,255,255,0.1); }
+        .option-btn { transition: all 0.2s; }
+        .option-btn:hover { transform: translateX(4px); }
+        .option-btn.selected { border-color: #f59e0b; background: rgba(245,158,11,0.1); }
+        .option-btn.correct { border-color: #22c55e; background: rgba(34,197,94,0.1); }
+        .option-btn.wrong { border-color: #ef4444; background: rgba(239,68,68,0.1); }
     </style>
-<!-- Google Analytics -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-8X0VB6K9G7"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag("js", new Date());
-  gtag("config", "G-8X0VB6K9G7");
-</script>
 </head>
-<body class="bg-gray-50 min-h-screen">
-    <div id="app">
-        <!-- Header -->
-        <header class="gradient-bg text-white shadow-lg">
-            <div class="container mx-auto px-4 py-4">
-                <div class="flex items-center justify-between">
-                    <a href="index.html" class="flex items-center space-x-3">
-                        <div class="text-3xl">🎓</div>
-                        <div>
-                            <h1 class="text-xl font-bold">北斗教育</h1>
-                            <p class="text-sm text-blue-200">AI 證照 + iPAS 模擬考</p>
-                        </div>
-                    </a>
-                    <div id="headerStats" class="text-right">
-                        <div class="text-2xl font-bold" id="totalQuestions">--</div>
-                        <div class="text-sm text-blue-200">題庫總數</div>
-                    </div>
+<body class="gradient-bg min-h-screen text-white">
+
+    <nav class="py-4 px-6 border-b border-white/10">
+        <div class="container mx-auto flex justify-between items-center">
+            <a href="index.html" class="flex items-center gap-2">
+                <span class="text-2xl">🌟</span>
+                <span class="font-bold text-xl">北斗教育</span>
+            </a>
+            <div class="flex items-center gap-4">
+                <a href="ai_courses.html" class="text-gray-300 hover:text-white">← 返回課程</a>
+                <a href="cert_learn.html" class="text-blue-400 hover:text-blue-300">📖 XTF 學習</a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="container mx-auto px-4 py-8 max-w-4xl">
+        <!-- 選擇證照 -->
+        <div id="selectPanel" class="card rounded-2xl p-8">
+            <h1 class="text-3xl font-bold text-center mb-8">🎯 證照模擬考</h1>
+            
+            <div class="grid md:grid-cols-2 gap-4 mb-8">
+                <button onclick="startExam('google_ai')" class="cert-card p-6 rounded-xl bg-gradient-to-r from-blue-600/30 to-purple-600/30 border border-blue-500/30 hover:border-blue-400 transition text-left">
+                    <div class="text-3xl mb-2">🤖</div>
+                    <div class="font-bold text-lg">Google AI Essentials</div>
+                    <div class="text-sm text-gray-400 mt-1">358 題</div>
+                </button>
+                
+                <button onclick="startExam('aws_ai')" class="cert-card p-6 rounded-xl bg-gradient-to-r from-orange-600/30 to-yellow-600/30 border border-orange-500/30 hover:border-orange-400 transition text-left">
+                    <div class="text-3xl mb-2">☁️</div>
+                    <div class="font-bold text-lg">AWS AI Services</div>
+                    <div class="text-sm text-gray-400 mt-1">1,568 題</div>
+                </button>
+                
+                <button onclick="startExam('azure_ai')" class="cert-card p-6 rounded-xl bg-gradient-to-r from-indigo-600/30 to-blue-600/30 border border-indigo-500/30 hover:border-indigo-400 transition text-left">
+                    <div class="text-3xl mb-2">🔷</div>
+                    <div class="font-bold text-lg">Azure AI-900</div>
+                    <div class="text-sm text-gray-400 mt-1">49 題</div>
+                </button>
+                
+                <button onclick="startExam('ipas')" class="cert-card p-6 rounded-xl bg-gradient-to-r from-green-600/30 to-teal-600/30 border border-green-500/30 hover:border-green-400 transition text-left">
+                    <div class="text-3xl mb-2">🛡️</div>
+                    <div class="font-bold text-lg">iPAS 資訊安全工程師</div>
+                    <div class="text-sm text-gray-400 mt-1">510 題</div>
+                </button>
+            </div>
+            
+            <div class="text-center">
+                <label class="flex items-center justify-center gap-2 text-gray-400">
+                    <input type="number" id="questionCount" value="10" min="5" max="50" class="w-16 bg-slate-700 rounded px-2 py-1 text-white text-center">
+                    <span>題/回</span>
+                </label>
+            </div>
+        </div>
+
+        <!-- 答題區 -->
+        <div id="examPanel" class="hidden">
+            <!-- 進度條 -->
+            <div class="card rounded-xl p-4 mb-6">
+                <div class="flex justify-between items-center mb-2">
+                    <span id="certName" class="font-bold">Google AI</span>
+                    <span id="progressText">1 / 10</span>
+                </div>
+                <div class="h-2 bg-gray-700 rounded-full overflow-hidden">
+                    <div id="progressBar" class="h-full bg-gradient-to-r from-blue-500 to-purple-500 rounded-full transition-all" style="width: 10%"></div>
                 </div>
             </div>
-        </header>
 
-        <!-- Main Content -->
-        <main class="container mx-auto px-4 py-6">
-            <!-- Loading -->
-            <div id="loadingSection" class="text-center py-12">
-                <div class="text-4xl mb-4 loading">🎓</div>
-                <p class="text-gray-500">載入證照題庫...</p>
-            </div>
-
-            <!-- Cert Selection -->
-            <section id="certSection" class="hidden">
-                <h2 class="text-xl font-bold text-gray-800 mb-6">📜 選擇證照類型</h2>
-                
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-                    <!-- Google AI -->
-                    <div onclick="selectCert('google')" 
-                        class="cert-card bg-white rounded-xl shadow-md p-6 cursor-pointer card-hover border-2 border-transparent"
-                        data-cert="google">
-                        <div class="flex items-center justify-between mb-4">
-                            <img src="https://www.gstatic.com/images/branding/product/2x/googleg_48dp.png" class="w-12 h-12">
-                            <span class="px-2 py-1 bg-green-100 text-green-700 text-xs rounded-full font-medium">入門</span>
-                        </div>
-                        <h3 class="font-bold text-lg mb-1">Google AI Essentials</h3>
-                        <p class="text-gray-500 text-sm mb-4">Google 官方 AI 基礎認證</p>
-                        <div class="flex justify-between text-sm">
-                            <span class="text-gray-400">📝 <span class="google-count">--</span> 題</span>
-                            <span class="text-green-600">及格 80%</span>
-                        </div>
-                    </div>
-                    
-                    <!-- AWS AI -->
-                    <div onclick="selectCert('aws')" 
-                        class="cert-card bg-white rounded-xl shadow-md p-6 cursor-pointer card-hover border-2 border-transparent"
-                        data-cert="aws">
-                        <div class="flex items-center justify-between mb-4">
-                            <div class="w-12 h-12 bg-orange-100 rounded-lg flex items-center justify-center text-2xl">☁️</div>
-                            <span class="px-2 py-1 bg-yellow-100 text-yellow-700 text-xs rounded-full font-medium">中級</span>
-                        </div>
-                        <h3 class="font-bold text-lg mb-1">AWS AI Practitioner</h3>
-                        <p class="text-gray-500 text-sm mb-4">AWS AI 從業者認證</p>
-                        <div class="flex justify-between text-sm">
-                            <span class="text-gray-400">📝 <span class="aws-count">--</span> 題</span>
-                            <span class="text-yellow-600">及格 70%</span>
-                        </div>
-                    </div>
-                    
-                    <!-- Azure AI-900 -->
-                    <div onclick="selectCert('azure')" 
-                        class="cert-card bg-white rounded-xl shadow-md p-6 cursor-pointer card-hover border-2 border-transparent"
-                        data-cert="azure">
-                        <div class="flex items-center justify-between mb-4">
-                            <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center text-2xl">Ⓜ️</div>
-                            <span class="px-2 py-1 bg-yellow-100 text-yellow-700 text-xs rounded-full font-medium">中級</span>
-                        </div>
-                        <h3 class="font-bold text-lg mb-1">Microsoft AI-900</h3>
-                        <p class="text-gray-500 text-sm mb-4">Azure AI 基礎認證</p>
-                        <div class="flex justify-between text-sm">
-                            <span class="text-gray-400">📝 <span class="azure-count">--</span> 題</span>
-                            <span class="text-yellow-600">及格 70%</span>
-                        </div>
-                    </div>
-                    
-                    <!-- iPAS -->
-                    <div onclick="selectCert('ipas')" 
-                        class="cert-card bg-white rounded-xl shadow-md p-6 cursor-pointer card-hover border-2 border-transparent"
-                        data-cert="ipas">
-                        <div class="flex items-center justify-between mb-4">
-                            <div class="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center text-2xl">🛡️</div>
-                            <span class="px-2 py-1 bg-blue-100 text-blue-700 text-xs rounded-full font-medium">初/中級</span>
-                        </div>
-                        <h3 class="font-bold text-lg mb-1">iPAS 資安工程師</h3>
-                        <p class="text-gray-500 text-sm mb-4">經濟部資訊安全工程師</p>
-                        <div class="flex justify-between text-sm">
-                            <span class="text-gray-400">📝 <span class="ipas-count">--</span> 題</span>
-                            <span class="text-blue-600">及格 60%</span>
-                        </div>
-                    </div>
+            <!-- 題目卡 -->
+            <div class="card rounded-2xl p-6 mb-6">
+                <div class="flex items-center gap-2 mb-4">
+                    <span id="qNumber" class="bg-blue-600 px-3 py-1 rounded-full text-sm font-bold">Q1</span>
+                    <span id="qDifficulty" class="text-yellow-400">⭐⭐</span>
                 </div>
                 
-                <!-- Settings -->
-                <div id="settingsSection" class="bg-white rounded-xl shadow-md p-6 hidden">
-                    <h3 class="font-bold text-lg mb-4">⚙️ 考試設定</h3>
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-2">題目數量</label>
-                            <select id="countSelect" class="w-full border rounded-lg px-4 py-2">
-                                <option value="10">10 題（快速練習）</option>
-                                <option value="20" selected>20 題（標準練習）</option>
-                                <option value="50">50 題（模擬考試）</option>
-                            </select>
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-2">考試模式</label>
-                            <select id="modeSelect" class="w-full border rounded-lg px-4 py-2">
-                                <option value="practice">練習模式（即時解答）</option>
-                                <option value="exam">考試模式（最後交卷）</option>
-                            </select>
-                        </div>
-                        <div class="flex items-end">
-                            <button onclick="startExam()" class="w-full bg-blue-600 text-white py-2 px-4 rounded-lg font-medium hover:bg-blue-700">
-                                開始考試 🚀
-                            </button>
-                        </div>
-                    </div>
-                    <div id="selectedCertInfo" class="mt-4 p-3 bg-blue-50 rounded-lg">
-                        <span class="text-gray-600">已選擇：</span>
-                        <span id="selectedCertName" class="font-bold text-blue-600"></span>
-                    </div>
+                <div id="questionText" class="text-lg leading-relaxed mb-6">
+                    題目載入中...
                 </div>
-            </section>
 
-            <!-- Exam Area -->
-            <section id="examArea" class="hidden">
-                <div class="bg-white rounded-xl shadow-md p-6">
-                    <!-- Progress -->
-                    <div class="flex items-center justify-between mb-4">
-                        <div class="flex items-center space-x-2">
-                            <span id="examCertBadge" class="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm font-medium"></span>
-                            <span id="examModeBadge" class="px-2 py-1 bg-gray-100 text-gray-600 rounded text-xs"></span>
-                        </div>
-                        <div class="text-gray-500">
-                            <span id="progressText">1 / 20</span>
-                        </div>
-                    </div>
-                    
-                    <!-- Progress Bar -->
-                    <div class="w-full bg-gray-200 rounded-full h-2 mb-6">
-                        <div id="progressBar" class="bg-blue-600 h-2 rounded-full transition-all" style="width: 5%"></div>
-                    </div>
-                    
-                    <!-- Question -->
-                    <div class="mb-6">
-                        <p id="questionText" class="text-lg text-gray-800 leading-relaxed"></p>
-                    </div>
-                    
-                    <!-- Options -->
-                    <div id="optionsContainer" class="space-y-3 mb-6"></div>
-                    
-                    <!-- Explanation -->
-                    <div id="explanationArea" class="hidden mb-6 p-4 bg-gray-50 rounded-lg">
-                        <h4 class="font-bold text-gray-700 mb-2">📝 解析</h4>
-                        <p id="explanationText" class="text-gray-600"></p>
-                    </div>
-                    
-                    <!-- Navigation -->
-                    <div class="flex justify-between">
-                        <button onclick="prevQuestion()" id="prevBtn" class="px-4 py-2 border border-gray-300 rounded-lg text-gray-600 hover:bg-gray-50" disabled>
-                            ← 上一題
-                        </button>
-                        <button onclick="nextQuestion()" id="nextBtn" class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
-                            下一題 →
-                        </button>
-                    </div>
+                <div id="optionsContainer" class="space-y-3">
+                    <!-- 選項會動態生成 -->
                 </div>
-            </section>
-
-            <!-- Results Area -->
-            <section id="resultsArea" class="hidden">
-                <div class="bg-white rounded-xl shadow-md p-8 text-center">
-                    <div class="text-6xl mb-4" id="resultEmoji">🎉</div>
-                    <h2 class="text-2xl font-bold text-gray-800 mb-2">考試完成！</h2>
-                    <div class="text-5xl font-bold mb-2" id="scoreDisplay">80%</div>
-                    <p class="text-gray-500 mb-2" id="scoreDetail">答對 16 / 20 題</p>
-                    <p class="mb-6" id="passStatus"></p>
-                    
-                    <div class="grid grid-cols-2 gap-4 max-w-md mx-auto mb-6">
-                        <div class="p-4 bg-green-50 rounded-lg">
-                            <div class="text-2xl font-bold text-green-600" id="correctCount">16</div>
-                            <div class="text-sm text-green-700">答對</div>
-                        </div>
-                        <div class="p-4 bg-red-50 rounded-lg">
-                            <div class="text-2xl font-bold text-red-600" id="wrongCount">4</div>
-                            <div class="text-sm text-red-700">答錯</div>
-                        </div>
-                    </div>
-                    
-                    <div class="flex justify-center space-x-4">
-                        <button onclick="reviewAnswers()" class="px-6 py-2 border border-blue-600 text-blue-600 rounded-lg hover:bg-blue-50">
-                            查看解析
-                        </button>
-                        <button onclick="resetExam()" class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
-                            再考一次
-                        </button>
-                    </div>
-                </div>
-            </section>
-        </main>
-
-        <footer class="bg-gray-800 text-gray-400 py-6 mt-8">
-            <div class="container mx-auto px-4 text-center">
-                <p>© 2025 北斗數位工作室</p>
             </div>
-        </footer>
-    </div>
+
+            <!-- 解析區 (答題後顯示) -->
+            <div id="explanationPanel" class="card rounded-xl p-6 mb-6 hidden">
+                <h3 class="font-bold text-green-400 mb-3">📝 解析</h3>
+                <div id="explanationText" class="text-gray-300 leading-relaxed"></div>
+            </div>
+
+            <!-- 操作按鈕 -->
+            <div class="flex gap-4">
+                <button onclick="prevQuestion()" id="btnPrev" class="flex-1 bg-slate-700 hover:bg-slate-600 py-3 rounded-xl font-bold disabled:opacity-50" disabled>
+                    ← 上一題
+                </button>
+                <button onclick="nextQuestion()" id="btnNext" class="flex-1 bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-400 hover:to-purple-500 py-3 rounded-xl font-bold">
+                    下一題 →
+                </button>
+            </div>
+        </div>
+
+        <!-- 結果區 -->
+        <div id="resultPanel" class="card rounded-2xl p-8 hidden">
+            <h2 class="text-3xl font-bold text-center mb-6">🎉 測驗完成！</h2>
+            
+            <div class="text-center mb-8">
+                <div class="text-6xl font-bold mb-2">
+                    <span id="scorePercent">80</span>%
+                </div>
+                <div class="text-gray-400">
+                    答對 <span id="correctCount">8</span> / <span id="totalCount">10</span> 題
+                </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-4 mb-8">
+                <div class="bg-green-900/30 rounded-xl p-4 text-center">
+                    <div class="text-2xl font-bold text-green-400" id="statCorrect">8</div>
+                    <div class="text-sm text-gray-400">答對</div>
+                </div>
+                <div class="bg-red-900/30 rounded-xl p-4 text-center">
+                    <div class="text-2xl font-bold text-red-400" id="statWrong">2</div>
+                    <div class="text-sm text-gray-400">答錯</div>
+                </div>
+            </div>
+
+            <div class="flex gap-4">
+                <button onclick="location.reload()" class="flex-1 bg-slate-700 hover:bg-slate-600 py-3 rounded-xl font-bold">
+                    重新選擇
+                </button>
+                <button onclick="retryExam()" class="flex-1 bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-400 hover:to-purple-500 py-3 rounded-xl font-bold">
+                    再測一次
+                </button>
+            </div>
+        </div>
+    </main>
 
     <script>
-        // ==========================================
-        // 北斗教育 AI 證照考試 v2.0 (API 整合版)
-        // ==========================================
-        
-        const API_BASE = 'https://beidou-edu-server-1.onrender.com/api';
-        
-        // 證照配置
-        const certConfig = {
-            google: { name: 'Google AI Essentials', pass: 80, table: 'ai_cert_questions', filter: "cert_id = 'GOOGLE'" },
-            aws: { name: 'AWS AI Practitioner', pass: 70, table: 'ai_cert_questions', filter: "cert_id = 'AWS'" },
-            azure: { name: 'Microsoft AI-900', pass: 70, table: 'ai_cert_questions', filter: "cert_id = 'AZURE'" },
-            ipas: { name: 'iPAS 資安工程師', pass: 60, table: 'ipas_ise_questions', filter: '1=1' }
-        };
-        
-        // State
-        let state = {
-            selectedCert: null,
-            questions: [],
-            currentIndex: 0,
-            answers: [],
-            score: 0,
-            mode: 'practice'
+        let questions = [];
+        let currentIndex = 0;
+        let answers = [];
+        let currentCert = '';
+
+        const certNames = {
+            'google_ai': 'Google AI Essentials',
+            'aws_ai': 'AWS AI Services',
+            'azure_ai': 'Azure AI-900',
+            'azure_cloud': 'Azure AZ-900',
+            'azure_data': 'Azure DP-900',
+            'ipas': 'iPAS 資訊安全工程師'
         };
 
-        // 初始化
-        async function init() {
-            await loadStats();
-            checkUrlParams();
-        }
-
-        // 載入統計
-        async function loadStats() {
+        async function startExam(cert) {
+            currentCert = cert;
+            const count = parseInt(document.getElementById('questionCount').value) || 10;
+            
             try {
-                const res = await fetch(`${API_BASE}/cert/exams`);
+                const res = await fetch(`data/cert_q_${cert}.json`);
                 const data = await res.json();
                 
-                if (data.success) {
-                    document.querySelector('.google-count').textContent = data.data.google || 71;
-                    document.querySelector('.aws-count').textContent = data.data.aws || 234;
-                    document.querySelector('.azure-count').textContent = data.data.azure || 162;
-                    document.querySelector('.ipas-count').textContent = data.data.ipas || 510;
-                    
-                    const total = (data.data.google || 71) + (data.data.aws || 234) + 
-                                  (data.data.azure || 162) + (data.data.ipas || 510);
-                    document.getElementById('totalQuestions').textContent = total;
-                }
-            } catch (err) {
-                // 使用預設值
-                document.querySelector('.google-count').textContent = '71';
-                document.querySelector('.aws-count').textContent = '234';
-                document.querySelector('.azure-count').textContent = '162';
-                document.querySelector('.ipas-count').textContent = '510';
-                document.getElementById('totalQuestions').textContent = '977';
-            }
-            
-            document.getElementById('loadingSection').classList.add('hidden');
-            document.getElementById('certSection').classList.remove('hidden');
-        }
-
-        // 檢查 URL 參數
-        function checkUrlParams() {
-            const params = new URLSearchParams(window.location.search);
-            const cert = params.get('cert');
-            if (cert) {
-                selectCert(cert.toLowerCase());
-            }
-        }
-
-        // 選擇證照
-        function selectCert(certId) {
-            state.selectedCert = certId;
-            
-            // GA 事件追蹤 - 選擇證照
-            gtag('event', 'select_cert', {
-                'event_category': 'cert',
-                'event_label': certId
-            });
-            
-            document.querySelectorAll('.cert-card').forEach(card => {
-                card.classList.remove('border-blue-500', 'bg-blue-50');
-            });
-            
-            const selectedCard = document.querySelector(`[data-cert="${certId}"]`);
-            if (selectedCard) {
-                selectedCard.classList.add('border-blue-500', 'bg-blue-50');
-            }
-            
-            document.getElementById('settingsSection').classList.remove('hidden');
-            document.getElementById('selectedCertName').textContent = certConfig[certId]?.name || certId;
-        }
-
-        // 開始考試
-        async function startExam() {
-            if (!state.selectedCert) {
-                alert('請先選擇證照類型！');
-                return;
-            }
-            
-            const count = parseInt(document.getElementById('countSelect').value);
-            state.mode = document.getElementById('modeSelect').value;
-            
-            // GA 事件追蹤 - 開始證照考試
-            gtag('event', 'start_cert_exam', {
-                'event_category': 'cert',
-                'event_label': state.selectedCert,
-                'value': parseInt(count)
-            });
-            
-            // 從 API 獲取題目
-            try {
-                const res = await fetch(`${API_BASE}/cert/${state.selectedCert}/questions?limit=${count}`);
-                const data = await res.json();
+                // 隨機抽題
+                const shuffled = data.questions.sort(() => Math.random() - 0.5);
+                questions = shuffled.slice(0, Math.min(count, shuffled.length));
                 
-                if (data.success && data.data.length > 0) {
-                    state.questions = data.data;
-                } else {
-                    throw new Error('No questions');
-                }
-            } catch (err) {
-                // 使用備援題目
-                state.questions = generateFallbackQuestions(count);
+                currentIndex = 0;
+                answers = new Array(questions.length).fill(null);
+                
+                document.getElementById('selectPanel').classList.add('hidden');
+                document.getElementById('examPanel').classList.remove('hidden');
+                document.getElementById('certName').textContent = certNames[cert] || cert;
+                
+                showQuestion();
+            } catch (e) {
+                console.error('載入失敗:', e);
+                alert('題庫載入失敗，請稍後再試');
             }
-            
-            state.currentIndex = 0;
-            state.answers = new Array(state.questions.length).fill(null);
-            state.score = 0;
-            
-            // 切換介面
-            document.getElementById('certSection').classList.add('hidden');
-            document.getElementById('examArea').classList.remove('hidden');
-            document.getElementById('resultsArea').classList.add('hidden');
-            
-            document.getElementById('examCertBadge').textContent = certConfig[state.selectedCert]?.name || state.selectedCert;
-            document.getElementById('examModeBadge').textContent = state.mode === 'practice' ? '練習模式' : '考試模式';
-            
-            renderQuestion();
         }
 
-        // 備援題目
-        function generateFallbackQuestions(count) {
-            const questions = [];
-            const certName = certConfig[state.selectedCert]?.name || 'AI';
+        function showQuestion() {
+            const q = questions[currentIndex];
             
-            for (let i = 0; i < count; i++) {
-                questions.push({
-                    id: i + 1,
-                    question: `[${certName}] 這是模擬題目 ${i + 1}，正確答案是 A`,
-                    options: ['正確答案', '錯誤選項 B', '錯誤選項 C', '錯誤選項 D'],
-                    answer: 0,
-                    explanation: '這是模擬題目的解析說明'
-                });
-            }
-            return questions;
-        }
-
-        // 渲染題目
-        function renderQuestion() {
-            const q = state.questions[state.currentIndex];
-            const total = state.questions.length;
+            // 更新進度
+            document.getElementById('progressText').textContent = `${currentIndex + 1} / ${questions.length}`;
+            document.getElementById('progressBar').style.width = `${((currentIndex + 1) / questions.length) * 100}%`;
+            document.getElementById('qNumber').textContent = `Q${currentIndex + 1}`;
+            document.getElementById('qDifficulty').textContent = '⭐'.repeat(q.difficulty || 2);
             
-            document.getElementById('progressText').textContent = `${state.currentIndex + 1} / ${total}`;
-            document.getElementById('progressBar').style.width = `${((state.currentIndex + 1) / total) * 100}%`;
+            // 題目
             document.getElementById('questionText').textContent = q.question;
             
+            // 選項
             const container = document.getElementById('optionsContainer');
-            const answered = state.answers[state.currentIndex] !== null;
-            const showAnswer = state.mode === 'practice' && answered;
+            container.innerHTML = '';
             
-            const options = Array.isArray(q.options) ? q.options : JSON.parse(q.options || '[]');
-            
-            container.innerHTML = options.map((opt, i) => {
-                let classes = 'option-btn w-full p-4 text-left border-2 rounded-lg cursor-pointer';
+            const options = q.options || [];
+            options.forEach((opt, i) => {
+                const optText = typeof opt === 'object' ? opt.text : opt;
+                const optId = typeof opt === 'object' ? opt.id : String.fromCharCode(65 + i);
                 
-                if (showAnswer) {
-                    classes += ' answered';
-                    if (i === q.answer) {
-                        classes += ' correct';
-                    } else if (i === state.answers[state.currentIndex]) {
-                        classes += ' wrong';
-                    }
-                } else if (state.answers[state.currentIndex] === i) {
-                    classes += ' selected';
+                const btn = document.createElement('button');
+                btn.className = 'option-btn w-full text-left p-4 rounded-xl border border-white/20 hover:border-white/40';
+                btn.innerHTML = `<span class="font-bold mr-2">${optId}.</span>${optText.replace(/^[A-D]\.\s*/, '')}`;
+                btn.onclick = () => selectOption(optId, btn);
+                
+                // 如果已經答過
+                if (answers[currentIndex] !== null) {
+                    const isCorrect = optId === q.answer;
+                    const isSelected = optId === answers[currentIndex];
+                    
+                    if (isCorrect) btn.classList.add('correct');
+                    else if (isSelected) btn.classList.add('wrong');
+                    btn.disabled = true;
                 }
                 
-                return `
-                    <button onclick="selectOption(${i})" class="${classes}" ${showAnswer ? '' : ''}>
-                        <span class="inline-block w-8 h-8 rounded-full bg-gray-100 text-center leading-8 mr-3 font-medium">
-                            ${String.fromCharCode(65 + i)}
-                        </span>
-                        ${opt}
-                        ${showAnswer && i === q.answer ? ' ✓' : ''}
-                        ${showAnswer && i === state.answers[state.currentIndex] && i !== q.answer ? ' ✗' : ''}
-                    </button>
-                `;
-            }).join('');
+                container.appendChild(btn);
+            });
             
-            // 顯示解析
-            const explanationArea = document.getElementById('explanationArea');
-            if (showAnswer) {
-                explanationArea.classList.remove('hidden');
+            // 解析
+            const expPanel = document.getElementById('explanationPanel');
+            if (answers[currentIndex] !== null) {
+                expPanel.classList.remove('hidden');
                 document.getElementById('explanationText').textContent = q.explanation || '暫無解析';
             } else {
-                explanationArea.classList.add('hidden');
+                expPanel.classList.add('hidden');
             }
             
-            document.getElementById('prevBtn').disabled = state.currentIndex === 0;
-            document.getElementById('nextBtn').textContent = state.currentIndex === total - 1 ? '完成考試' : '下一題 →';
+            // 按鈕狀態
+            document.getElementById('btnPrev').disabled = currentIndex === 0;
+            document.getElementById('btnNext').textContent = 
+                currentIndex === questions.length - 1 ? '查看結果' : '下一題 →';
         }
 
-        function selectOption(optionIndex) {
-            if (state.mode === 'practice' && state.answers[state.currentIndex] !== null) {
-                return;
-            }
+        function selectOption(optId, btn) {
+            if (answers[currentIndex] !== null) return;
             
-            state.answers[state.currentIndex] = optionIndex;
-            const q = state.questions[state.currentIndex];
+            answers[currentIndex] = optId;
+            const q = questions[currentIndex];
+            const isCorrect = optId === q.answer;
             
-            if (state.mode === 'exam') {
-                // 考試模式：只標記選擇
-                renderQuestion();
+            // 標記所有選項
+            document.querySelectorAll('.option-btn').forEach(b => {
+                const bId = b.textContent.charAt(0);
+                if (bId === q.answer) b.classList.add('correct');
+                else if (bId === optId) b.classList.add('wrong');
+                b.disabled = true;
+            });
+            
+            // 顯示解析
+            document.getElementById('explanationPanel').classList.remove('hidden');
+            document.getElementById('explanationText').textContent = q.explanation || '暫無解析';
+        }
+
+        function nextQuestion() {
+            if (currentIndex < questions.length - 1) {
+                currentIndex++;
+                showQuestion();
             } else {
-                // 練習模式：立即判分
-                if (optionIndex === q.answer) {
-                    state.score++;
-                }
-                renderQuestion();
+                showResult();
             }
         }
 
         function prevQuestion() {
-            if (state.currentIndex > 0) {
-                state.currentIndex--;
-                renderQuestion();
+            if (currentIndex > 0) {
+                currentIndex--;
+                showQuestion();
             }
         }
 
-        function nextQuestion() {
-            if (state.answers[state.currentIndex] === null) {
-                alert('請先作答！');
-                return;
-            }
+        function showResult() {
+            const correct = answers.filter((a, i) => a === questions[i].answer).length;
+            const total = questions.length;
+            const pct = Math.round((correct / total) * 100);
             
-            if (state.currentIndex < state.questions.length - 1) {
-                state.currentIndex++;
-                renderQuestion();
-            } else {
-                finishExam();
-            }
-        }
-
-        function finishExam() {
-            // 考試模式：最後計分
-            if (state.mode === 'exam') {
-                state.score = 0;
-                state.questions.forEach((q, i) => {
-                    if (state.answers[i] === q.answer) {
-                        state.score++;
-                    }
-                });
-            }
+            document.getElementById('examPanel').classList.add('hidden');
+            document.getElementById('resultPanel').classList.remove('hidden');
             
-            const total = state.questions.length;
-            const correct = state.score;
-            const wrong = total - correct;
-            const percentage = Math.round((correct / total) * 100);
-            const passLine = certConfig[state.selectedCert]?.pass || 70;
-            const passed = percentage >= passLine;
-            
-            // GA 事件追蹤 - 完成證照考試
-            gtag('event', 'finish_cert_exam', {
-                'event_category': 'cert',
-                'event_label': state.selectedCert,
-                'value': percentage
-            });
-            gtag('event', passed ? 'cert_passed' : 'cert_failed', {
-                'event_category': 'cert',
-                'event_label': state.selectedCert
-            });
-            
-            document.getElementById('resultEmoji').textContent = passed ? '🎉' : '💪';
-            document.getElementById('scoreDisplay').textContent = `${percentage}%`;
-            document.getElementById('scoreDisplay').className = `text-5xl font-bold mb-2 ${passed ? 'text-green-600' : 'text-red-600'}`;
-            document.getElementById('scoreDetail').textContent = `答對 ${correct} / ${total} 題`;
-            document.getElementById('passStatus').innerHTML = passed 
-                ? `<span class="text-green-600 font-bold">✓ 通過！及格線 ${passLine}%</span>` 
-                : `<span class="text-red-600 font-bold">✗ 未通過，及格線 ${passLine}%</span>`;
+            document.getElementById('scorePercent').textContent = pct;
             document.getElementById('correctCount').textContent = correct;
-            document.getElementById('wrongCount').textContent = wrong;
-            
-            document.getElementById('examArea').classList.add('hidden');
-            document.getElementById('resultsArea').classList.remove('hidden');
+            document.getElementById('totalCount').textContent = total;
+            document.getElementById('statCorrect').textContent = correct;
+            document.getElementById('statWrong').textContent = total - correct;
         }
 
-        function resetExam() {
-            document.getElementById('certSection').classList.remove('hidden');
-            document.getElementById('examArea').classList.add('hidden');
-            document.getElementById('resultsArea').classList.add('hidden');
+        function retryExam() {
+            document.getElementById('resultPanel').classList.add('hidden');
+            startExam(currentCert);
         }
-
-        function reviewAnswers() {
-            state.currentIndex = 0;
-            state.mode = 'practice'; // 切換到練習模式顯示答案
-            document.getElementById('resultsArea').classList.add('hidden');
-            document.getElementById('examArea').classList.remove('hidden');
-            document.getElementById('examModeBadge').textContent = '檢討模式';
-            renderQuestion();
-        }
-
-        document.addEventListener('DOMContentLoaded', init);
     </script>
 </body>
 </html>

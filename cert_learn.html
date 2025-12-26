@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>北斗教育 | 證照 XTF 學習</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&display=swap');
+        body { font-family: 'Noto Sans TC', sans-serif; }
+        .gradient-bg { background: linear-gradient(135deg, #0f172a 0%, #1e3a5f 50%, #0f172a 100%); }
+        .card { background: rgba(30, 41, 59, 0.8); border: 1px solid rgba(255,255,255,0.1); }
+        .xtf-tab { transition: all 0.3s; }
+        .xtf-tab.active { border-bottom: 3px solid; }
+        .xtf-content { display: none; }
+        .xtf-content.active { display: block; }
+        .node-card { transition: all 0.3s; cursor: pointer; }
+        .node-card:hover { transform: translateY(-2px); border-color: rgba(255,255,255,0.3); }
+        .node-card.selected { border-color: #f59e0b; background: rgba(245, 158, 11, 0.1); }
+        .cert-badge { display: inline-block; padding: 2px 8px; border-radius: 9999px; font-size: 0.75rem; }
+    </style>
+</head>
+<body class="gradient-bg min-h-screen text-white">
+
+    <!-- 導航列 -->
+    <nav class="py-4 px-6 border-b border-white/10">
+        <div class="container mx-auto flex justify-between items-center">
+            <a href="index.html" class="flex items-center gap-2">
+                <span class="text-2xl">🌟</span>
+                <span class="font-bold text-xl">北斗教育</span>
+            </a>
+            <div class="hidden md:flex items-center gap-6">
+                <a href="ai_courses.html" class="text-gray-300 hover:text-white">AI 認證</a>
+                <a href="courses.html" class="text-gray-300 hover:text-white">學測課程</a>
+                <a href="battle.html" class="text-orange-400 hover:text-orange-300">⚔️ 戰鬥</a>
+            </div>
+            <a href="auth.html" id="authLink" class="text-gray-300 hover:text-white">登入</a>
+        </div>
+    </nav>
+
+    <main class="container mx-auto px-4 py-8 max-w-6xl">
+        <!-- 標題 -->
+        <div class="text-center mb-8">
+            <h1 class="text-3xl font-bold mb-2">🎓 證照 XTF 學習</h1>
+            <p class="text-gray-400">Google AI Essentials / iPAS 資訊安全工程師</p>
+        </div>
+
+        <div class="grid md:grid-cols-4 gap-6">
+            <!-- 左側：證照與節點選擇 -->
+            <div class="md:col-span-1 space-y-4">
+                <!-- 證照選擇 -->
+                <div class="card rounded-xl p-4">
+                    <h3 class="font-bold mb-3">📜 選擇證照</h3>
+                    <div class="space-y-2">
+                        <button onclick="selectCert('google_ai')" id="btn-google_ai" class="cert-btn w-full text-left p-3 rounded-lg bg-gradient-to-r from-blue-600 to-purple-600 border-2 border-transparent">
+                            <div class="font-bold">🤖 Google AI Essentials</div>
+                            <div class="text-xs text-gray-300">89 知識點</div>
+                        </button>
+                        <button onclick="selectCert('ipas_ise')" id="btn-ipas_ise" class="cert-btn w-full text-left p-3 rounded-lg bg-slate-700 hover:bg-slate-600 border-2 border-transparent">
+                            <div class="font-bold">🛡️ iPAS 資訊安全工程師</div>
+                            <div class="text-xs text-gray-300">122 知識點</div>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 節點列表 -->
+                <div class="card rounded-xl p-4 max-h-[450px] overflow-y-auto">
+                    <h3 class="font-bold mb-3">📋 知識節點 <span id="nodeCount" class="text-gray-400 text-sm">(0)</span></h3>
+                    <div id="nodeList" class="space-y-2">
+                        <p class="text-gray-500 text-sm">載入中...</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 右側：XTF 內容 -->
+            <div class="md:col-span-3">
+                <div class="card rounded-xl overflow-hidden">
+                    <!-- XTF 標籤 -->
+                    <div class="flex border-b border-white/10">
+                        <button onclick="showTab('understand')" class="xtf-tab active flex-1 py-4 text-center border-blue-400 text-blue-400" data-tab="understand">
+                            🔻 消 (理解)
+                        </button>
+                        <button onclick="showTab('memorize')" class="xtf-tab flex-1 py-4 text-center text-gray-400 hover:text-purple-400" data-tab="memorize">
+                            🔀 拓 (記憶)
+                        </button>
+                        <button onclick="showTab('apply')" class="xtf-tab flex-1 py-4 text-center text-gray-400 hover:text-green-400" data-tab="apply">
+                            🔺 融 (應用)
+                        </button>
+                    </div>
+
+                    <!-- 內容區 -->
+                    <div class="p-6">
+                        <!-- 節點標題 -->
+                        <div id="nodeTitle" class="mb-6">
+                            <h2 class="text-2xl font-bold mb-2">選擇一個知識節點</h2>
+                            <p class="text-gray-400">從左側列表選擇要學習的概念</p>
+                        </div>
+
+                        <!-- 消：理解 -->
+                        <div id="tab-understand" class="xtf-content active">
+                            <div class="bg-blue-900/20 border border-blue-500/30 rounded-xl p-6">
+                                <h3 class="text-lg font-bold text-blue-400 mb-4">🔻 消：白話理解</h3>
+                                <div id="content-understand" class="text-gray-300 leading-relaxed whitespace-pre-wrap">
+                                    選擇節點後顯示內容...
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 拓：記憶 -->
+                        <div id="tab-memorize" class="xtf-content">
+                            <div class="bg-purple-900/20 border border-purple-500/30 rounded-xl p-6">
+                                <h3 class="text-lg font-bold text-purple-400 mb-4">🔀 拓：連結記憶</h3>
+                                <div id="content-memorize" class="text-gray-300 leading-relaxed whitespace-pre-wrap">
+                                    選擇節點後顯示內容...
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 融：應用 -->
+                        <div id="tab-apply" class="xtf-content">
+                            <div class="bg-green-900/20 border border-green-500/30 rounded-xl p-6">
+                                <h3 class="text-lg font-bold text-green-400 mb-4">🔺 融：考試應用</h3>
+                                <div id="content-apply" class="text-gray-300 leading-relaxed whitespace-pre-wrap">
+                                    選擇節點後顯示內容...
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 操作按鈕 -->
+                        <div id="actionButtons" class="mt-6 flex gap-3 hidden">
+                            <a href="ai_courses.html" class="flex-1 bg-slate-700 hover:bg-slate-600 py-3 rounded-lg font-medium text-center">
+                                ← 返回課程
+                            </a>
+                            <button onclick="nextNode()" class="flex-1 bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-400 hover:to-purple-500 py-3 rounded-lg font-bold">
+                                下一個 →
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 學習進度 -->
+                <div class="card rounded-xl p-4 mt-4">
+                    <div class="flex justify-between items-center mb-2">
+                        <span class="text-gray-400">學習進度</span>
+                        <span id="progressText" class="text-sm">0 / 0</span>
+                    </div>
+                    <div class="h-2 bg-gray-700 rounded-full overflow-hidden">
+                        <div id="progressBar" class="h-full bg-gradient-to-r from-blue-500 to-purple-500 rounded-full transition-all" style="width: 0%"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="py-8 border-t border-white/10 mt-8">
+        <div class="container mx-auto px-4 text-center text-gray-500">
+            <p>© 2025 北斗七星文創數位有限公司</p>
+        </div>
+    </footer>
+
+    <script>
+        let nodesData = null;
+        let currentCert = 'google_ai';
+        let currentNodeIndex = -1;
+        let viewedNodes = new Set();
+
+        const certInfo = {
+            'google_ai': { name: 'Google AI Essentials', emoji: '🤖', color: 'from-blue-600 to-purple-600' },
+            'ipas_ise': { name: 'iPAS 資訊安全工程師', emoji: '🛡️', color: 'from-green-600 to-teal-600' }
+        };
+
+        // 初始化
+        async function init() {
+            try {
+                const res = await fetch('data/nodes_cert_xtf.json');
+                nodesData = await res.json();
+                console.log(`載入 AI: ${nodesData.meta.total_ai}, iPAS: ${nodesData.meta.total_ipas} 節點`);
+                
+                // 載入已查看記錄
+                const saved = localStorage.getItem('beidou_cert_viewed');
+                if (saved) viewedNodes = new Set(JSON.parse(saved));
+                
+                // URL 參數
+                const params = new URLSearchParams(window.location.search);
+                const cert = params.get('cert');
+                if (cert && nodesData[cert]) {
+                    currentCert = cert;
+                }
+                
+                selectCert(currentCert);
+            } catch (e) {
+                console.error('載入失敗:', e);
+            }
+
+            // 登入狀態
+            const user = JSON.parse(localStorage.getItem('beidou_user') || 'null');
+            if (user && !user.guest) {
+                document.getElementById('authLink').textContent = user.username || '會員';
+                document.getElementById('authLink').href = 'dashboard.html';
+            }
+        }
+
+        // 選擇證照
+        function selectCert(cert) {
+            currentCert = cert;
+            currentNodeIndex = -1;
+            
+            // 更新按鈕樣式
+            document.querySelectorAll('.cert-btn').forEach(btn => {
+                const isCurrent = btn.id === `btn-${cert}`;
+                btn.className = `cert-btn w-full text-left p-3 rounded-lg border-2 transition-all ${
+                    isCurrent 
+                        ? `bg-gradient-to-r ${certInfo[cert].color} border-white/30`
+                        : 'bg-slate-700 hover:bg-slate-600 border-transparent'
+                }`;
+            });
+            
+            loadNodes();
+        }
+
+        // 載入節點列表
+        function loadNodes() {
+            const container = document.getElementById('nodeList');
+            const nodes = nodesData[currentCert] || [];
+            
+            document.getElementById('nodeCount').textContent = `(${nodes.length})`;
+            updateProgress();
+
+            container.innerHTML = nodes.map((n, i) => {
+                const isViewed = viewedNodes.has(n.node_id);
+                return `
+                    <div class="node-card card rounded-lg p-3 text-sm ${isViewed ? 'opacity-60' : ''}" onclick="selectNode(${i})">
+                        <div class="flex items-center gap-2">
+                            ${isViewed ? '<span class="text-green-400">✓</span>' : ''}
+                            <span class="font-medium truncate">${n.name}</span>
+                        </div>
+                        <div class="text-xs text-gray-500 mt-1">
+                            ${'⭐'.repeat(Math.min(5, Math.ceil(n.importance / 20)))}
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // 選擇節點
+        function selectNode(index) {
+            const nodes = nodesData[currentCert];
+            const node = nodes[index];
+            currentNodeIndex = index;
+
+            // 標記已查看
+            viewedNodes.add(node.node_id);
+            localStorage.setItem('beidou_cert_viewed', JSON.stringify([...viewedNodes]));
+
+            // 更新選中狀態
+            document.querySelectorAll('.node-card').forEach((el, i) => {
+                el.classList.toggle('selected', i === index);
+            });
+
+            // 更新標題
+            const info = certInfo[currentCert];
+            document.getElementById('nodeTitle').innerHTML = `
+                <div class="flex items-center gap-3 mb-2">
+                    <span class="cert-badge bg-gradient-to-r ${info.color}">${info.emoji} ${info.name}</span>
+                </div>
+                <h2 class="text-2xl font-bold mb-2">${node.name}</h2>
+                <div class="flex items-center gap-4 text-sm text-gray-400">
+                    <span>重要度：${'⭐'.repeat(Math.min(5, Math.ceil(node.importance / 20)))}</span>
+                    <span>難度：${'🔥'.repeat(node.difficulty || 2)}</span>
+                </div>
+            `;
+
+            // 填充 XTF 內容
+            document.getElementById('content-understand').textContent = node.understand || '暫無內容';
+            document.getElementById('content-memorize').textContent = node.memorize || '暫無內容';
+            document.getElementById('content-apply').textContent = node.apply || '暫無內容';
+
+            // 顯示操作按鈕
+            document.getElementById('actionButtons').classList.remove('hidden');
+            
+            // 更新進度
+            updateProgress();
+            loadNodes(); // 重新渲染列表以顯示已查看狀態
+            
+            // 重新選中當前
+            setTimeout(() => {
+                document.querySelectorAll('.node-card')[index]?.classList.add('selected');
+            }, 10);
+        }
+
+        // 下一個節點
+        function nextNode() {
+            const nodes = nodesData[currentCert];
+            const nextIndex = (currentNodeIndex + 1) % nodes.length;
+            selectNode(nextIndex);
+            
+            // 滾動到視圖
+            document.querySelectorAll('.node-card')[nextIndex]?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+
+        // 更新進度
+        function updateProgress() {
+            const nodes = nodesData[currentCert] || [];
+            const viewed = nodes.filter(n => viewedNodes.has(n.node_id)).length;
+            const total = nodes.length;
+            const pct = total > 0 ? (viewed / total * 100) : 0;
+            
+            document.getElementById('progressText').textContent = `${viewed} / ${total}`;
+            document.getElementById('progressBar').style.width = `${pct}%`;
+        }
+
+        // 切換標籤
+        function showTab(tab) {
+            document.querySelectorAll('.xtf-tab').forEach(el => {
+                const isActive = el.dataset.tab === tab;
+                el.classList.toggle('active', isActive);
+                el.classList.toggle('text-gray-400', !isActive);
+                
+                if (isActive) {
+                    if (tab === 'understand') el.classList.add('text-blue-400', 'border-blue-400');
+                    else if (tab === 'memorize') el.classList.add('text-purple-400', 'border-purple-400');
+                    else if (tab === 'apply') el.classList.add('text-green-400', 'border-green-400');
+                } else {
+                    el.classList.remove('text-blue-400', 'border-blue-400', 'text-purple-400', 'border-purple-400', 'text-green-400', 'border-green-400');
+                }
+            });
+
+            document.querySelectorAll('.xtf-content').forEach(el => {
+                el.classList.toggle('active', el.id === `tab-${tab}`);
+            });
+        }
+
+        init();
+    </script>
+</body>
+</html>

@@ -5,34 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>北斗教育 | 登入</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Google Analytics -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-8X0VB6K9G7"></script>
-    <script>
-        window.dataLayer = window.dataLayer || [];
-        function gtag(){dataLayer.push(arguments);}
-        gtag('js', new Date());
-        gtag('config', 'G-8X0VB6K9G7');
-    </script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&display=swap');
         body { font-family: 'Noto Sans TC', sans-serif; }
-        .gradient-bg {
-            background: linear-gradient(135deg, #1e1e2e 0%, #2d1b4e 50%, #1e1e2e 100%);
-        }
-        .glass {
-            background: rgba(255, 255, 255, 0.05);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-        }
-        .input-field {
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            transition: all 0.3s;
-        }
-        .input-field:focus {
-            border-color: #8b5cf6;
-            box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.2);
-        }
+        .gradient-bg { background: linear-gradient(135deg, #1e1e2e 0%, #2d1b4e 50%, #1e1e2e 100%); }
+        .glass { background: rgba(255,255,255,0.05); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1); }
+        .input-field { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.2); transition: all 0.3s; }
+        .input-field:focus { border-color: #8b5cf6; box-shadow: 0 0 0 3px rgba(139,92,246,0.2); }
     </style>
 </head>
 <body class="gradient-bg min-h-screen text-white flex items-center justify-center p-4">
@@ -52,7 +31,7 @@
             <!-- 切換標籤 -->
             <div class="flex mb-6 bg-white/5 rounded-lg p-1">
                 <button id="tabLogin" onclick="switchTab('login')" 
-                    class="flex-1 py-2 rounded-md text-sm font-medium transition tab-active">
+                    class="flex-1 py-2 rounded-md text-sm font-medium transition bg-purple-600 text-white">
                     登入
                 </button>
                 <button id="tabRegister" onclick="switchTab('register')" 
@@ -60,6 +39,10 @@
                     註冊
                 </button>
             </div>
+            
+            <!-- 錯誤/成功訊息 -->
+            <div id="errorMsg" class="hidden bg-red-500/20 border border-red-500 text-red-300 px-4 py-2 rounded-lg mb-4"></div>
+            <div id="successMsg" class="hidden bg-green-500/20 border border-green-500 text-green-300 px-4 py-2 rounded-lg mb-4"></div>
             
             <!-- 登入表單 -->
             <form id="loginForm" onsubmit="handleLogin(event)">
@@ -81,7 +64,7 @@
                             <input type="checkbox" class="mr-2 rounded">
                             記住我
                         </label>
-                        <a href="javascript:void(0)" onclick="alert('請聯繫客服重設密碼：service@beidou.edu.tw')" class="text-purple-400 hover:text-purple-300">忘記密碼？</a>
+                        <a href="#" onclick="alert('請聯繫客服：service@beidou.edu.tw')" class="text-purple-400 hover:text-purple-300">忘記密碼？</a>
                     </div>
                     <button type="submit" id="loginBtn"
                         class="w-full bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 py-3 rounded-lg font-medium transition">
@@ -109,23 +92,22 @@
                         <label class="block text-sm text-gray-400 mb-1">密碼</label>
                         <input type="password" id="regPassword" required minlength="6"
                             class="input-field w-full px-4 py-3 rounded-lg text-white outline-none"
-                            placeholder="至少 6 個字元">
+                            placeholder="至少6個字元">
                     </div>
                     <div>
                         <label class="block text-sm text-gray-400 mb-1">年級</label>
-                        <select id="regGrade"
-                            class="input-field w-full px-4 py-3 rounded-lg text-white outline-none">
-                            <option value="高一">高一</option>
-                            <option value="高二">高二</option>
-                            <option value="高三">高三</option>
-                            <option value="其他">其他</option>
+                        <select id="regGrade" class="input-field w-full px-4 py-3 rounded-lg text-white outline-none bg-transparent">
+                            <option value="高一" class="bg-gray-800">高一</option>
+                            <option value="高二" class="bg-gray-800">高二</option>
+                            <option value="高三" class="bg-gray-800">高三</option>
+                            <option value="其他" class="bg-gray-800">其他</option>
                         </select>
                     </div>
                     <div>
-                        <label class="block text-sm text-gray-400 mb-1">推薦碼 (選填)</label>
+                        <label class="block text-sm text-gray-400 mb-1">推薦碼（選填）</label>
                         <input type="text" id="regReferral"
                             class="input-field w-full px-4 py-3 rounded-lg text-white outline-none"
-                            placeholder="朋友的推薦碼">
+                            placeholder="有推薦碼可獲額外獎勵">
                     </div>
                     <button type="submit" id="registerBtn"
                         class="w-full bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 py-3 rounded-lg font-medium transition">
@@ -134,82 +116,29 @@
                 </div>
             </form>
             
-            <!-- 錯誤訊息 -->
-            <div id="errorMsg" class="hidden mt-4 p-3 bg-red-500/20 border border-red-500/50 rounded-lg text-red-300 text-sm"></div>
-            
-            <!-- 成功訊息 -->
-            <div id="successMsg" class="hidden mt-4 p-3 bg-green-500/20 border border-green-500/50 rounded-lg text-green-300 text-sm"></div>
-            
             <!-- 分隔線 -->
             <div class="flex items-center my-6">
-                <div class="flex-1 border-t border-gray-700"></div>
+                <div class="flex-1 border-t border-gray-600"></div>
                 <span class="px-4 text-gray-500 text-sm">或</span>
-                <div class="flex-1 border-t border-gray-700"></div>
+                <div class="flex-1 border-t border-gray-600"></div>
             </div>
             
             <!-- 訪客模式 -->
-            <button onclick="guestMode()" 
-                class="w-full border border-gray-600 text-gray-300 hover:bg-white/5 py-3 rounded-lg font-medium transition">
-                👤 以訪客身份繼續
+            <button onclick="guestMode()" class="w-full border border-gray-600 hover:border-gray-400 py-3 rounded-lg font-medium transition text-gray-300 hover:text-white">
+                🎮 訪客模式（免註冊體驗）
             </button>
         </div>
         
-        <!-- 底部連結 -->
-        <div class="text-center mt-6 text-sm text-gray-500">
-            <a href="index.html" class="hover:text-purple-400">← 返回首頁</a>
-        </div>
+        <!-- 返回首頁 -->
+        <p class="text-center mt-6 text-gray-500">
+            <a href="index.html" class="hover:text-white">← 返回首頁</a>
+        </p>
     </div>
 
     <script>
-        const API_BASE = 'https://beidou-edu-server-1.onrender.com/api';
-        
-        // ===== 新手村進度處理 =====
-        document.addEventListener('DOMContentLoaded', () => {
-            // 檢查是否從新手村來
-            const urlParams = new URLSearchParams(window.location.search);
-            const fromTutorial = urlParams.get('from') === 'tutorial';
-            const mode = urlParams.get('mode');
-            
-            if (fromTutorial) {
-                // 顯示新手村進度
-                const tutorialData = localStorage.getItem('beidou_tutorial_data');
-                if (tutorialData) {
-                    const data = JSON.parse(tutorialData);
-                    showTutorialBonus(data);
-                }
-                // 預設切到註冊
-                if (mode === 'register') {
-                    switchTab('register');
-                }
-            }
-        });
-        
-        function showTutorialBonus(data) {
-            // 在表單上方顯示新手村成果
-            const container = document.querySelector('.glass');
-            const bonusDiv = document.createElement('div');
-            bonusDiv.className = 'bg-gradient-to-r from-purple-600/20 to-blue-600/20 rounded-lg p-4 mb-6 border border-purple-500/30';
-            bonusDiv.innerHTML = `
-                <p class="text-sm text-purple-300 mb-2">🎮 新手村成果將自動帶入：</p>
-                <div class="flex justify-around text-center">
-                    <div>
-                        <p class="text-lg font-bold text-purple-400">${data.exp || 0}</p>
-                        <p class="text-xs text-gray-400">經驗值</p>
-                    </div>
-                    <div>
-                        <p class="text-lg font-bold text-yellow-400">${data.coins || 0}</p>
-                        <p class="text-xs text-gray-400">金幣</p>
-                    </div>
-                    <div>
-                        <p class="text-lg font-bold text-green-400">Lv.${data.level || 1}</p>
-                        <p class="text-xs text-gray-400">等級</p>
-                    </div>
-                </div>
-            `;
-            container.insertBefore(bonusDiv, container.firstChild);
-        }
-        
+        // ============================================================
         // 切換標籤
+        // ============================================================
         function switchTab(tab) {
             const loginForm = document.getElementById('loginForm');
             const registerForm = document.getElementById('registerForm');
@@ -233,16 +162,12 @@
                 tabLogin.classList.remove('bg-purple-600', 'text-white');
                 tabLogin.classList.add('text-gray-400');
             }
-            
-            // GA 事件
-            gtag('event', 'switch_tab', {
-                'event_category': 'auth',
-                'event_label': tab
-            });
         }
         
-        // 登入
-        async function handleLogin(e) {
+        // ============================================================
+        // 登入 (localStorage 版本)
+        // ============================================================
+        function handleLogin(e) {
             e.preventDefault();
             hideMessages();
             
@@ -253,48 +178,30 @@
             btn.disabled = true;
             btn.textContent = '登入中...';
             
-            try {
-                const res = await fetch(`${API_BASE}/user/login`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ email, password })
-                });
-                
-                const data = await res.json();
-                
-                if (data.success) {
-                    // 儲存 token
-                    localStorage.setItem('beidou_token', data.data.token);
-                    localStorage.setItem('beidou_user', JSON.stringify(data.data.user));
-                    
-                    showSuccess('登入成功！正在跳轉...');
-                    
-                    // GA 事件
-                    gtag('event', 'login', {
-                        'event_category': 'auth',
-                        'event_label': 'success'
-                    });
-                    
-                    setTimeout(() => {
-                        window.location.href = 'dashboard.html';
-                    }, 1000);
-                } else {
-                    showError(data.error || '登入失敗');
-                    gtag('event', 'login_failed', {
-                        'event_category': 'auth',
-                        'event_label': data.error
-                    });
-                }
-            } catch (err) {
-                showError('網路錯誤，請稍後再試');
-            }
+            // 檢查 localStorage 中是否有此用戶
+            const users = JSON.parse(localStorage.getItem('beidou_users') || '{}');
             
-            btn.disabled = false;
-            btn.textContent = '登入';
+            if (users[email] && users[email].password === password) {
+                // 登入成功
+                const user = { email, username: users[email].username, grade: users[email].grade };
+                localStorage.setItem('beidou_token', 'local_' + Date.now());
+                localStorage.setItem('beidou_user', JSON.stringify(user));
+                
+                showSuccess('登入成功！正在跳轉...');
+                setTimeout(() => {
+                    window.location.href = 'battle.html';
+                }, 1000);
+            } else {
+                showError('Email 或密碼錯誤');
+                btn.disabled = false;
+                btn.textContent = '登入';
+            }
         }
         
-        // 註冊
-        async function handleRegister(e) {
+        // ============================================================
+        // 註冊 (localStorage 版本)
+        // ============================================================
+        function handleRegister(e) {
             e.preventDefault();
             hideMessages();
             
@@ -302,58 +209,49 @@
             const email = document.getElementById('regEmail').value;
             const password = document.getElementById('regPassword').value;
             const grade = document.getElementById('regGrade').value;
-            const referralCode = document.getElementById('regReferral').value;
+            const referral = document.getElementById('regReferral').value;
             const btn = document.getElementById('registerBtn');
             
             btn.disabled = true;
             btn.textContent = '註冊中...';
             
-            try {
-                const res = await fetch(`${API_BASE}/user/register`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ email, password, username, grade, referralCode })
-                });
-                
-                const data = await res.json();
-                
-                if (data.success) {
-                    // 儲存 token
-                    localStorage.setItem('beidou_token', data.data.token);
-                    localStorage.setItem('beidou_user', JSON.stringify(data.data.user));
-                    
-                    showSuccess('註冊成功！正在跳轉...');
-                    
-                    // GA 事件
-                    gtag('event', 'sign_up', {
-                        'event_category': 'auth',
-                        'event_label': 'success'
-                    });
-                    
-                    setTimeout(() => {
-                        window.location.href = 'dashboard.html';
-                    }, 1000);
-                } else {
-                    showError(data.error || '註冊失敗');
-                }
-            } catch (err) {
-                showError('網路錯誤，請稍後再試');
+            // 檢查是否已存在
+            const users = JSON.parse(localStorage.getItem('beidou_users') || '{}');
+            
+            if (users[email]) {
+                showError('此 Email 已被註冊');
+                btn.disabled = false;
+                btn.textContent = '註冊';
+                return;
             }
             
-            btn.disabled = false;
-            btn.textContent = '註冊';
+            // 儲存新用戶
+            users[email] = { username, password, grade, referral, createdAt: new Date().toISOString() };
+            localStorage.setItem('beidou_users', JSON.stringify(users));
+            
+            // 自動登入
+            const user = { email, username, grade };
+            localStorage.setItem('beidou_token', 'local_' + Date.now());
+            localStorage.setItem('beidou_user', JSON.stringify(user));
+            
+            showSuccess('註冊成功！正在跳轉到方案頁面...');
+            setTimeout(() => {
+                window.location.href = 'pricing.html';
+            }, 1000);
         }
         
+        // ============================================================
         // 訪客模式
+        // ============================================================
         function guestMode() {
             localStorage.setItem('beidou_guest', 'true');
-            gtag('event', 'guest_mode', {
-                'event_category': 'auth'
-            });
-            window.location.href = 'quiz_ui.html';
+            localStorage.setItem('beidou_user', JSON.stringify({ username: '冒險者', guest: true }));
+            window.location.href = 'battle.html';
         }
         
-        // 訊息顯示
+        // ============================================================
+        // 訊息
+        // ============================================================
         function showError(msg) {
             document.getElementById('errorMsg').textContent = msg;
             document.getElementById('errorMsg').classList.remove('hidden');
@@ -369,20 +267,20 @@
             document.getElementById('successMsg').classList.add('hidden');
         }
         
-        // 檢查是否已登入
+        // ============================================================
+        // 初始化
+        // ============================================================
         document.addEventListener('DOMContentLoaded', () => {
+            // 已登入則跳轉
             const token = localStorage.getItem('beidou_token');
             if (token) {
-                window.location.href = 'dashboard.html';
+                window.location.href = 'battle.html';
             }
             
-            // 檢查 URL 參數，自動切換到註冊
+            // URL 參數
             const params = new URLSearchParams(window.location.search);
             if (params.get('mode') === 'register') {
                 switchTab('register');
-            } else {
-                // 初始化標籤樣式
-            document.getElementById('tabLogin').classList.add('bg-purple-600', 'text-white');
             }
         });
     </script>
