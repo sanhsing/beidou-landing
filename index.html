@@ -282,6 +282,11 @@
     </footer>
 
     <script>
+        // 新手村判斷
+        if (!localStorage.getItem('beidou_tutorial_done')) {
+            window.location.href = 'tutorial.html';
+        }
+
         // 登入狀態檢查
         const user = JSON.parse(localStorage.getItem('beidou_user') || 'null');
         if (user && !user.guest) {

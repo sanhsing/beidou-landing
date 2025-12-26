@@ -3,646 +3,403 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>北斗教育 | 新手村冒險</title>
+    <title>北斗教育 | 新手村</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        .gradient-bg { background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%); }
-        .glass { background: rgba(255,255,255,0.05); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1); }
-        .glow { box-shadow: 0 0 30px rgba(139, 92, 246, 0.3); }
-        .shake { animation: shake 0.5s ease-in-out; }
-        @keyframes shake { 0%,100%{transform:translateX(0)} 25%{transform:translateX(-5px)} 75%{transform:translateX(5px)} }
-        .bounce-in { animation: bounceIn 0.6s ease-out; }
-        @keyframes bounceIn { 0%{opacity:0;transform:scale(0.3)} 50%{transform:scale(1.05)} 100%{opacity:1;transform:scale(1)} }
-        .slide-up { animation: slideUp 0.4s ease-out; }
-        @keyframes slideUp { from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:translateY(0)} }
-        .pulse-glow { animation: pulseGlow 2s infinite; }
-        @keyframes pulseGlow { 0%,100%{box-shadow:0 0 20px rgba(139,92,246,0.4)} 50%{box-shadow:0 0 40px rgba(139,92,246,0.8)} }
-        .progress-bar { transition: width 0.5s ease-out; }
-        .monster-sprite { font-size: 4rem; filter: drop-shadow(0 0 10px rgba(255,255,255,0.3)); }
-        .hp-bar { transition: width 0.3s ease-out; }
-        .damage-text { animation: damageFloat 1s ease-out forwards; }
-        @keyframes damageFloat { 0%{opacity:1;transform:translateY(0)} 100%{opacity:0;transform:translateY(-50px)} }
-        .reward-pop { animation: rewardPop 0.5s ease-out; }
-        @keyframes rewardPop { 0%{transform:scale(0)} 50%{transform:scale(1.2)} 100%{transform:scale(1)} }
-        .confetti { position: fixed; pointer-events: none; }
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&display=swap');
+        body { font-family: 'Noto Sans TC', sans-serif; }
+        .dream-bg { background: radial-gradient(ellipse at center, #1a1a2e 0%, #16213e 50%, #0f0f23 100%); min-height: 100vh; }
+        .star { position: absolute; background: white; border-radius: 50%; animation: twinkle 2s infinite; }
+        @keyframes twinkle { 0%, 100% { opacity: 0.3; } 50% { opacity: 1; } }
+        .fade-in { animation: fadeIn 0.8s ease-in forwards; opacity: 0; }
+        @keyframes fadeIn { to { opacity: 1; } }
+        .flashcard { perspective: 1000px; }
+        .flashcard-inner { transition: transform 0.6s; transform-style: preserve-3d; }
+        .flashcard.flipped .flashcard-inner { transform: rotateY(180deg); }
+        .flashcard-front, .flashcard-back { backface-visibility: hidden; position: absolute; inset: 0; }
+        .flashcard-back { transform: rotateY(180deg); }
+        .dialog-box { background: rgba(30, 41, 59, 0.95); border: 2px solid rgba(96, 165, 250, 0.5); box-shadow: 0 0 30px rgba(96, 165, 250, 0.2); }
+        .monster-dialog { background: rgba(51, 65, 85, 0.95); border: 2px solid rgba(251, 191, 36, 0.5); }
+        .subject-card { transition: all 0.3s; }
+        .subject-card:hover { transform: scale(1.05); }
+        .subject-card.selected { border-color: #fbbf24; box-shadow: 0 0 20px rgba(251,191,36,0.4); }
+        .hp-bar { transition: width 0.5s ease-out; }
+        @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-8px); } 75% { transform: translateX(8px); } }
+        .shake { animation: shake 0.4s; }
+        @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+        .bounce { animation: bounce 0.5s; }
+        @keyframes glow { 0%, 100% { filter: drop-shadow(0 0 5px gold); } 50% { filter: drop-shadow(0 0 20px gold); } }
+        .glow { animation: glow 1s infinite; }
     </style>
 </head>
-<body class="gradient-bg min-h-screen text-white">
-    
-    <!-- 頂部進度 -->
-    <div class="fixed top-0 left-0 right-0 z-50 bg-black/50 backdrop-blur">
-        <div class="max-w-4xl mx-auto px-4 py-2 flex items-center justify-between">
-            <div class="flex items-center gap-2">
-                <span class="text-2xl">🌟</span>
-                <span class="font-bold">新手村</span>
-            </div>
-            <div class="flex-1 mx-4">
-                <div class="bg-white/10 rounded-full h-2">
-                    <div id="totalProgress" class="progress-bar bg-gradient-to-r from-purple-500 to-blue-500 h-2 rounded-full" style="width: 0%"></div>
-                </div>
-            </div>
-            <div class="text-sm text-gray-400">
-                <span id="stepLabel">1/7</span>
-            </div>
-        </div>
-    </div>
-
-    <!-- 主容器 -->
-    <div class="pt-16 pb-8 px-4 max-w-2xl mx-auto min-h-screen flex flex-col">
-        
-        <!-- 步驟 1: 歡迎 -->
-        <div id="step1" class="step flex-1 flex flex-col items-center justify-center text-center">
-            <div class="bounce-in">
-                <div class="text-8xl mb-6">🌟</div>
-                <h1 class="text-3xl font-bold mb-4">歡迎來到北斗教育</h1>
-                <p class="text-gray-400 mb-8 max-w-md">
-                    在這裡，學習不再枯燥無聊<br>
-                    打怪升級，順便考上理想學校！
-                </p>
-                <button onclick="nextStep()" class="px-8 py-4 bg-gradient-to-r from-purple-600 to-blue-600 rounded-xl font-bold text-lg hover:scale-105 transition pulse-glow">
-                    開始冒險 →
-                </button>
-            </div>
-        </div>
-
-        <!-- 步驟 2: 選擇科目 -->
-        <div id="step2" class="step hidden flex-1 flex flex-col">
-            <div class="slide-up">
-                <h2 class="text-2xl font-bold text-center mb-2">選擇你的主修科目</h2>
-                <p class="text-gray-400 text-center mb-6">先選一科開始，之後可以隨時更換</p>
-                
-                <div class="grid grid-cols-2 gap-3" id="subjectGrid">
-                    <!-- 科目按鈕動態生成 -->
-                </div>
-                
-                <div id="subjectConfirm" class="hidden mt-6 text-center">
-                    <p class="text-lg mb-4">你選擇了 <span id="selectedSubjectName" class="text-purple-400 font-bold"></span></p>
-                    <button onclick="confirmSubject()" class="px-8 py-3 bg-gradient-to-r from-purple-600 to-blue-600 rounded-xl font-bold hover:scale-105 transition">
-                        確認選擇 →
-                    </button>
-                </div>
-            </div>
-        </div>
-
-        <!-- 步驟 3: 介紹戰鬥 -->
-        <div id="step3" class="step hidden flex-1 flex flex-col items-center justify-center">
-            <div class="slide-up text-center">
-                <div class="text-6xl mb-4">⚔️</div>
-                <h2 class="text-2xl font-bold mb-4">戰鬥系統介紹</h2>
-                <div class="glass rounded-xl p-6 mb-6 text-left max-w-md">
-                    <div class="space-y-4">
-                        <div class="flex items-start gap-3">
-                            <span class="text-2xl">1️⃣</span>
-                            <div>
-                                <p class="font-bold">遇到怪獸</p>
-                                <p class="text-gray-400 text-sm">每隻怪獸對應一個知識點</p>
-                            </div>
-                        </div>
-                        <div class="flex items-start gap-3">
-                            <span class="text-2xl">2️⃣</span>
-                            <div>
-                                <p class="font-bold">回答題目</p>
-                                <p class="text-gray-400 text-sm">答對攻擊怪獸，答錯受到傷害</p>
-                            </div>
-                        </div>
-                        <div class="flex items-start gap-3">
-                            <span class="text-2xl">3️⃣</span>
-                            <div>
-                                <p class="font-bold">獲得獎勵</p>
-                                <p class="text-gray-400 text-sm">擊敗怪獸獲得經驗值和金幣</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <button onclick="nextStep()" class="px-8 py-3 bg-gradient-to-r from-purple-600 to-blue-600 rounded-xl font-bold hover:scale-105 transition">
-                    我懂了，開戰！ →
-                </button>
-            </div>
-        </div>
-
-        <!-- 步驟 4: 第一場戰鬥 -->
-        <div id="step4" class="step hidden flex-1 flex flex-col">
-            <div class="slide-up flex-1 flex flex-col">
-                <!-- 怪獸區 -->
-                <div class="glass rounded-xl p-4 mb-4">
-                    <div class="flex items-center justify-between mb-2">
-                        <div class="flex items-center gap-2">
-                            <span id="monster1Emoji" class="text-3xl">👾</span>
-                            <div>
-                                <p id="monster1Name" class="font-bold">新手小怪</p>
-                                <p class="text-xs text-gray-400">Lv.1 新手村</p>
-                            </div>
-                        </div>
-                        <div class="text-right">
-                            <p class="text-xs text-gray-400">HP</p>
-                            <p id="monster1HpText" class="font-bold text-green-400">100/100</p>
-                        </div>
-                    </div>
-                    <div class="bg-black/30 rounded-full h-3 overflow-hidden">
-                        <div id="monster1HpBar" class="hp-bar bg-gradient-to-r from-green-500 to-green-400 h-full" style="width: 100%"></div>
-                    </div>
-                    <div id="damageContainer" class="relative h-8"></div>
-                </div>
-
-                <!-- 題目區 -->
-                <div class="glass rounded-xl p-4 flex-1 flex flex-col">
-                    <p class="text-xs text-purple-400 mb-2">💡 新手題目</p>
-                    <p id="question1" class="text-lg mb-4 flex-1">載入中...</p>
-                    <div id="options1" class="space-y-2">
-                        <!-- 選項動態生成 -->
-                    </div>
-                </div>
-
-                <!-- 玩家狀態 -->
-                <div class="glass rounded-xl p-3 mt-4 flex items-center justify-between">
-                    <div class="flex items-center gap-2">
-                        <span class="text-2xl">🧙</span>
-                        <div>
-                            <p class="font-bold text-sm">冒險者</p>
-                            <p class="text-xs text-gray-400">Lv.1</p>
-                        </div>
-                    </div>
-                    <div class="flex items-center gap-4">
-                        <div class="text-center">
-                            <p class="text-xs text-gray-400">經驗</p>
-                            <p id="playerExp" class="font-bold text-purple-400">0</p>
-                        </div>
-                        <div class="text-center">
-                            <p class="text-xs text-gray-400">金幣</p>
-                            <p id="playerCoins" class="font-bold text-yellow-400">0</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- 步驟 5: 勝利 + 第二題 -->
-        <div id="step5" class="step hidden flex-1 flex flex-col items-center justify-center">
-            <div class="slide-up text-center">
-                <div class="text-6xl mb-4 reward-pop">🎉</div>
-                <h2 class="text-2xl font-bold mb-2">擊敗了怪獸！</h2>
-                <div class="glass rounded-xl p-4 mb-6 inline-block">
-                    <p class="text-gray-400 mb-2">獲得獎勵：</p>
-                    <div class="flex gap-6 justify-center">
-                        <div>
-                            <p class="text-2xl font-bold text-purple-400">+50</p>
-                            <p class="text-xs text-gray-400">經驗值</p>
-                        </div>
-                        <div>
-                            <p class="text-2xl font-bold text-yellow-400">+10</p>
-                            <p class="text-xs text-gray-400">金幣</p>
-                        </div>
-                    </div>
-                </div>
-                <p class="text-gray-400 mb-4">繼續挑戰下一隻怪獸？</p>
-                <button onclick="startBattle2()" class="px-8 py-3 bg-gradient-to-r from-purple-600 to-blue-600 rounded-xl font-bold hover:scale-105 transition">
-                    繼續戰鬥！ →
-                </button>
-            </div>
-        </div>
-
-        <!-- 步驟 6: 升級 + Boss 預告 -->
-        <div id="step6" class="step hidden flex-1 flex flex-col items-center justify-center">
-            <div class="slide-up text-center">
-                <div class="text-6xl mb-4">⬆️</div>
-                <h2 class="text-3xl font-bold mb-2 text-yellow-400">升級了！</h2>
-                <p class="text-xl mb-6">Lv.1 → Lv.2</p>
-                
-                <div class="glass rounded-xl p-4 mb-6">
-                    <p class="text-gray-400 mb-2">解鎖功能：</p>
-                    <div class="space-y-2 text-left">
-                        <div class="flex items-center gap-2">
-                            <span>✅</span>
-                            <span>錯題本</span>
-                        </div>
-                        <div class="flex items-center gap-2">
-                            <span>✅</span>
-                            <span>每日任務</span>
-                        </div>
-                        <div class="flex items-center gap-2 text-gray-500">
-                            <span>🔒</span>
-                            <span>PvP 對戰 (Lv.5)</span>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="glass rounded-xl p-4 mb-6 border border-red-500/30">
-                    <p class="text-red-400 mb-2">⚠️ 新手村 Boss 出現！</p>
-                    <div class="text-4xl mb-2">👑🐲</div>
-                    <p class="font-bold">章節守護者</p>
-                    <p class="text-xs text-gray-400">擊敗他才能離開新手村</p>
-                </div>
-
-                <button onclick="startBossBattle()" class="px-8 py-3 bg-gradient-to-r from-red-600 to-orange-600 rounded-xl font-bold hover:scale-105 transition">
-                    挑戰 Boss！ →
-                </button>
-            </div>
-        </div>
-
-        <!-- 步驟 7: 通關 + 註冊提示 -->
-        <div id="step7" class="step hidden flex-1 flex flex-col items-center justify-center">
-            <div class="bounce-in text-center">
-                <div class="text-8xl mb-4">🏆</div>
-                <h2 class="text-3xl font-bold mb-2">恭喜通關新手村！</h2>
-                <p class="text-gray-400 mb-6">你已經掌握了基本玩法</p>
-                
-                <div class="glass rounded-xl p-6 mb-6">
-                    <p class="text-lg mb-4">你的戰績：</p>
-                    <div class="grid grid-cols-3 gap-4 mb-4">
-                        <div>
-                            <p class="text-2xl font-bold text-purple-400" id="finalExp">150</p>
-                            <p class="text-xs text-gray-400">經驗值</p>
-                        </div>
-                        <div>
-                            <p class="text-2xl font-bold text-yellow-400" id="finalCoins">50</p>
-                            <p class="text-xs text-gray-400">金幣</p>
-                        </div>
-                        <div>
-                            <p class="text-2xl font-bold text-green-400">Lv.2</p>
-                            <p class="text-xs text-gray-400">等級</p>
-                        </div>
-                    </div>
-                    <div class="flex items-center justify-center gap-2 text-yellow-400">
-                        <span>🏅</span>
-                        <span class="font-bold">獲得稱號：「冒險新星」</span>
-                    </div>
-                </div>
-
-                <div class="glass rounded-xl p-6 mb-6 border border-purple-500/50">
-                    <p class="text-lg font-bold mb-2">💾 儲存你的進度？</p>
-                    <p class="text-gray-400 text-sm mb-4">註冊後可跨裝置同步、參加排行榜</p>
-                    
-                    <div class="space-y-3">
-                        <button onclick="goToRegister()" class="w-full px-6 py-3 bg-gradient-to-r from-purple-600 to-blue-600 rounded-xl font-bold hover:scale-105 transition">
-                            📧 Email 註冊（10秒）
-                        </button>
-                        <button onclick="googleLogin()" class="w-full px-6 py-3 bg-white/10 rounded-xl font-bold hover:bg-white/20 transition flex items-center justify-center gap-2">
-                            <img src="https://www.google.com/favicon.ico" class="w-5 h-5"> Google 快速登入
-                        </button>
-                        <button onclick="continueTrial()" class="w-full px-6 py-3 text-gray-400 hover:text-white transition text-sm">
-                            稍後再說，繼續試玩 →
-                        </button>
-                    </div>
-                </div>
-
-                <p class="text-xs text-gray-500">
-                    ⚠️ 不註冊的話，換裝置會遺失進度喔
-                </p>
-            </div>
-        </div>
-
-    </div>
+<body class="dream-bg text-white overflow-hidden">
+    <div id="stars" class="fixed inset-0 pointer-events-none z-0"></div>
+    <div id="app" class="relative z-10 min-h-screen flex items-center justify-center p-4"></div>
 
     <script>
-        // ========== 全域狀態 ==========
-        let currentStep = 1;
-        let selectedSubject = null;
-        let playerExp = 0;
-        let playerCoins = 0;
-        let playerLevel = 1;
-        
-        // 科目配置
-        const subjects = [
-            { id: 'math', name: '數學', emoji: '📐', color: 'from-blue-500 to-cyan-500' },
-            { id: 'chinese', name: '國文', emoji: '📚', color: 'from-red-500 to-pink-500' },
-            { id: 'english', name: '英文', emoji: '🔤', color: 'from-green-500 to-teal-500' },
-            { id: 'physics', name: '物理', emoji: '⚡', color: 'from-yellow-500 to-orange-500' },
-            { id: 'chemistry', name: '化學', emoji: '🧪', color: 'from-purple-500 to-pink-500' },
-            { id: 'biology', name: '生物', emoji: '🧬', color: 'from-green-500 to-lime-500' },
-            { id: 'history', name: '歷史', emoji: '🏛️', color: 'from-amber-500 to-yellow-500' },
-            { id: 'geography', name: '地理', emoji: '🌍', color: 'from-blue-500 to-green-500' },
-            { id: 'civics', name: '公民', emoji: '⚖️', color: 'from-indigo-500 to-purple-500' },
-            { id: 'earth', name: '地科', emoji: '🌏', color: 'from-teal-500 to-cyan-500' },
-        ];
+    let dialogues = null, flashcards = null, monsters = null;
+    
+    let state = {
+        stage: 'loading',
+        name: '',
+        subject: '',
+        currentDialog: 0,
+        currentCard: 0,
+        currentMonster: 0,
+        currentQuestion: 0,
+        battlePhase: 'appear',
+        playerHp: 100,
+        monsterHp: 0,
+        exp: 0,
+        coins: 0
+    };
 
-        // 新手題目庫 (簡單題目)
-        const tutorialQuestions = {
-            math: [
-                { q: '2 + 3 = ?', options: ['4', '5', '6', '7'], answer: 1 },
-                { q: '10 - 4 = ?', options: ['5', '6', '7', '8'], answer: 1 },
-            ],
-            chinese: [
-                { q: '「青出於藍」的下一句是？', options: ['而勝於藍', '更勝於藍', '超越於藍', '高於藍'], answer: 0 },
-                { q: '「一日不見」下一句是？', options: ['如隔三秋', '如隔三年', '思念萬分', '魂牽夢縈'], answer: 0 },
-            ],
-            english: [
-                { q: 'Apple 的中文是？', options: ['蘋果', '香蕉', '橘子', '西瓜'], answer: 0 },
-                { q: '"Hello" 是什麼意思？', options: ['再見', '你好', '謝謝', '對不起'], answer: 1 },
-            ],
-            physics: [
-                { q: '牛頓第一運動定律又稱？', options: ['慣性定律', '加速度定律', '作用力定律', '重力定律'], answer: 0 },
-                { q: '光速約為？', options: ['3億 m/s', '3萬 m/s', '30萬 m/s', '300萬 m/s'], answer: 0 },
-            ],
-            chemistry: [
-                { q: '水的化學式是？', options: ['H2O', 'CO2', 'NaCl', 'O2'], answer: 0 },
-                { q: '氧氣的化學符號是？', options: ['O', 'O2', 'H', 'N'], answer: 1 },
-            ],
-            biology: [
-                { q: '人體最大的器官是？', options: ['心臟', '肝臟', '皮膚', '大腦'], answer: 2 },
-                { q: '植物行光合作用產生？', options: ['二氧化碳', '氧氣', '氮氣', '氫氣'], answer: 1 },
-            ],
-            history: [
-                { q: '中華民國成立於哪一年？', options: ['1911', '1912', '1949', '1945'], answer: 1 },
-                { q: '台灣光復節是哪一天？', options: ['10/10', '10/25', '2/28', '7/7'], answer: 1 },
-            ],
-            geography: [
-                { q: '台灣最高峰是？', options: ['阿里山', '玉山', '雪山', '合歡山'], answer: 1 },
-                { q: '世界最大的海洋是？', options: ['大西洋', '印度洋', '太平洋', '北冰洋'], answer: 2 },
-            ],
-            civics: [
-                { q: '中華民國憲法第一條：中華民國基於？', options: ['三民主義', '五權分立', '民主共和', '自由平等'], answer: 0 },
-                { q: '台灣的立法機關是？', options: ['行政院', '立法院', '司法院', '監察院'], answer: 1 },
-            ],
-            earth: [
-                { q: '地球自轉一圈約需？', options: ['12小時', '24小時', '7天', '365天'], answer: 1 },
-                { q: '造成四季變化的主因是？', options: ['地球公轉', '地軸傾斜', '日地距離', '月球引力'], answer: 1 },
-            ],
+    const subjects = [
+        { id: '數學', icon: '📐', color: 'from-amber-500 to-orange-500' },
+        { id: '物理', icon: '⚛️', color: 'from-blue-500 to-cyan-500' },
+        { id: '化學', icon: '🧪', color: 'from-purple-500 to-pink-500' },
+        { id: '生物', icon: '🧬', color: 'from-green-500 to-teal-500' },
+        { id: '國文', icon: '📜', color: 'from-red-500 to-rose-500' },
+        { id: '英文', icon: '🔤', color: 'from-indigo-500 to-blue-500' },
+        { id: '歷史', icon: '🏛️', color: 'from-yellow-600 to-amber-600' },
+        { id: '地理', icon: '🌍', color: 'from-emerald-500 to-green-500' },
+        { id: '公民與社會', icon: '⚖️', color: 'from-slate-500 to-gray-500' },
+        { id: '地球科學', icon: '🌏', color: 'from-sky-500 to-blue-500' }
+    ];
+
+    async function init() {
+        createStars();
+        if (localStorage.getItem('beidou_tutorial_done')) {
+            window.location.href = 'index.html';
+            return;
+        }
+        try {
+            const [d1, d2, d3] = await Promise.all([
+                fetch('data/tutorial_dialogues.json').then(r => r.json()),
+                fetch('data/tutorial_flashcards.json').then(r => r.json()),
+                fetch('data/tutorial_monsters.json').then(r => r.json())
+            ]);
+            dialogues = d1; flashcards = d2; monsters = d3;
+            state.stage = 'opening';
+            render();
+        } catch (e) {
+            document.getElementById('app').innerHTML = '<div class="text-red-400">載入失敗，請重新整理</div>';
+        }
+    }
+
+    function createStars() {
+        const c = document.getElementById('stars');
+        for (let i = 0; i < 80; i++) {
+            const s = document.createElement('div');
+            s.className = 'star';
+            s.style.cssText = `left:${Math.random()*100}%;top:${Math.random()*100}%;width:${Math.random()*2+1}px;height:${Math.random()*2+1}px;animation-delay:${Math.random()*2}s`;
+            c.appendChild(s);
+        }
+    }
+
+    function render() {
+        const app = document.getElementById('app');
+        const renders = {
+            opening: renderOpening,
+            chenyun: renderChenyun,
+            name: renderName,
+            subject: renderSubject,
+            flashcard_intro: renderFlashcardIntro,
+            flashcard: renderFlashcard,
+            battle_intro: renderBattleIntro,
+            battle: renderBattle,
+            monster_defeat: renderMonsterDefeat,
+            ending: renderEnding
         };
+        app.innerHTML = (renders[state.stage] || (() => ''))();
+    }
 
-        // ========== 初始化 ==========
-        document.addEventListener('DOMContentLoaded', () => {
-            initSubjectGrid();
-            updateProgress();
-            
-            // 檢查是否有暫存進度
-            const saved = localStorage.getItem('beidou_tutorial_progress');
-            if (saved) {
-                const data = JSON.parse(saved);
-                if (data.completed) {
-                    // 已完成新手村，跳轉
-                    window.location.href = 'dashboard.html';
-                }
+    // ===== 開場 =====
+    function renderOpening() {
+        return `<div class="text-center max-w-2xl fade-in">
+            <div class="text-2xl md:text-3xl leading-relaxed mb-12 min-h-[100px]">${dialogues.opening[state.currentDialog]}</div>
+            <button onclick="nextOpening()" class="px-8 py-3 bg-blue-600/50 hover:bg-blue-600 rounded-full border border-blue-400/50 transition">
+                ${state.currentDialog < dialogues.opening.length - 1 ? '繼續' : '進入夢境'}
+            </button>
+        </div>`;
+    }
+    function nextOpening() {
+        if (++state.currentDialog >= dialogues.opening.length) { state.stage = 'chenyun'; state.currentDialog = 0; }
+        render();
+    }
+
+    // ===== 澄韻 =====
+    function renderChenyun() {
+        return `<div class="text-center max-w-2xl">
+            <div class="text-8xl mb-6 fade-in">👩‍🏫</div>
+            <div class="text-xl text-blue-400 mb-2 fade-in">澄韻 · 天權星</div>
+            <div class="dialog-box rounded-2xl p-6 mb-8 fade-in"><div class="text-xl leading-relaxed">${dialogues.chenyun_intro[state.currentDialog]}</div></div>
+            <button onclick="nextChenyun()" class="px-8 py-3 bg-blue-600/50 hover:bg-blue-600 rounded-full border border-blue-400/50 transition fade-in">
+                ${state.currentDialog < dialogues.chenyun_intro.length - 1 ? '繼續' : '你好，澄韻'}
+            </button>
+        </div>`;
+    }
+    function nextChenyun() {
+        if (++state.currentDialog >= dialogues.chenyun_intro.length) { state.stage = 'name'; }
+        render();
+    }
+
+    // ===== 名字 =====
+    function renderName() {
+        return `<div class="text-center max-w-md w-full">
+            <div class="text-6xl mb-4">👩‍🏫</div>
+            <div class="dialog-box rounded-2xl p-6 mb-6">
+                <div class="text-xl mb-2">${dialogues.name_prompt.ask}</div>
+                <div class="text-sm text-gray-400">${dialogues.name_prompt.hint}</div>
+            </div>
+            <input type="text" id="playerName" maxlength="10" placeholder="輸入你的名字..." class="w-full bg-slate-800/80 border border-white/20 rounded-xl px-4 py-3 text-center text-xl mb-4 focus:border-blue-400 focus:outline-none">
+            <button onclick="submitName()" class="w-full py-3 bg-gradient-to-r from-blue-500 to-purple-600 rounded-xl font-bold">確認</button>
+        </div>`;
+    }
+    function submitName() {
+        const n = document.getElementById('playerName').value.trim();
+        if (!n) { alert('請輸入名字'); return; }
+        state.name = n; state.stage = 'subject'; render();
+    }
+
+    // ===== 選科 =====
+    function renderSubject() {
+        return `<div class="text-center max-w-4xl w-full">
+            <div class="text-6xl mb-4">👩‍🏫</div>
+            <div class="dialog-box rounded-2xl p-4 mb-6 inline-block">
+                <div class="text-lg">${dialogues.subject_prompt.ask}</div>
+                <div class="text-sm text-gray-400">${dialogues.subject_prompt.hint}</div>
+            </div>
+            <div class="grid grid-cols-2 md:grid-cols-5 gap-3 mb-6">
+                ${subjects.map(s => `<button onclick="selectSubject('${s.id}')" class="subject-card bg-gradient-to-br ${s.color} p-4 rounded-xl border-2 ${state.subject === s.id ? 'border-amber-400' : 'border-transparent'}">
+                    <div class="text-3xl mb-1">${s.icon}</div><div class="font-bold text-sm">${s.id}</div>
+                </button>`).join('')}
+            </div>
+            ${state.subject ? `<button onclick="confirmSubject()" class="px-8 py-3 bg-gradient-to-r from-amber-500 to-orange-500 rounded-xl font-bold">確認選擇 ${subjects.find(s=>s.id===state.subject)?.icon} ${state.subject}</button>` : ''}
+        </div>`;
+    }
+    function selectSubject(id) { state.subject = id; render(); }
+    function confirmSubject() { state.stage = 'flashcard_intro'; state.currentDialog = 0; render(); }
+
+    // ===== 閃卡介紹 =====
+    function renderFlashcardIntro() {
+        return `<div class="text-center max-w-2xl">
+            <div class="text-6xl mb-4">👩‍🏫</div>
+            <div class="dialog-box rounded-2xl p-6 mb-8"><div class="text-xl leading-relaxed">${dialogues.flashcard_intro[state.currentDialog]}</div></div>
+            <button onclick="nextFlashcardIntro()" class="px-8 py-3 bg-blue-600/50 hover:bg-blue-600 rounded-full border border-blue-400/50 transition">
+                ${state.currentDialog < dialogues.flashcard_intro.length - 1 ? '繼續' : '開始學習'}
+            </button>
+        </div>`;
+    }
+    function nextFlashcardIntro() {
+        if (++state.currentDialog >= dialogues.flashcard_intro.length) { state.stage = 'flashcard'; state.currentCard = 0; }
+        render();
+    }
+
+    // ===== 閃卡 =====
+    function renderFlashcard() {
+        const cards = flashcards[state.subject], card = cards[state.currentCard];
+        return `<div class="text-center max-w-lg w-full">
+            <div class="flex items-center justify-between mb-4 text-sm text-gray-400">
+                <span>${subjects.find(s=>s.id===state.subject)?.icon} ${state.subject}</span>
+                <span>閃卡 ${state.currentCard + 1} / ${cards.length}</span>
+            </div>
+            <div class="h-2 bg-gray-700 rounded-full mb-6 overflow-hidden">
+                <div class="h-full bg-gradient-to-r from-blue-500 to-purple-500" style="width:${(state.currentCard+1)/cards.length*100}%"></div>
+            </div>
+            <div id="flashcard" class="flashcard h-64 mb-6 cursor-pointer" onclick="flipCard()">
+                <div class="flashcard-inner relative w-full h-full">
+                    <div class="flashcard-front bg-gradient-to-br from-slate-700 to-slate-800 rounded-2xl p-6 flex items-center justify-center border border-white/10"><div class="text-xl">${card.front}</div></div>
+                    <div class="flashcard-back bg-gradient-to-br from-blue-900 to-purple-900 rounded-2xl p-6 flex items-center justify-center border border-blue-400/30"><div class="text-lg">${card.back}</div></div>
+                </div>
+            </div>
+            <div class="text-sm text-gray-400 mb-4">點擊卡片翻轉</div>
+            <div class="flex gap-4">
+                <button onclick="rateCard('😕')" class="flex-1 py-3 bg-red-900/50 hover:bg-red-800 rounded-xl">😕 不熟</button>
+                <button onclick="rateCard('🤔')" class="flex-1 py-3 bg-yellow-900/50 hover:bg-yellow-800 rounded-xl">🤔 有印象</button>
+                <button onclick="rateCard('😄')" class="flex-1 py-3 bg-green-900/50 hover:bg-green-800 rounded-xl">😄 熟了</button>
+            </div>
+        </div>`;
+    }
+    function flipCard() { document.getElementById('flashcard').classList.toggle('flipped'); }
+    function rateCard(r) {
+        state.exp += r==='😄'?10:r==='🤔'?5:2;
+        if (++state.currentCard >= flashcards[state.subject].length) { state.stage = 'battle_intro'; state.currentDialog = 0; }
+        render();
+    }
+
+    // ===== 戰鬥介紹 =====
+    function renderBattleIntro() {
+        return `<div class="text-center max-w-2xl">
+            <div class="text-6xl mb-4">👩‍🏫</div>
+            <div class="dialog-box rounded-2xl p-6 mb-8"><div class="text-xl leading-relaxed">${dialogues.battle_intro[state.currentDialog]}</div></div>
+            <button onclick="nextBattleIntro()" class="px-8 py-3 bg-red-600/50 hover:bg-red-600 rounded-full border border-red-400/50 transition">
+                ${state.currentDialog < dialogues.battle_intro.length - 1 ? '繼續' : '⚔️ 開始戰鬥！'}
+            </button>
+        </div>`;
+    }
+    function nextBattleIntro() {
+        if (++state.currentDialog >= dialogues.battle_intro.length) {
+            state.stage = 'battle';
+            state.currentMonster = 0; state.currentQuestion = 0;
+            state.playerHp = 100; state.monsterHp = monsters.monsters[0].hp;
+            state.battlePhase = 'appear';
+        }
+        render();
+    }
+
+    // ===== 戰鬥 =====
+    function renderBattle() {
+        const m = monsters.monsters[state.currentMonster];
+        const cards = flashcards[state.subject];
+        const card = cards[(state.currentMonster * 2 + state.currentQuestion) % cards.length];
+        const mHpPct = Math.max(0, state.monsterHp / m.hp * 100);
+        const pHpPct = Math.max(0, state.playerHp);
+        
+        // 怪物對話
+        let mDialog = m.dialogues[state.battlePhase] || m.dialogues.attack;
+        if (state.monsterHp < m.hp * 0.3 && m.dialogues.low_hp) mDialog = m.dialogues.low_hp;
+        
+        return `<div class="w-full max-w-2xl">
+            <!-- 怪物 -->
+            <div class="text-center mb-4">
+                <div class="text-sm text-gray-400 mb-1">Lv.${m.level} ${m.name}</div>
+                <div id="monsterAvatar" class="text-7xl mb-2 ${state.battlePhase==='appear'?'bounce':''}">${m.avatar}</div>
+                <div class="monster-dialog rounded-xl px-4 py-2 mb-3 mx-auto max-w-sm fade-in">
+                    <div class="text-sm text-amber-100">${mDialog}</div>
+                </div>
+                <div class="w-48 mx-auto">
+                    <div class="flex justify-between text-xs text-gray-400 mb-1"><span>HP</span><span>${Math.max(0,state.monsterHp)}/${m.hp}</span></div>
+                    <div class="h-3 bg-gray-700 rounded-full overflow-hidden"><div class="hp-bar h-full bg-gradient-to-r from-red-500 to-orange-500 rounded-full" style="width:${mHpPct}%"></div></div>
+                </div>
+            </div>
+            <!-- 題目 -->
+            <div class="bg-slate-800/80 rounded-2xl p-6 mb-4 border border-white/10">
+                <div class="text-center text-lg mb-4">${card.front}</div>
+                <input type="text" id="answerInput" placeholder="輸入答案..." class="w-full bg-slate-900 border border-white/20 rounded-xl px-4 py-3 text-center focus:border-blue-400 focus:outline-none" onkeypress="if(event.key==='Enter')submitAnswer()">
+                <div class="text-xs text-gray-500 mt-2 text-center">提示：${card.back.substring(0,15)}...</div>
+            </div>
+            <button onclick="submitAnswer()" class="w-full py-3 bg-gradient-to-r from-blue-500 to-purple-600 rounded-xl font-bold mb-4">⚔️ 確認答案</button>
+            <!-- 澄韻提示 -->
+            <div class="flex items-start gap-3 bg-blue-900/30 rounded-xl p-3 mb-4 border border-blue-500/30">
+                <span class="text-2xl">👩‍🏫</span>
+                <div class="text-sm text-blue-200">${monsters.chenyun_battle_tips[Math.floor(Math.random()*monsters.chenyun_battle_tips.length)].replace('{name}',state.name)}</div>
+            </div>
+            <!-- 玩家 -->
+            <div class="flex items-center justify-between bg-slate-800/50 rounded-xl p-3">
+                <div class="flex items-center gap-2"><span class="text-2xl">🧙</span><span class="font-bold">${state.name}</span></div>
+                <div class="w-32">
+                    <div class="text-xs text-gray-400 text-right mb-1">HP ${pHpPct}/100</div>
+                    <div class="h-2 bg-gray-700 rounded-full overflow-hidden"><div class="hp-bar h-full bg-gradient-to-r from-green-500 to-emerald-500 rounded-full" style="width:${pHpPct}%"></div></div>
+                </div>
+            </div>
+        </div>`;
+    }
+
+    function submitAnswer() {
+        const ans = document.getElementById('answerInput').value.trim();
+        const m = monsters.monsters[state.currentMonster];
+        const isCorrect = ans.length > 0;
+        
+        if (isCorrect) {
+            state.monsterHp -= monsters.battle_rules.correct_damage;
+            state.exp += 15; state.coins += 20;
+            state.battlePhase = 'hit';
+        } else {
+            state.playerHp -= monsters.battle_rules.wrong_damage;
+            state.battlePhase = 'miss';
+        }
+        render();
+        
+        if (isCorrect) {
+            document.getElementById('monsterAvatar')?.classList.add('shake');
+            setTimeout(() => document.getElementById('monsterAvatar')?.classList.remove('shake'), 400);
+        }
+        
+        setTimeout(() => {
+            if (state.monsterHp <= 0) {
+                state.stage = 'monster_defeat';
+                render();
+                return;
             }
-        });
-
-        // ========== 步驟控制 ==========
-        function nextStep() {
-            document.getElementById(`step${currentStep}`).classList.add('hidden');
-            currentStep++;
-            document.getElementById(`step${currentStep}`).classList.remove('hidden');
-            updateProgress();
-            saveProgress();
-        }
-
-        function goToStep(step) {
-            document.getElementById(`step${currentStep}`).classList.add('hidden');
-            currentStep = step;
-            document.getElementById(`step${currentStep}`).classList.remove('hidden');
-            updateProgress();
-        }
-
-        function updateProgress() {
-            const progress = ((currentStep - 1) / 6) * 100;
-            document.getElementById('totalProgress').style.width = `${progress}%`;
-            document.getElementById('stepLabel').textContent = `${currentStep}/7`;
-        }
-
-        // ========== 科目選擇 ==========
-        function initSubjectGrid() {
-            const grid = document.getElementById('subjectGrid');
-            grid.innerHTML = subjects.map(s => `
-                <button onclick="selectSubject('${s.id}', '${s.name}')" 
-                    id="subject_${s.id}"
-                    class="glass p-4 rounded-xl text-center hover:scale-105 transition border-2 border-transparent">
-                    <div class="text-3xl mb-1">${s.emoji}</div>
-                    <div class="font-bold">${s.name}</div>
-                </button>
-            `).join('');
-        }
-
-        function selectSubject(id, name) {
-            selectedSubject = id;
-            // 清除其他選中
-            subjects.forEach(s => {
-                document.getElementById(`subject_${s.id}`).classList.remove('border-purple-500', 'glow');
-            });
-            // 選中當前
-            document.getElementById(`subject_${id}`).classList.add('border-purple-500', 'glow');
-            // 顯示確認
-            document.getElementById('selectedSubjectName').textContent = name;
-            document.getElementById('subjectConfirm').classList.remove('hidden');
-        }
-
-        function confirmSubject() {
-            if (!selectedSubject) return;
-            localStorage.setItem('beidou_selected_subject', selectedSubject);
-            nextStep();
-        }
-
-        // ========== 戰鬥系統 ==========
-        let currentQuestion = 0;
-        let monsterHp = 100;
-        let maxMonsterHp = 100;
-
-        function loadQuestion(questionIndex) {
-            const questions = tutorialQuestions[selectedSubject] || tutorialQuestions.math;
-            const q = questions[questionIndex % questions.length];
-            
-            document.getElementById('question1').textContent = q.q;
-            
-            const optionsDiv = document.getElementById('options1');
-            optionsDiv.innerHTML = q.options.map((opt, i) => `
-                <button onclick="answerQuestion(${i}, ${q.answer})" 
-                    class="w-full glass p-3 rounded-lg text-left hover:bg-white/10 transition flex items-center gap-2">
-                    <span class="w-6 h-6 rounded-full bg-white/10 flex items-center justify-center text-sm">${String.fromCharCode(65+i)}</span>
-                    <span>${opt}</span>
-                </button>
-            `).join('');
-        }
-
-        function answerQuestion(selected, correct) {
-            const buttons = document.querySelectorAll('#options1 button');
-            buttons.forEach(b => b.disabled = true);
-            
-            if (selected === correct) {
-                // 答對
-                buttons[selected].classList.add('bg-green-500/30', 'border', 'border-green-500');
-                attackMonster(30);
-            } else {
-                // 答錯
-                buttons[selected].classList.add('bg-red-500/30', 'border', 'border-red-500');
-                buttons[correct].classList.add('bg-green-500/30', 'border', 'border-green-500');
-                showDamage('-10 HP', 'red');
+            if (state.playerHp <= 0) {
+                state.playerHp = 20;
+                alert('澄韻：「別灰心，我來幫你恢復一些體力！」');
             }
-            
-            setTimeout(() => {
-                if (monsterHp <= 0) {
-                    // 怪獸死亡
-                    playerExp += 50;
-                    playerCoins += 10;
-                    updatePlayerStats();
-                    
-                    if (currentStep === 4) {
-                        nextStep(); // 進入勝利畫面
-                    }
-                } else {
-                    // 繼續下一題
-                    currentQuestion++;
-                    loadQuestion(currentQuestion);
-                }
-            }, 1000);
-        }
+            state.battlePhase = 'attack';
+            state.currentQuestion++;
+            render();
+        }, 1200);
+    }
 
-        function attackMonster(damage) {
-            monsterHp = Math.max(0, monsterHp - damage);
-            const percent = (monsterHp / maxMonsterHp) * 100;
-            
-            document.getElementById('monster1HpBar').style.width = `${percent}%`;
-            document.getElementById('monster1HpText').textContent = `${monsterHp}/${maxMonsterHp}`;
-            
-            // 變色
-            if (percent < 30) {
-                document.getElementById('monster1HpBar').classList.remove('from-green-500', 'to-green-400', 'from-yellow-500', 'to-yellow-400');
-                document.getElementById('monster1HpBar').classList.add('from-red-500', 'to-red-400');
-            } else if (percent < 60) {
-                document.getElementById('monster1HpBar').classList.remove('from-green-500', 'to-green-400');
-                document.getElementById('monster1HpBar').classList.add('from-yellow-500', 'to-yellow-400');
-            }
-            
-            showDamage(`-${damage}`, 'yellow');
+    // ===== 怪物擊敗 =====
+    function renderMonsterDefeat() {
+        const m = monsters.monsters[state.currentMonster];
+        return `<div class="text-center max-w-md fade-in">
+            <div class="text-8xl mb-4 opacity-50">${m.avatar}</div>
+            <div class="text-2xl font-bold text-amber-400 mb-4">🎉 擊敗 ${m.name}！</div>
+            <div class="monster-dialog rounded-2xl p-6 mb-6">
+                <div class="text-lg leading-relaxed">${m.dialogues.defeat}</div>
+            </div>
+            <div class="flex justify-center gap-6 mb-6">
+                <div class="text-center"><div class="text-2xl text-amber-400">+30</div><div class="text-sm text-gray-400">EXP</div></div>
+                <div class="text-center"><div class="text-2xl text-yellow-400">+40</div><div class="text-sm text-gray-400">金幣</div></div>
+            </div>
+            <button onclick="nextMonster()" class="px-8 py-3 bg-gradient-to-r from-amber-500 to-orange-500 rounded-xl font-bold glow">
+                ${state.currentMonster < monsters.monsters.length - 1 ? '繼續前進 →' : '🏆 完成試煉！'}
+            </button>
+        </div>`;
+    }
+    function nextMonster() {
+        state.exp += 30; state.coins += 40;
+        if (++state.currentMonster < monsters.monsters.length) {
+            state.monsterHp = monsters.monsters[state.currentMonster].hp;
+            state.currentQuestion = 0;
+            state.battlePhase = 'appear';
+            state.stage = 'battle';
+        } else {
+            state.stage = 'ending'; state.currentDialog = 0;
         }
+        render();
+    }
 
-        function showDamage(text, color) {
-            const container = document.getElementById('damageContainer');
-            const el = document.createElement('div');
-            el.className = `damage-text absolute left-1/2 transform -translate-x-1/2 font-bold text-xl text-${color}-400`;
-            el.textContent = text;
-            container.appendChild(el);
-            setTimeout(() => el.remove(), 1000);
+    // ===== 結算 =====
+    function renderEnding() {
+        if (state.currentDialog < dialogues.ending.length - 1) {
+            return `<div class="text-center max-w-2xl">
+                <div class="text-6xl mb-4">👩‍🏫</div>
+                <div class="dialog-box rounded-2xl p-6 mb-8"><div class="text-xl leading-relaxed">${dialogues.ending[state.currentDialog].replace('{name}',state.name)}</div></div>
+                <button onclick="nextEnding()" class="px-8 py-3 bg-amber-600/50 hover:bg-amber-600 rounded-full border border-amber-400/50 transition">繼續</button>
+            </div>`;
         }
+        return `<div class="text-center max-w-md fade-in">
+            <div class="text-6xl mb-4">🎉</div>
+            <div class="text-2xl font-bold mb-6">新手村完成！</div>
+            <div class="bg-slate-800/80 rounded-2xl p-6 mb-6 border border-amber-500/30">
+                <div class="text-lg mb-4">獲得獎勵</div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="bg-slate-900/50 rounded-xl p-3"><div class="text-amber-400 text-2xl font-bold">${state.exp}</div><div class="text-sm text-gray-400">經驗值</div></div>
+                    <div class="bg-slate-900/50 rounded-xl p-3"><div class="text-yellow-400 text-2xl font-bold">${state.coins}</div><div class="text-sm text-gray-400">金幣</div></div>
+                </div>
+                <div class="mt-4 pt-4 border-t border-white/10">
+                    <div class="text-purple-400">🏅 獲得稱號</div>
+                    <div class="font-bold">「新手村畢業生」</div>
+                </div>
+            </div>
+            <button onclick="finishTutorial()" class="w-full py-4 bg-gradient-to-r from-amber-500 to-orange-500 rounded-xl font-bold text-lg glow">進入學測大陸 →</button>
+        </div>`;
+    }
+    function nextEnding() { state.currentDialog++; render(); }
+    function finishTutorial() {
+        localStorage.setItem('beidou_player', JSON.stringify({
+            name: state.name, mainSubject: state.subject, exp: state.exp, coins: state.coins,
+            level: 1, titles: ['新手村畢業生'], tutorialDone: true, createdAt: new Date().toISOString()
+        }));
+        localStorage.setItem('beidou_tutorial_done', 'true');
+        window.location.href = 'index.html';
+    }
 
-        function updatePlayerStats() {
-            document.getElementById('playerExp').textContent = playerExp;
-            document.getElementById('playerCoins').textContent = playerCoins;
-        }
-
-        // Step 4 初始化
-        document.getElementById('step4').addEventListener('transitionend', () => {
-            if (!document.getElementById('step4').classList.contains('hidden')) {
-                // 初始化第一場戰鬥
-                const subjectConfig = subjects.find(s => s.id === selectedSubject);
-                document.getElementById('monster1Emoji').textContent = subjectConfig?.emoji || '👾';
-                document.getElementById('monster1Name').textContent = `${subjectConfig?.name || '知識'}小精靈`;
-                loadQuestion(0);
-            }
-        });
-
-        // 第二場戰鬥
-        function startBattle2() {
-            monsterHp = 100;
-            maxMonsterHp = 100;
-            currentQuestion = 1;
-            
-            goToStep(4);
-            
-            // 更新怪獸
-            setTimeout(() => {
-                document.getElementById('monster1HpBar').style.width = '100%';
-                document.getElementById('monster1HpBar').classList.remove('from-red-500', 'to-red-400', 'from-yellow-500', 'to-yellow-400');
-                document.getElementById('monster1HpBar').classList.add('from-green-500', 'to-green-400');
-                document.getElementById('monster1HpText').textContent = '100/100';
-                document.getElementById('monster1Name').textContent = `${subjects.find(s => s.id === selectedSubject)?.name || '知識'}怪獸`;
-                loadQuestion(currentQuestion);
-            }, 100);
-        }
-
-        // Boss 戰
-        function startBossBattle() {
-            // 模擬 Boss 戰勝利
-            playerExp += 100;
-            playerCoins += 30;
-            playerLevel = 2;
-            
-            document.getElementById('finalExp').textContent = playerExp;
-            document.getElementById('finalCoins').textContent = playerCoins;
-            
-            goToStep(7);
-            createConfetti();
-        }
-
-        // ========== 完成 ==========
-        function goToRegister() {
-            saveProgress();
-            localStorage.setItem('beidou_tutorial_completed', 'true');
-            localStorage.setItem('beidou_tutorial_data', JSON.stringify({
-                exp: playerExp,
-                coins: playerCoins,
-                level: playerLevel,
-                subject: selectedSubject
-            }));
-            window.location.href = 'auth.html?mode=register&from=tutorial';
-        }
-
-        function googleLogin() {
-            saveProgress();
-            // TODO: 實作 Google OAuth
-            alert('Google 登入功能開發中，請先使用 Email 註冊');
-        }
-
-        function continueTrial() {
-            saveProgress();
-            localStorage.setItem('beidou_tutorial_completed', 'true');
-            localStorage.setItem('beidou_guest_mode', 'true');
-            window.location.href = 'dashboard.html?guest=true';
-        }
-
-        function saveProgress() {
-            localStorage.setItem('beidou_tutorial_progress', JSON.stringify({
-                step: currentStep,
-                subject: selectedSubject,
-                exp: playerExp,
-                coins: playerCoins,
-                level: playerLevel,
-                timestamp: Date.now()
-            }));
-        }
-
-        // ========== 特效 ==========
-        function createConfetti() {
-            const colors = ['#f00', '#0f0', '#00f', '#ff0', '#f0f', '#0ff'];
-            for (let i = 0; i < 50; i++) {
-                const confetti = document.createElement('div');
-                confetti.className = 'confetti';
-                confetti.style.cssText = `
-                    position: fixed;
-                    width: 10px;
-                    height: 10px;
-                    background: ${colors[Math.floor(Math.random() * colors.length)]};
-                    left: ${Math.random() * 100}vw;
-                    top: -10px;
-                    border-radius: ${Math.random() > 0.5 ? '50%' : '0'};
-                    animation: fall ${2 + Math.random() * 2}s linear forwards;
-                `;
-                document.body.appendChild(confetti);
-                setTimeout(() => confetti.remove(), 4000);
-            }
-            
-            // 添加掉落動畫
-            if (!document.getElementById('confetti-style')) {
-                const style = document.createElement('style');
-                style.id = 'confetti-style';
-                style.textContent = `
-                    @keyframes fall {
-                        to { transform: translateY(100vh) rotate(720deg); opacity: 0; }
-                    }
-                `;
-                document.head.appendChild(style);
-            }
-        }
-
-        // Step 3 結束後自動進入 Step 4
-        const step3Btn = document.querySelector('#step3 button');
-        if (step3Btn) {
-            step3Btn.addEventListener('click', () => {
-                setTimeout(() => {
-                    const subjectConfig = subjects.find(s => s.id === selectedSubject);
-                    document.getElementById('monster1Emoji').textContent = subjectConfig?.emoji || '👾';
-                    document.getElementById('monster1Name').textContent = `${subjectConfig?.name || '知識'}小精靈`;
-                    monsterHp = 100;
-                    loadQuestion(0);
-                }, 100);
-            });
-        }
+    init();
     </script>
 </body>
 </html>

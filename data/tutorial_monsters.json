@@ -1,0 +1,66 @@
+{
+  "monsters": [
+    {
+      "id": "TUTORIAL_1",
+      "name": "知識萌芽",
+      "level": 1,
+      "hp": 30,
+      "avatar": "🌱",
+      "difficulty": "basic",
+      "description": "剛從知識之樹落下的小萌芽，很溫和。",
+      "dialogues": {
+        "appear": "嗚...有人來了...你是新的旅者嗎？",
+        "attack": "讓我考考你這個簡單的問題～",
+        "hit": "唔！你答對了...",
+        "miss": "嘻嘻，這題不對喔～",
+        "defeat": "萌芽化作光點融入你的心中...「謝謝你...願知識與你同在...」"
+      }
+    },
+    {
+      "id": "TUTORIAL_2",
+      "name": "概念精靈",
+      "level": 2,
+      "hp": 50,
+      "avatar": "✨",
+      "difficulty": "apply",
+      "description": "由概念凝聚而成的精靈，會出應用題。",
+      "dialogues": {
+        "appear": "✨ 閃亮登場！我是概念精靈～想通過這裡，就要證明你會應用知識！",
+        "attack": "來吧，這題需要動動腦筋喔！",
+        "hit": "哇！你真的理解了！",
+        "miss": "可惜～知識要活用才行呢！",
+        "defeat": "精靈微笑著消散...「你已經學會思考了，繼續前進吧！」"
+      }
+    },
+    {
+      "id": "TUTORIAL_BOSS",
+      "name": "迷惑使者",
+      "level": 3,
+      "hp": 80,
+      "avatar": "🎭",
+      "difficulty": "extend",
+      "description": "新手村的守門人，專門考驗你的理解深度。",
+      "dialogues": {
+        "appear": "🎭 又一個想離開新手村的孩子...讓我看看你是否真的準備好了。",
+        "attack": "這是我精心設計的迷惑題...你能看穿本質嗎？",
+        "hit": "...不錯。你沒有被表象迷惑。",
+        "miss": "哈哈哈！被我迷惑了吧？再想想！",
+        "low_hp": "嗯...你比我想像的要強...",
+        "defeat": "🎭「...好吧，我承認你的實力。去吧，學測大陸等著你。記住——永遠不要被表象迷惑。」"
+      }
+    }
+  ],
+  "battle_rules": {
+    "correct_damage": 20,
+    "wrong_damage": 10,
+    "time_limit": 30,
+    "questions_per_monster": [1, 2, 2]
+  },
+  "chenyun_battle_tips": [
+    "別緊張，相信你學過的知識！",
+    "仔細看題目，答案就在其中。",
+    "就算答錯也沒關係，這是學習的過程。",
+    "你可以的，{name}！",
+    "這題想想閃卡的內容..."
+  ]
+}
